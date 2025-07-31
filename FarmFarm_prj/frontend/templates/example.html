@@ -1,0 +1,25 @@
+{% extends "./base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/example.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+      <p>내용내용</p>
+    </div>
+
+    <nav class="bottom_nav">
+      <div class="circle_btn selected_nav"><a href="#">지도</a></div>
+      <div class="circle_btn"><a href="#">홈</a></div>
+      <div class="circle_btn"><a href="#">AI</a></div>
+    </nav>
+    
+</div>
+{% endblock body %}
