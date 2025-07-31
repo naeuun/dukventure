@@ -1,0 +1,51 @@
+body {
+    background-color: #ccc;
+    margin:0;
+}
+.big_hugger{
+    margin: 0 auto;
+    max-width: 414px;
+    background-color: white;
+}
+.container {
+    min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
+    padding: 16px;
+}
+
+.bottom_nav {
+    position: fixed;
+    height:40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 414px;
+    margin: auto;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+.bottom_nav a {
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+}
+.circle_btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:35px;
+    height:35px;
+    border: 2px solid #888;
+    border-radius: 50%;
+}
+.selected_nav{
+    background-color: #888;
+}
+.selected_nav a{
+    color:white;
+}
