@@ -14,3 +14,5 @@ def selleronboarding4(request):
     return render(request, "seller_onboardings/seller_onboarding_4.html")
 def selleronboarding5(request):
     return render(request, "seller_onboardings/seller_onboarding_5.html")
+def commononboarding(request):
+    return render(request, "common_onboarding.html")

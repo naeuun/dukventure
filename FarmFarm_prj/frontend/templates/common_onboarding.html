@@ -1,0 +1,25 @@
+{% extends "./base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/common_onboarding.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+    <img src="{% static 'img/dummy_small_logo_img.png' %}" alt="더미 로고 이미지" class="small_logo"/>
+    <div class="container">
+        <div class="side" onclick="location.href='selleronboarding1'">
+            <p class="dumicon">👩‍🌾</p>
+            <p>상인</p>
+        </div>
+        <div class="side">
+            <p class="dumicon">🙋‍♀️</p>
+            <p>소비자</p>
+        </div>
+    </div>
+</div>
+{% endblock body %}
