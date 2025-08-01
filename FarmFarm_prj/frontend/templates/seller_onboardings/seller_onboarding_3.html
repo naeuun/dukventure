@@ -1,0 +1,49 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
+{% endblock style %}
+{% block script %}
+<script src="{% static 'js/seller_onboardings/seller_onboarding_3.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="prev_page" onclick="history.back()">&lt;</div>
+        <img src="{% static 'img/dummy_small_logo_img.png' %}" alt="더미 로고 이미지" class="small_logo"/>
+        <div class="progress_bar">
+            <div class="now_step" style="width: 270px;"></div>
+        </div>
+        <div class="content">
+            <div class="register_box">
+                <p>가게 등록</p>
+                <p>상호명 : <input type="text" placeholder="상호명을 입력하세요."></p>
+                <p>위치 : <input type="text" placeholder="가게의 주소를 입력해주세요."></p>
+                <p>판매 물품 : <input type="text" placeholder="판매 물품들의 유형을 적어주세요. ex)야채"></p>
+                <p>운영 시간 : <input type="text" placeholder="가게 운영 시간대를 적어주세요."></p>
+            </div>
+            <div class="button_hugger">
+                <button
+                type="button" 
+                value="가게 정보 등록" 
+                class="register_button"
+                onclick="location.href='selleronboarding5'"
+                >
+                    등록
+                </button>
+                <button
+                type="button"
+                value="음성 인식 버튼"
+                class="voice_recognition_btn"
+                >
+                    🎙
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

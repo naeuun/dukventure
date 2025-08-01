@@ -1,0 +1,35 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="prev_page" onclick="history.back()">&lt;</div>
+        <div class="progress_bar">
+            <div class="now_step" style="width: 360px;"></div>
+        </div>
+        <div class="content">
+            <p class="smaller_content">
+                🎉<br>
+                가게 등록에 성공하였습니다!
+            </p>
+            <button
+            type="button" 
+            value="판매자 홈 페이지로" 
+            class="goto_hometax"
+            onclick="window.location.href=''"
+            >
+                홈으로
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock body %}
