@@ -9,4 +9,6 @@ urlpatterns = [
     path("selleronboarding3", selleronboarding3, name="selleronboarding3"),
     path("selleronboarding4", selleronboarding4, name="selleronboarding4"),
     path("selleronboarding5", selleronboarding5, name="selleronboarding5"),
+    
+    path("reservations", reservations, name="reservations"),
 ]
