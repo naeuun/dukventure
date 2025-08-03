@@ -138,3 +138,5 @@ fe/fix/#21-button-color
 4. **PR 생성 및 리뷰** → `BACKEND` 또는 `FRONTEND` 브랜치로 PR
 5. **코드 리뷰 후 병합(Merge)**
 6. **최종 배포 전 main 브랜치에 병합**
+
+### 🚀 덕벤처 파이팅 🌠  
