@@ -1,0 +1,154 @@
+body {
+    margin: 0;
+  }
+  .big_hugger {
+    margin: 0 auto;
+    max-width: 402px;
+    background-color: #ccc;
+  }
+  .container {
+    min-height: calc(100vh - 35px);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .bottom_nav {
+    position: fixed;
+    height: 74px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 402px;
+    margin: auto;
+    background: #F4F5EF;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding-top: 7px;
+  }
+  
+  .image-upload-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .image-box {
+    width: 80px;
+    height: 80px;
+    background-color: #f0f0f0;
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .image-box input[type="file"] {
+    display: none;
+  }
+  
+  .image-box .plus-icon {
+    font-size: 28px;
+    color: #aaa;
+  }
+  
+  .image-box img.preview-img {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .food-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    width:300px;
+  }
+  .food-option {
+    width:80px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    background-color: white;
+    text-align: center;
+    box-sizing: border-box;
+    transition: 0.2s ease;
+  }
+  
+  .food-option-input {
+    padding: 6px 12px;
+    border: 1px solid #aaa;
+    border-radius: 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  
+  
+  .food-input {
+    display: none;
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    outline: none;
+    width:70px;
+    height: 20px;
+  }
+  .food-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  max-width: 100%;
+}
+
+.food-option {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  background-color: white;
+  transition: 0.2s ease;
+}
+
+.food-option.selected {
+  background-color: crimson;
+  color: white;
+  border-color: crimson;
+}
+
+.food-option-input {
+  padding: 6px 12px;
+  border: 1px solid #aaa;
+  border-radius: 12px;
+  font-size: 14px;
+  width: 80px;
+  order: 98;
+}
+.food-option.add-food-btn {
+    order: 99;
+    width:80px;
+  }
+  
+.register_btn{
+    border: none;
+    font-size:18px;
+    width:100%;
+    height:100%;
+    cursor: pointer;
+}

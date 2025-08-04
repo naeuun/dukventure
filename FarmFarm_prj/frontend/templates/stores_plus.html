@@ -1,0 +1,57 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/stores_plus.css' %}" />
+{% endblock style %}
+
+{% block script %}
+<script src="{% static 'js/stores_plus.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<form id="storeForm" method="POST">
+  {% csrf_token %}
+  <div class="big_hugger">
+    <div class="container">
+      <p>이미지</p>
+      <div class="image-upload-container">
+        {% for i in "123" %}
+        <label class="image-box">
+          <input type="file" accept="image/*" onchange="handleBoxImageUpload(event, '{{ forloop.counter0 }}')" />
+          <span class="plus-icon">＋</span>
+          <img class="preview-img" />
+        </label>
+        {% endfor %}
+      </div>
+
+      <p>음식 종류</p>
+      <div class="food-list" id="foodList">
+        <div class="food-option" onclick="toggleFood(this)">토마토</div>
+        <div class="food-option" onclick="toggleFood(this)">오이</div>
+        <div class="food-option" onclick="toggleFood(this)">가지</div>
+        <div class="food-option add-food-btn" onclick="showFoodInput()">＋</div>
+        <input type="text" class="food-input" placeholder="음식 이름 입력..." />
+      </div>
+      <input type="hidden" name="selected_foods" id="selectedFoodsInput" />
+
+      <p>키워드</p>
+      <div class="food-list" id="keywordList">
+        <div class="food-option" onclick="toggleFood(this)">신선해요</div>
+        <div class="food-option" onclick="toggleFood(this)">친절해요</div>
+        <div class="food-option" onclick="toggleFood(this)">저렴해요</div>
+        <div class="food-option" onclick="toggleFood(this)">맛있어요</div>
+        <div class="food-option" onclick="toggleFood(this)">쾌적해요</div>
+        <div class="food-option" onclick="toggleFood(this)">조용해요</div>
+      </div>
+      <input type="hidden" name="selected_keywords" id="selectedKeywordsInput" />
+    </div>
+
+    <div class="nav_box">
+      <nav class="bottom_nav">
+        <button type="submit" class="register_btn">등록하기</button>
+      </nav>
+    </div>
+  </div>
+</form>
+{% endblock body %}

@@ -19,3 +19,6 @@ def commononboarding(request):
 
 def reservations(request):
     return render(request, "reservations.html")
+
+def storesplus(request):
+    return render(request, "stores_plus.html")
