@@ -1,26 +1,29 @@
 body {
-    background-color: #ccc;
     margin:0;
 }
 .big_hugger{
     margin: 0 auto;
     max-width: 402px;
-    background-color: white;
+    background-color: #ccc;
 }
 .container {
     min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
     padding: 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
 }
-
 .bottom_nav {
     position: fixed;
-    height:40px;
+    height: 74px;
     bottom: 0;
     left: 0;
     right: 0;
     max-width: 402px;
     margin: auto;
-    background: white;
+    background: #F4F5EF;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -34,18 +37,42 @@ body {
     font-size: 14px;
     font-weight: 500;
 }
-.circle_btn{
+.btn {
     display: flex;
     justify-content: center;
     align-items: center;
-    width:35px;
-    height:35px;
-    border: 2px solid #888;
-    border-radius: 50%;
+    width: 50px;      /* 선택되지 않아도 고정된 width/height 지정 */
+    height: 50px;
 }
-.selected_nav{
-    background-color: #888;
+
+.map_page{
+    width:16px;
+    margin-top:3px;
+    margin-bottom:-3px;
 }
+.home_page{
+    width:24px;
+    margin-top:3px;
+    margin-bottom:-3px;
+}
+.shopping_page{
+    font-size: 20px;
+    font-weight: 600;
+}
+.selected_nav {
+    background-color: #C1FF52;
+    border: 1px solid black;
+    border-radius: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* width와 height는 빼고, 부모 .btn의 크기에 맞춤 */
+    color: black;
+}
+.btn, .selected_nav {
+    box-sizing: border-box;
+}
+
 .selected_nav a{
     color:white;
 }

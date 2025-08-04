@@ -1,11 +1,10 @@
 body {
-    background-color: #ccc;
     margin:0;
 }
 .big_hugger{
     margin: 0 auto;
     max-width: 402px;
-    background-color: white;
+    background-color: black;
 }
 .container {
     min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
@@ -14,48 +13,60 @@ body {
     justify-content: space-around;
     align-items: center;
     flex-direction: column;
-}
-.big_logo{
-    width:250px;
-    border-radius: 50%;
-    margin-top: 20px;
-    
-}
-
-.progress_bar{
-    background-color: #ddd;
-    width:360px;
-    height:10px;
-    border-radius: 20px;
     position: relative;
 }
 
+.progress_bar{
+    background-color: #F4F5EF;
+    width:345px;
+    height:28px;
+    border-radius: 32px;
+    position: absolute;
+    top:30px;
+    border: 1px solid #C1FF52;
+}
+
 .now_step{
+    background-color: #C1FF52;
+    border: 0.5px solid black;
+    height: 19.5px;
+    border-radius: 32px;
     position:absolute;
-    background-color:  #22B14C;
-    height:10px;
-    border-radius: 20px;
+    top: 4px;
+    left : 3px;
 }
 .content{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom:100px; /*후에 프로토타입 보고 수정*/
+    color:white;
 }
 .bigger_content{
-    font-size: 30px;
+    font-size: 24px;
+    color:white;
+    font-weight: 800;
+}
+.green_highlight{
+    color:#C1FF52;
+}
+.buttons{
+    display: flex;
+    gap:10px;
 }
 .button_{
-    border:1px solid #ccc;
-    width: 90px;
-    height: 50px;
-    border-radius: 20px;
-    font-size: 20px;
-
+    border: 1px solid #C1FF52;
+    width: 152px;
+    height: 51px;
+    border-radius: 26px;
+    font-size: 15px;
+    font-weight: 700;
+    background-color: black;
+    color: white;
 }
-.content button:hover{
-    background-color: #ddd;
+.button_:hover{
+    background-color: #C1FF52;
+    color:black;
 }
 .goto_hometax{
     border:1px solid #ccc;
@@ -67,58 +78,33 @@ body {
 .smaller_content{
     font-size: 20px;
     text-align: center;
-}
-.prev_page{
-    font-size:30px;
-    color:#bbb;
-    position:fixed;
-    top:10px;
-    margin-right:350px;
-    cursor: pointer;
-}
-.small_logo{
-    position:fixed;
-    top:10px;
-    margin-left:300px;
-    width:100px;
-}
-/*
-.bottom_nav {
-    position: fixed;
-    height:40px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 414px;
-    margin: auto;
-    background: white;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #ccc;
-    padding: 10px 0;
-}
-
-.bottom_nav a {
-    text-decoration: none;
-    color: #888;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.circle_btn{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width:35px;
-    height:35px;
-    border: 2px solid #888;
-    border-radius: 50%;
-}
-.selected_nav{
-    background-color: #888;
-}
-.selected_nav a{
     color:white;
 }
-*/
+.prev_page{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    cursor: pointer;
+}
+.prev_page img{
+    width: 13.8px;
+}
+.registerornot{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}
+.registerornot button{
+    border: 1px solid #C1FF52;
+    width: 311px;
+    height: 51px;
+    border-radius: 26px;
+    font-size: 15px;
+    font-weight: 700;
+    background-color: black;
+    color: white;
+}
+.registerornot button:hover{
+    background-color: #C1FF52;
+    color:black;
+}

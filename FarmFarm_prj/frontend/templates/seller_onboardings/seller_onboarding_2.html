@@ -3,6 +3,9 @@
 {% load static %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
 {% endblock style %}
 
 {% block script %}
@@ -12,20 +15,20 @@
 <div class="big_hugger">
 
     <div class="container">
-        <div class="prev_page" onclick="history.back()">&lt;</div>
-        <img src="{% static 'img/dummy_small_logo_img.png' %}" alt="더미 로고 이미지" class="small_logo"/>
         <div class="progress_bar">
-            <div class="now_step" style="width: 180px;"></div>
+            <div class="now_step" style="width: 174px;"></div>
         </div>
         <div class="content">
-            <p class="smaller_content">
-                지금바로 가게 등록<br>
-                하시겠습니까?
+            <p class="bigger_content">
+                지금바로 가게를 등록하시겠습니까?
             </p>
             <div class="buttons">
                 <button type="button" value="사업자 등록 O" onclick="location.href='selleronboarding3'" class="button_">네</button>
                 <button type="button" value="사업자 등록 X" onclick="location.href='selleronboarding4'" class="button_">아니오</button>
             </div>
+        </div>
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
         </div>
     </div>
 </div>

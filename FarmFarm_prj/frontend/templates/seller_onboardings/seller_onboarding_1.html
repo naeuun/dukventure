@@ -3,6 +3,9 @@
 {% load static %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
 {% endblock style %}
 
 {% block script %}
@@ -13,14 +16,13 @@
 
     <div class="container">
         <div class="progress_bar">
-            <div class="now_step" style="width: 90px;"></div>
+            <div class="now_step" style="width: 65.5px;"></div>
         </div>
-        <img src="{% static 'img/dummy_logo_img.png' %}" alt="더미 로고 이미지" class="big_logo"/>
         <div class="content">
-            <p class="bigger_content">사업자 등록 여부</p>
+            <p class="bigger_content"><span class="green_highlight">사업자등록</span>을 하셨나요?</p>
             <div class="buttons">
                 <button type="button" value="사업자 등록 O" onclick="location.href='selleronboarding2'" class="button_">네</button>
-                <button type="button" value="사업자 등록 X" onclick="location.href='selleronboarding4'" class="button_">아니오</button>
+                <button type="button" value="사업자 등록 X" onclick="location.href='selleronboarding4'" class="button_">아니요</button>
             </div>
         </div>
     </div>
