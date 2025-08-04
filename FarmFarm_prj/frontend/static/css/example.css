@@ -28,7 +28,7 @@ body {
     justify-content: space-around;
     align-items: center;
     border-top: 1px solid #ccc;
-    padding: 10px 0;
+    padding-top:7px;
 }
 
 .bottom_nav a {
@@ -66,7 +66,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* width와 height는 빼고, 부모 .btn의 크기에 맞춤 */
     color: black;
 }
 .btn, .selected_nav {
@@ -74,5 +73,20 @@ body {
 }
 
 .selected_nav a{
-    color:white;
+    color: black;
+}
+.nav_box{
+    position:relative;
+}
+.now_page{
+    width:10.7px;
+    position:absolute;
+    bottom:65px;
+    left:62px;
+    /* 홈 페이지 클릭시
+    left: 195px;
+    */
+    /* 장보기 페이지 클릭시
+    left: 330px;
+    */
 }
