@@ -1,0 +1,35 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="progress_bar">
+            <div class="now_step" style="width: 65.5px;"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content"><span class="green_highlight">사업자등록</span>을 하셨나요?</p>
+            <div class="buttons">
+                <button type="button" value="사업자 등록 O" onclick="location.href='selleronboarding2'" class="button_">네</button>
+                <button type="button" value="사업자 등록 X" onclick="location.href='selleronboarding4'" class="button_">아니요</button>
+            </div>
+        </div>
+    </div>
+
+<!--
+    <nav class="bottom_nav">
+      <div class="circle_btn selected_nav"><a href="#">지도</a></div>
+      <div class="circle_btn"><a href="#">홈</a></div>
+      <div class="circle_btn"><a href="#">AI</a></div>
+    </nav>
+-->
+</div>
+{% endblock body %}

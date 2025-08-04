@@ -1,0 +1,35 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="content">
+            <p class="bigger_content">
+                사업자 등록 없이<br>
+                가게등록은 <span class="green_highlight">불가능</span>합니다.
+            </p>
+            <div class="registerornot">
+                <button type="button" value="사업자 등록 O" 
+                    onclick="window.location.href='https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&menuCd=index3'">
+                    등록 하러 가기
+                </button>
+                            <button type="button" value="사업자 등록 X" id="benefits">사업자 등록 혜택 보기</button>
+            </div>
+        </div>
+        
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        </div>
+    </div>
+</div>
+{% endblock body %}

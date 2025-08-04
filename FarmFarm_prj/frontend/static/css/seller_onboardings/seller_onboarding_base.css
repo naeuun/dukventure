@@ -1,0 +1,110 @@
+body {
+    margin:0;
+}
+.big_hugger{
+    margin: 0 auto;
+    max-width: 402px;
+    background-color: black;
+}
+.container {
+    min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
+    padding: 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.progress_bar{
+    background-color: #F4F5EF;
+    width:345px;
+    height:28px;
+    border-radius: 32px;
+    position: absolute;
+    top:30px;
+    border: 1px solid #C1FF52;
+}
+
+.now_step{
+    background-color: #C1FF52;
+    border: 0.5px solid black;
+    height: 19.5px;
+    border-radius: 32px;
+    position:absolute;
+    top: 4px;
+    left : 3px;
+}
+.content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color:white;
+}
+.bigger_content{
+    font-size: 24px;
+    color:white;
+    font-weight: 800;
+}
+.green_highlight{
+    color:#C1FF52;
+}
+.buttons{
+    display: flex;
+    gap:10px;
+}
+.button_{
+    border: 1px solid #C1FF52;
+    width: 152px;
+    height: 51px;
+    border-radius: 26px;
+    font-size: 15px;
+    font-weight: 700;
+    background-color: black;
+    color: white;
+}
+.button_:hover{
+    background-color: #C1FF52;
+    color:black;
+}
+.goto_hometax{
+    border:1px solid #ccc;
+    width: 150px;
+    height: 50px;
+    border-radius: 20px;
+    font-size: 20px;
+}
+.smaller_content{
+    font-size: 20px;
+    text-align: center;
+    color:white;
+}
+.prev_page{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    cursor: pointer;
+}
+.prev_page img{
+    width: 13.8px;
+}
+.registerornot{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}
+.registerornot button{
+    border: 1px solid #C1FF52;
+    width: 311px;
+    height: 51px;
+    border-radius: 26px;
+    font-size: 15px;
+    font-weight: 700;
+    background-color: black;
+    color: white;
+}
+.registerornot button:hover{
+    background-color: #C1FF52;
+    color:black;
+}

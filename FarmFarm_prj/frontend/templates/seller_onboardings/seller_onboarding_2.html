@@ -1,0 +1,32 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="progress_bar">
+            <div class="now_step" style="width: 174px;"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content">
+                지금바로 가게를 등록하시겠습니까?
+            </p>
+            <div class="buttons">
+                <button type="button" value="사업자 등록 O" onclick="location.href='selleronboarding3'" class="button_">네</button>
+                <button type="button" value="사업자 등록 X" onclick="location.href='selleronboarding4'" class="button_">아니오</button>
+            </div>
+        </div>
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        </div>
+    </div>
+</div>
+{% endblock body %}

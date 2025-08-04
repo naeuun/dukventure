@@ -1,0 +1,132 @@
+body {
+    background-color: #ccc;
+    margin:0;
+}
+.big_hugger{
+    margin: 0 auto;
+    max-width: 402px;
+    background-color: white;
+}
+.container {
+    min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
+    
+    padding-top: 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+
+.bottom_nav {
+    position: fixed;
+    height:40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 402px;
+    margin: auto;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+.bottom_nav a {
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+}
+.circle_btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:35px;
+    height:35px;
+    border: 2px solid #888;
+    border-radius: 50%;
+}
+.selected_nav{
+    background-color: #888;
+}
+.selected_nav a{
+    color:white;
+}
+
+.customer_reserv{
+    width:350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ddd;
+}
+.reserv_img img{
+    width: 150px;
+}
+.reserv_details{
+    border-left: 2px solid #ddd;
+    padding-left:10px;
+    font-size:13px;
+}
+
+.buttons{
+    height:40px;
+    margin:20px;
+    position: relative;
+}
+#accept,
+#refuse{
+    height:100%;
+    border:1px solid #ccc;
+    width: 90px;
+    border-radius: 20px;
+    font-size: 20px;
+    margin:0 10px;
+    cursor: pointer;
+}
+.buttons button:hover{
+    background-color: #ddd ;
+}
+
+
+/* 모달영역 css */
+.modal {
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래 */
+    right: 0; /* 거절 버튼과 같은 너비로 오른쪽 기준 정렬 */
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 90px; /* 거절 버튼과 동일한 너비 */
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+    z-index: 100;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal ul {
+    list-style: none;
+    margin: 0;
+    padding: 5px 0;
+}
+
+.modal li {
+    width: 100%;
+}
+
+.reason_btn {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.reason_btn:hover {
+    background: #eee;
+}

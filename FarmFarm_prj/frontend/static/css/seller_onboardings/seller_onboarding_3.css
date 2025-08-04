@@ -1,0 +1,40 @@
+.button_hugger{
+    margin-top: 20px;
+    position: relative;
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.register_button{
+    border: 1px solid #C1FF52;
+    width: 152px;
+    height: 51px;
+    border-radius: 26px;
+    font-size: 15px;
+    font-weight: 700;
+    background-color: black;
+    color: white;
+}
+.voice_recognition_btn{
+    background-color: #C1FF52;
+    width: 46.5px;
+    height: 46.5px;
+    border-radius: 50%;
+    font-size: 20px;
+    position: absolute;
+    margin-left:230px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.voice_recognition_btn img{
+    width:19px;
+}
+.register_box{
+    width: 303px;
+    height: 55vh;
+    border: 1px solid #C1FF52;
+    border-radius: 27px;
+}
