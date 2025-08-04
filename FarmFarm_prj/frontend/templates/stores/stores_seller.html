@@ -1,0 +1,59 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}" />
+{% endblock style %}
+
+{% block script %}
+<script src="{% static 'js/stores/stores_seller.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+    <div class="container">
+      <!-- 지도 영역 -->
+      <div id="map">
+        <div class="search_box">
+          <input type="text" id="searchInput" placeholder="장소를 입력하세요" />
+          <button id="searchBtn">🔍</button>
+        </div>
+        <div id="errorMessage"></div>
+      </div>
+      
+      <!--가게 클릭시 가게정보 띄우기용 테스트 버튼 -->
+      <button type="button" value="테스트 버튼" id="test">!</button>
+    
+      <!-- 아래에서 올라오는 바텀시트 -->
+      <div id="bottomSheet" class="bottom_sheet hidden">
+        <div class="sheet_content">
+          <div class="stores_box">
+            <div class="store_img">
+                <img src="{% static 'img/dummy_logo_img.png' %}"/>
+            </div>
+            <div class="store_details">
+                <p>위치 : 도봉구 삼양로 892-13</p>
+                <p>가격 : 오이 2,000</p>
+                <p style="color:green;"><b>사업자등록 O</b></p>
+            </div>
+          </div>
+          <div class="hash_btn">
+            <div class="hash">
+              <p># 신선해요</p>
+              <p># 달아요</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="bottom_nav">
+      <div class="circle_btn selected_nav"><a href="#">지도</a></div>
+      <div class="circle_btn"><a href="#">홈</a></div>
+      <div class="circle_btn"><a href="#">AI</a></div>
+    </nav>
+  </div>
+
+  <!-- 카카오맵 SDK -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_APP_KEY&libraries=services"></script>
+  <script src="./map.js"></script>
+{% endblock body %}

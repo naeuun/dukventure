@@ -1,0 +1,207 @@
+body {
+    background-color: #ccc;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .big_hugger {
+    margin: 0 auto;
+    max-width: 402px;
+    background-color: white;
+  }
+
+  .container {
+    min-height: calc(100vh - 35px); /* 하단 네비게이션 높이 제외 */
+    position: relative; /* 지도+검색창 overlay */
+  }
+
+  /* 지도 */
+  #map {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 검색창 overlay */
+  .search_box {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    padding: 8px;
+    border-radius: 8px;
+    z-index: 10;
+  }
+
+  #searchInput {
+    width: 280px;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+  }
+
+  #searchBtn {
+    width:40px;
+    margin-left: 6px;
+    padding: 8px 12px;
+    font-size: 15px;
+    background: #22B14C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  /* 지도 로딩 실패 안내문 */
+  #errorMessage {
+    position: absolute;
+    top: 45vh;
+    width:300px;
+    color: #666;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  /* 하단 네비게이션 */
+  .bottom_nav {
+    position: fixed;
+    height: 40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 402px;
+    margin: auto;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+    z-index: 11;
+  }
+
+  .bottom_nav a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .circle_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border: 2px solid #888;
+    border-radius: 50%;
+  }
+  
+.selected_nav{
+    background-color: #888;
+}
+.selected_nav a{
+    color:white;
+}
+
+#add_store{
+  position:absolute;
+  bottom:40px;
+  right:20px;
+  background-color: #22B14C;
+  border:none;
+  font-size: 30px;
+  border-radius: 50%;
+  width:40px;
+  height:40px;
+}
+
+/* 테스트용 버튼 css, 후에 지워도 됨 */
+#test{
+  position:absolute;
+  bottom:40px;
+  left:20px;
+  background-color: red;
+  border:none;
+  font-size: 30px;
+  border-radius: 50%;
+  width:40px;
+  height:40px;
+}
+
+
+
+.bottom_sheet {
+  position: fixed;
+  bottom: -300px; /* 숨김 상태 */
+  left: 0;
+  right: 0;
+  max-width: 402px;
+  margin: auto;
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+  height: 300px;
+  transition: bottom 0.3s ease-in-out;
+  z-index: 10;
+}
+
+.bottom_sheet.hidden {
+  bottom: -300px;
+}
+
+.bottom_sheet.show {
+  bottom: 0; /* 화면 위로 올라옴 */
+}
+
+.sheet_content {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.stores_box{
+  width:350px;
+  display: flex;
+  border: 2px solid #ddd;
+}
+.store_img img{
+  width: 150px;
+}
+.store_img{
+  width:175px;
+}
+.store_details{
+  border-left: 2px solid #ddd;
+  padding-left:10px;
+  font-size:13px;
+  width: 175px;
+}
+.hash_btn{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap:100px;
+}
+.hash p{
+  width:75px;
+  margin:0;
+  color:#22B14C;
+}
+.btn button{
+  border:1px solid #ccc;
+  width: 90px;
+  border-radius: 20px;
+  font-size: 15px;
+  margin:0 10px;
+  cursor: pointer;
+}

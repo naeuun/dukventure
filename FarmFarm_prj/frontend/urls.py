@@ -12,4 +12,7 @@ urlpatterns = [
     
     path("reservations", reservations, name="reservations"),
     path("storesplus", storesplus, name="storesplus"),
+    
+    path("storesseller", storesseller, name="storesseller"),
+    path("storescustomer", storescustomer, name="storescustomer"),
 ]

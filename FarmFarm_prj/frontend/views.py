@@ -22,3 +22,9 @@ def reservations(request):
 
 def storesplus(request):
     return render(request, "stores_plus.html")
+
+def storesseller(request):
+    return render(request, "stores/stores_seller.html")
+
+def storescustomer(request):
+    return render(request, "stores/stores_customer.html")
