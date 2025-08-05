@@ -18,6 +18,7 @@ media/
 .newvenv
 env/
 venv/
+myvenv/
 newvenv/
 ENV/
 env.bak/
