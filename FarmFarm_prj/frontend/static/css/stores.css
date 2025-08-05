@@ -28,40 +28,66 @@ body {
   /* 검색창 overlay */
   .search_box {
     position: absolute;
-    top: 20px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    padding: 8px;
-    border-radius: 8px;
     z-index: 10;
+    background-color: black;
+    width:100%;
+    height:100px;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
-
+.searching_{
+    width:334px;
+    height:47px;
+    border: 1px solid #ccc;
+    background-color: white;
+    border: 2px solid #C1FF52;
+    border-radius: 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.map_deco{
+    position:absolute;
+    width:329px;
+    top:10px;
+}
   #searchInput {
-    width: 280px;
+    width: 300px;
     padding: 8px 10px;
     font-size: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
     outline: none;
+    position: relative;
+    background-color: inherit;
+    border:none;
+    display: flex;
   }
 
   #searchBtn {
     width:40px;
     margin-left: 6px;
-    padding: 8px 12px;
-    font-size: 15px;
-    background: #22B14C;
-    color: white;
+    padding: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    position: absolute;
+    top:55px;
+    right:35px;
+    background-color: inherit;
+  }
+  #searchBtn img{
+    width:18px;
   }
 
   /* 지도 로딩 실패 안내문 */
   #errorMessage {
     position: absolute;
-    top: 45vh;
+    top: 50vh;
     width:300px;
     color: #666;
     font-size: 16px;
@@ -69,49 +95,78 @@ body {
   }
 
   /* 하단 네비게이션 */
+
   .bottom_nav {
     position: fixed;
-    height: 40px;
+    height: 74px;
     bottom: 0;
     left: 0;
     right: 0;
     max-width: 402px;
     margin: auto;
-    background: white;
+    background: #F4F5EF;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top: 1px solid #ccc;
-    padding: 10px 0;
-    z-index: 11;
-  }
+    padding-top:7px;
+}
 
-  .bottom_nav a {
+.bottom_nav a {
     text-decoration: none;
-    color: #555;
+    color: #888;
     font-size: 14px;
-  }
-
-  .circle_btn {
+    font-weight: 500;
+}
+.btn {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 35px;
-    height: 35px;
-    border: 2px solid #888;
-    border-radius: 50%;
-  }
-  
-.selected_nav{
-    background-color: #888;
-}
-.selected_nav a{
-    color:white;
+    width: 50px;      /* 선택되지 않아도 고정된 width/height 지정 */
+    height: 50px;
 }
 
+.map_page{
+    width:16px;
+    margin-top:3px;
+    margin-bottom:-3px;
+}
+.home_page{
+    width:24px;
+    margin-top:3px;
+    margin-bottom:-3px;
+}
+.shopping_page{
+    font-size: 20px;
+    font-weight: 600;
+}
+.selected_nav {
+    background-color: #C1FF52;
+    border: 1px solid black;
+    border-radius: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+}
+.btn, .selected_nav {
+    box-sizing: border-box;
+}
+
+.selected_nav a{
+    color: black;
+}
+.nav_box{
+    position:relative;
+}
+.now_page{
+    width:10.7px;
+    position:absolute;
+    bottom:65px;
+    left:62px;
+}
 #add_store{
   position:absolute;
-  bottom:40px;
+  bottom:60px;
   right:20px;
   background-color: #22B14C;
   border:none;
@@ -124,7 +179,7 @@ body {
 /* 테스트용 버튼 css, 후에 지워도 됨 */
 #test{
   position:absolute;
-  bottom:40px;
+  bottom:60px;
   left:20px;
   background-color: red;
   border:none;

@@ -15,21 +15,6 @@ body {
     position: relative;
   }
   
-  .bottom_nav {
-    position: fixed;
-    height: 74px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 402px;
-    margin: auto;
-    background: #F4F5EF;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #ccc;
-    padding-top: 7px;
-  }
   
   .image-upload-container {
     display: flex;
@@ -127,9 +112,8 @@ body {
 }
 
 .food-option.selected {
-  background-color: crimson;
-  color: white;
-  border-color: crimson;
+  background-color: #C1FF52;
+  border-color: black;
 }
 
 .food-option-input {
@@ -148,7 +132,31 @@ body {
 .register_btn{
     border: none;
     font-size:18px;
-    width:100%;
-    height:100%;
+    font-weight:700;
+    width:402px;
+    height:74px;
     cursor: pointer;
+    padding-bottom:10px;
+    background-color: black;
+    color:white;
 }
+.register_btn:hover{
+    background-color: #C1FF52;
+    color:black;
+}
+
+.bottom_nav {
+    position: fixed;
+    height: 60px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 402px;
+    margin: auto;
+    background: #F4F5EF;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding-top: 7px;
+  }

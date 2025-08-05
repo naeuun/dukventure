@@ -7,6 +7,7 @@
 {% endblock style %}
 
 {% block script %}
+<script src="{% static 'js/seller_onboardings/seller_onboarding_4.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
@@ -23,7 +24,18 @@
                     onclick="window.location.href='https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&menuCd=index3'">
                     등록 하러 가기
                 </button>
-                            <button type="button" value="사업자 등록 X" id="benefits">사업자 등록 혜택 보기</button>
+                <button type="button" value="사업자 등록 X" id="benefits">사업자 등록 혜택 보기</button>
+                
+                <!-- 모달 구조 -->
+                <div id="benefitModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <p>1. 마음놓고 사업 가능</p>
+                    <p>2. 눈치 안보고 사업 가능</p>
+                    </div>
+                </div>
+  
+  
             </div>
         </div>
         
