@@ -17,9 +17,6 @@ def selleronboarding5(request):
 def commononboarding(request):
     return render(request, "common_onboarding.html")
 
-def reservations(request):
-    return render(request, "reservations.html")
-
 def storesplus(request):
     return render(request, "stores_plus.html")
 
@@ -28,3 +25,9 @@ def storesseller(request):
 
 def storescustomer(request):
     return render(request, "stores/stores_customer.html")
+
+def splash(request):
+    return render(request, "splash.html")
+
+def reservationsseller(request):
+    return render(request, "reservations_seller.html")
