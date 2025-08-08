@@ -27,35 +27,34 @@
       <div id="map">
         <div id="errorMessage"></div>
       </div>
-      <button type="button" value="가게 추가" id="add_store">+</button>
+      <img src="{% static 'img/add_store_plz.png' %}" alt="노점 추가 안내 메세지" class="msg">
+      <a href="/storesplus"><button type="button" value="가게 추가" id="add_store">+</button></a>
       
       <!--가게 클릭시 가게정보 띄우기용 테스트 버튼 -->
-      <button type="button" value="테스트 버튼" id="test">!</button>
-    
+      <button type="button" value="테스트 버튼" id="test">
+        <img src="{% static 'img/stores.png' %}" alt="가게들" class="stores_per">
+      </button>
+
       <!-- 아래에서 올라오는 바텀시트 -->
       <div id="bottomSheet" class="bottom_sheet hidden">
-        <div class="sheet_content">
-          <div class="stores_box">
-            <div class="store_img">
-                <img src="{% static 'img/home_page_black.png' %}"/>
-            </div>
-            <div class="store_details">
-                <p>위치 : 도봉구 삼양로 892-13</p>
-                <p>가격 : 오이 2,000</p>
-                <p style="color:green;"><b>사업자등록 O</b></p>
+        <div class="sheet_content_v2">
+          <div class="modal_info_box">
+            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
+            <div class="detail_info">
+              <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
+              <p class="product_detail">음식: 계란 10개 3,000원</p>
+              <p class="product_detail">시간: 오전 10시 ~ 12시</p>
+              <p class="product_detail">위치: 4.19민주역 1번출구</p>
             </div>
           </div>
-          <div class="hash_btn">
-            <div class="hash">
-              <p># 신선해요</p>
-              <p># 달아요</p>
-            </div>
-            <div class="btn">
-              <button type="button" value="예약버튼">예약하기</button>
-            </div>
+      
+          <div class="modal_btn_group">
+            <div class="distance">30M</div>
+            <button class="btn_reserve">예약하기</button>
           </div>
         </div>
       </div>
+      
     </div>
     
     <div class="nav_box">

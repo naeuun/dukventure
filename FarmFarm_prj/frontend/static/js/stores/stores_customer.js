@@ -50,6 +50,22 @@ document.addEventListener("DOMContentLoaded", function () {
   const testBtn = document.getElementById("test");
   const bottomSheet = document.getElementById("bottomSheet");
 
+  let startY = 0;
+  let isDragging = false;
+
+  bottomSheet.addEventListener("touchstart", (e) => {
+    startY = e.touches[0].clientY;
+  });
+
+  bottomSheet.addEventListener("touchmove", (e) => {
+    const moveY = e.touches[0].clientY;
+    const diffY = startY - moveY;
+
+    if (diffY > 30 && !bottomSheet.classList.contains("expanded")) {
+      bottomSheet.classList.add("expanded");
+    }
+  });
+
   testBtn.addEventListener("click", () => {
     bottomSheet.classList.remove("hidden");
     bottomSheet.classList.add("show");

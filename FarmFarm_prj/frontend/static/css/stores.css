@@ -1,284 +1,324 @@
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-  }
-
-  .big_hugger {
-    margin: 0 auto;
-    max-width: 402px;
-    background-color: white;
-  }
-
-  .container {
-    min-height: calc(100vh - 35px); /* 하단 네비게이션 높이 제외 */
-    position: relative; /* 지도+검색창 overlay */
-  }
-
-  /* 지도 */
-  #map {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* 검색창 overlay */
-  .search_box {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    z-index: 10;
-    background-color: black;
-    width:100%;
-    height:100px;
-    padding-top: 20px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-.searching_{
-    width:334px;
-    height:47px;
-    border: 1px solid #ccc;
-    background-color: white;
-    border: 2px solid #C1FF52;
-    border-radius: 9px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.map_deco{
-    position:absolute;
-    width:329px;
-    top:10px;
-}
-  #searchInput {
-    width: 300px;
-    padding: 8px 10px;
-    font-size: 15px;
-    outline: none;
-    position: relative;
-    background-color: inherit;
-    border:none;
-    display: flex;
-  }
-
-  #searchBtn {
-    width:40px;
-    margin-left: 6px;
-    padding: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    position: absolute;
-    top:55px;
-    right:35px;
-    background-color: inherit;
-  }
-  #searchBtn img{
-    width:18px;
-  }
-
-  /* 지도 로딩 실패 안내문 */
-  #errorMessage {
-    position: absolute;
-    top: 50vh;
-    width:300px;
-    color: #666;
-    font-size: 16px;
-    text-align: center;
-  }
-
-  /* 하단 네비게이션 */
-
-  .bottom_nav {
-    position: fixed;
-    height: 74px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 401px;
-    margin: auto;
-
-    /* 글래스 효과 */
-    background: inherit;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.664);
-
-    box-shadow:
-        0 0 30px rgba(255, 255, 255, 0.6),    /* 바깥쪽 확산 */
-        0 0 8px rgba(255, 255, 255, 0.8),     /* 더 강한 중심광 */
-        inset 0 0 3px rgba(255, 255, 255, 0.9); /* 안쪽 테두리 강조 */
-
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: none;
-    padding: 7px 0;
-    z-index: 1000;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
 }
 
+.big_hugger {
+  margin: 0 auto;
+  max-width: 402px;
+  background-color: white;
+}
+
+.container {
+  min-height: calc(100vh - 35px);
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search_box {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background-color: black;
+  width: 100%;
+  height: 100px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.searching_ {
+  width: 334px;
+  height: 47px;
+  background-color: white;
+  border: 2px solid #C1FF52;
+  border-radius: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#searchInput {
+  width: 300px;
+  padding: 8px 10px;
+  font-size: 15px;
+  outline: none;
+  background-color: inherit;
+  border: none;
+}
+
+#searchBtn {
+  position: absolute;
+  top: 55px;
+  right: 35px;
+  width: 40px;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+#searchBtn img {
+  width: 18px;
+}
+
+.map_deco {
+  position: absolute;
+  width: 329px;
+  top: 10px;
+}
+
+#errorMessage {
+  position: absolute;
+  top: 50vh;
+  width: 300px;
+  color: #666;
+  font-size: 16px;
+  text-align: center;
+}
+
+.bottom_nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 74px;
+  max-width: 401px;
+  margin: auto;
+  background: inherit;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.664);
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.6),
+    0 0 8px rgba(255, 255, 255, 0.8),
+    inset 0 0 3px rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding:7px 0;
+  z-index: 1000;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+}
 
 .bottom_nav a {
-    text-decoration: none;
-    color: #888;
-    font-size: 14px;
-    font-weight: 500;
-}
-.btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;      /* 선택되지 않아도 고정된 width/height 지정 */
-    height: 50px;
+  text-decoration: none;
+  color: #888;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.map_page{
-    width:16px;
-    margin-top:3px;
-    margin-bottom:-3px;
+.map_page {
+  width: 16px;
+  margin: 3px 0 -3px;
 }
-.home_page{
-    width:24px;
-    margin-top:3px;
-    margin-bottom:-3px;
+
+.home_page {
+  width: 24px;
+  margin: 3px 0 -3px;
 }
-.shopping_page{
-    font-size: 20px;
-    font-weight: 600;
-    color:#D9D9D9; 
+
+.shopping_page {
+  font-size: 20px;
+  font-weight: 600;
+  color: #D9D9D9;
 }
+
 .selected_nav {
-    background-color: #C1FF52;
-    border: 1px solid black;
-    border-radius: 11px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: black;
-}
-.btn, .selected_nav {
-    box-sizing: border-box;
+  background-color: #C1FF52;
+  border: 1px solid black;
+  border-radius: 11px;
+  color: black;
 }
 
-.selected_nav a{
-    color: black;
-}
-.nav_box{
-    position:relative;
-}
-.now_page{
-    width:10.7px;
-    position:absolute;
-    bottom:72px;
-    left:62px;
-    /* 홈 페이지 클릭시
-    left: 195px;
-    */
-    /* 장보기 페이지 클릭시
-    left: 330px;
-    */
+.selected_nav a {
+  color: black;
 }
 
+.nav_box {
+  position: relative;
+}
 
-#add_store{
-  position:absolute;
-  bottom:60px;
-  right:20px;
-  background-color: #22B14C;
-  border:none;
-  font-size: 30px;
+.now_page {
+  width: 10.7px;
+  position: absolute;
+  bottom: 72px;
+  left: 62px;
+}
+
+.msg {
+  position: absolute;
+  bottom: 60px;
+  right: 70px;
+  width: 150px;
+  opacity: 1;
+  animation: fadeOut 1s ease forwards 2s;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+#add_store {
+  position: absolute;
+  bottom: 60px;
+  right: 20px;
+  width: 46.4px;
+  height: 46.4px;
+  font-size: 35px;
+  background-color: #C1FF52;
+  border: 1px solid black;
   border-radius: 50%;
-  width:40px;
-  height:40px;
 }
 
-/* 테스트용 버튼 css, 후에 지워도 됨 */
-#test{
-  position:absolute;
-  bottom:60px;
-  left:20px;
-  background-color: red;
-  border:none;
-  font-size: 30px;
-  border-radius: 50%;
-  width:40px;
-  height:40px;
+#test {
+  position: absolute;
+  bottom: 60px;
+  left: 20px;
+  border: none;
+  background-color: transparent;
 }
 
-
+.stores_per {
+  width: 20px;
+}
 
 .bottom_sheet {
   position: fixed;
-  bottom: -300px; /* 숨김 상태 */
   left: 0;
   right: 0;
   max-width: 402px;
   margin: auto;
-  background: #fff;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
+  background-color:black;
+  border-radius: 38px 38px 0 0;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
-  height: 300px;
+  height: 550px;
+  max-height: 80vh;
   transition: bottom 0.3s ease-in-out;
   z-index: 10;
 }
 
 .bottom_sheet.hidden {
-  bottom: -300px;
+  bottom: -550px;
 }
 
 .bottom_sheet.show {
-  bottom: 0; /* 화면 위로 올라옴 */
+  bottom:0;
+}
+.bottom_sheet.expanded {
+  height: 80vh; /* 확장 높이 */
+  overflow-y: auto;
 }
 
-.sheet_content {
-  padding: 20px;
+.sheet_content_v2 {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 12px;
+  height:550px;
 }
 
-.stores_box{
-  width:350px;
-  display: flex;
-  border: 2px solid #ddd;
+.modal_product_img {
+  width: 287.6px;
+  height:129px;
+  border-radius: 17px;
+  object-fit: cover;
+  position:absolute;
+  top:10px;
+  z-index:1;
 }
-.store_img img{
-  width: 150px;
+
+.modal_info_box {
+  background: linear-gradient(#d6ffc4, #b0ff8f);
+  width: 317.5px;
+  height:270px;
+  border-radius: 23px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: black;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position:relative;
 }
-.store_img{
-  width:175px;
+.detail_info{
+  width: 267px;
+  height:109px;
+  border: 0.7px solid #828282;
+  border-radius: 16px;
+  position:absolute;
+  top:30px;
+  background: rgba(255, 255, 255, 0.7);
+  padding:110px 10px 10px 10px;
 }
-.store_details{
-  border-left: 2px solid #ddd;
-  padding-left:10px;
+.store_name {
+  font-size: 16px;
+  font-weight:500;
+  color: #669F00;
+  margin-bottom: 10px;
+}
+
+.product_detail {
   font-size:13px;
-  width: 175px;
-}
-.hash_btn{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap:100px;
-}
-.hash p{
-  width:75px;
+  font-weight:500;
   margin:0;
-  color:#22B14C;
 }
-.btn button{
-  border:1px solid #ccc;
-  width: 90px;
-  border-radius: 20px;
+
+.modal_btn_group {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 12px;
+  gap:20px;
+}
+
+.distance {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  background-color: black;
+  width:135px;
+  height:52px;
+  color: white;
+  border: 1px solid #C1FF52;
+  border-radius: 26px;
+  font-weight: 700;
   font-size: 15px;
-  margin:0 10px;
+}
+
+.btn_reserve {
+  background-color: #C1FF52;
+  width:135px;
+  height:52px;
+  color: black;
+  border: none;
+  border-radius: 26px;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
 }
