@@ -2,7 +2,7 @@
 
 {% load static %}
 {% block style %}
-<link rel="stylesheet" href="{% static 'css/common_onboarding.css' %}" />
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
 {% endblock style %}
 
 {% block script %}
@@ -10,16 +10,25 @@
 
 {% block body %}
 <div class="big_hugger">
-    <img src="{% static 'img/dummy_small_logo_img.png' %}" alt="더미 로고 이미지" class="small_logo"/>
+
     <div class="container">
-        <div class="side" onclick="location.href='selleronboarding1'">
-            <p class="dumicon">👩‍🌾</p>
-            <p>상인</p>
+        <div class="progress_bar">
         </div>
-        <div class="side">
-            <p class="dumicon">🙋‍♀️</p>
-            <p>소비자</p>
+        <div class="content">
+            <p class="bigger_content">당신은 무엇인가요?</p>
+            <div class="buttons">
+                <button type="button" value="판매자" onclick="location.href='selleronboarding1'" class="button_">판매자</button>
+                <button type="button" value="구매자" onclick="location.href=''" class="button_">구매자</button>
+                 
         </div>
     </div>
+
+<!--
+    <nav class="bottom_nav">
+      <div class="circle_btn selected_nav"><a href="#">지도</a></div>
+      <div class="circle_btn"><a href="#">홈</a></div>
+      <div class="circle_btn"><a href="#">AI</a></div>
+    </nav>
+-->
 </div>
 {% endblock body %}
