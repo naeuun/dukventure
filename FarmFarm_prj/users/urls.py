@@ -5,6 +5,12 @@ app_name = 'users'
 
 urlpatterns = [
     path('', onboarding, name='onboarding'),
-    path('role/<str:role>/', auto_login, name='auto_login'),
-    path('home/', home, name='home'),
+    path('auto-login/', auto_login, name='auto_login'),
+    path('buyer-home/', buyer_home, name='buyer_home'),
+    path('seller-step1/', seller_step1, name='seller_step1'),
+    path('seller-step2/', seller_step2, name='seller_step2'),
+    path('seller-step3/', seller_step3, name='seller_step3'),
+    path('seller-step4/', seller_step4, name='seller_step4'),
+    path('seller-step5/', seller_step5, name='seller_step5'),
+    path('seller-home/', seller_home, name='seller_home'),
 ]

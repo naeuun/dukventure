@@ -6,6 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    ...
+    {% block content %}
+    {% endblock %}
+    <footer>
+        <a href="{% url 'users:onboarding' %}">
+            홈으로 돌아가기
+        </a>
+    </footer>
 </body>
 </html>
