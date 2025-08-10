@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>판매자 예약 관리</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { font-size: 1.5rem; }
+    .reservation { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; background-color: #eee; }
+    button { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h1>판매자 예약 관리</h1>
+  <div id="reservation-list"></div>
+
+  <script>
+    const storeId = 1;
+    const apiUrl = `/reservations/store/${storeId}/`;
+
+    const dummyData = [
+      {
+        id: 2,
+        buyer_name: "예성",
+        status_label: "승인 대기",
+        badge_text: "승인 대기",
+        requested_pickup_at: "2025-08-11T15:30:00",
+        total_price: 5000,
+        items: [
+          { item_name: "딸기잼", quantity: 1, unit_price: 5000 }
+        ]
+      }
+    ];
+
+    function renderReservations(data) {
+      const container = document.getElementById("reservation-list");
+      container.innerHTML = "";
+      data.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "reservation";
+        div.innerHTML = `
+          <strong>고객: ${r.buyer_name}</strong> 
+          <span class="badge">${r.badge_text}</span><br/>
+          픽업 요청 시간: ${r.requested_pickup_at}<br/>
+          총 금액: ${r.total_price}원
+          <div class="items">
+            ${r.items.map(it => `${it.item_name} (${it.quantity}개)`).join(", ")}
+          </div>
+          <div class="actions">
+            <button onclick="accept(${r.id})">승인</button>
+            <button onclick="reject(${r.id})">거절</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function accept(id) {
+      alert(`${id}번 예약 승인`);
+      // API 연동 시: fetch(`/reservations/${id}/accept/`, {method:"POST"});
+    }
+
+    function reject(id) {
+      alert(`${id}번 예약 거절`);
+      // API 연동 시: fetch(`/reservations/${id}/reject/`, {method:"POST", body: JSON.stringify({reason:"OUT_OF_STOCK"})});
+    }
+
+    // API 연동 시: fetch(apiUrl).then(res => res.json()).then(renderReservations);
+    renderReservations(dummyData);
+  </script>
+</body>
+</html>

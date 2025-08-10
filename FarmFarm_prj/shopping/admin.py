@@ -1,3 +1,4 @@
 from django.contrib import admin
-
-# Register your models here.
+from .models import ShoppingPlan, ShoppingPlanItem
+admin.site.register(ShoppingPlan)
+admin.site.register(ShoppingPlanItem)
