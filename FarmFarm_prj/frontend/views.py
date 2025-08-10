@@ -31,3 +31,7 @@ def splash(request):
 
 def reservationsseller(request):
     return render(request, "reservations_seller.html")
+
+
+def sellerhomepage(request):
+    return render(request, "seller_homepage.html")

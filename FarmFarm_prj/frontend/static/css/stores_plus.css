@@ -291,10 +291,6 @@ body {
     font-weight: 900;
     cursor: pointer;
   }
-  .voice_modal_ann{
-    width:161px;
-    margin-bottom:10px;
-  }
   .voice_recognizing_btn{
     width:47px;
     height:47px;
@@ -412,4 +408,23 @@ body {
 .twinkle {
   width: 17.5px;
   margin-left: 5px;
+}
+
+
+
+/*음성인식모달*/
+.text_box_area{
+  position:relative;
+}
+.voice_modal_ann{
+  width:195px;
+  top:0;
+}
+.ann_text{
+  color:black;
+  position:absolute;
+  top:10px;
+  left:23px;
+  font-size: 14px;
+  font-weight: 700;
 }

@@ -27,7 +27,10 @@
       <div id="map">
         <div id="errorMessage"></div>
       </div>
-      <img src="{% static 'img/add_store_plz.png' %}" alt="노점 추가 안내 메세지" class="msg">
+      <div class="add_store_msg" class="msg">
+        <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox">
+        <div class="text">노점<span style="color:grey;">을 추가해주세요!</span></div>
+      </div>
       <a href="/storesplus"><button type="button" value="가게 추가" id="add_store">+</button></a>
       
       <!--가게 클릭시 가게정보 띄우기용 테스트 버튼 -->
@@ -78,11 +81,11 @@
     <div class="nav_box">
         <nav class="bottom_nav">
           <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
-          <div class="btn selected_nav"><a href="#">
+          <div class="btn selected_nav"><a href="/storescustomoer">
             <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
           </a></div>
           <div class="btn"><a href="#">
-            <img src="{% static 'img/home_page_gray.png' %}" alt="지도페이지" class="home_page">
+            <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
           </a></div>
           <div class="btn"><a href="#">
             <span class="shopping_page">AI</span>

@@ -7,8 +7,7 @@ body {
     background-color: black;
 }
 .container {
-    min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
-    padding: 16px;
+    min-height: 100vh;
     display: flex;
     justify-content: space-around;
     align-items: center;

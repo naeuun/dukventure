@@ -1,0 +1,477 @@
+body {
+  margin: 0;
+  background-color: transparent;
+}
+
+.big_hugger {
+  margin: 0 auto;
+  max-width: 402px;
+  min-height: 100vh;
+  overflow-y: auto;
+    background: linear-gradient(#ffffff, #daf6cf);
+  
+}
+
+  .container {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0;
+  }
+  
+  .greeting_section {
+    top:0;
+    position: absolute;
+    width: 100%;
+  }
+  
+  .clover_bg {
+    width: 80%;
+    display: block;
+  }
+  
+  .logo{
+    width:40px;
+    position:absolute;
+    top:8px;
+    right:8px;
+  }
+
+  .greeting_card {
+    position: absolute;
+    top: 90px;
+    left: 12px;
+    right: 12px;
+    background: #5278107a;
+    border:1px solid white;
+    border-radius: 30px;
+    padding: 10px;
+    padding-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  }
+  
+  .greeting_text {
+    max-width: 60%;
+    color: white;
+  }
+  .username {
+    display:flex;
+    color: #C1FF52;
+    font-weight: 800;
+    font-size: 20px;
+    margin-left: 20px;
+    max-width: 100px;
+    overflow: hidden;
+    
+  }
+  
+  .desc {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    margin: 5px 0;
+    width:250px;
+    height:50px;
+    border:1px solid white;
+    border-radius: 20px;
+    padding:15px 5px;
+  }
+  
+  .highlight {
+    color: #C1FF52;
+    font-weight: bold;
+    margin-right: -3px;
+  }
+  
+  .profile_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #2a2a2a;
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 0 0 6px rgba(193, 255, 82, 0.4);
+  }
+  
+  .profile_img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #C1FF52;
+    margin-bottom: 5px;
+  }
+  
+  .profile_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .profile_name {
+    font-size: 13px;
+    color: white;
+  }
+  
+  .line_{
+    position: absolute;
+    top:250px;
+    width:100%;
+    height:8px;
+    border-top: 4px solid #C1FF52;
+    border-bottom: 1px solid #C1FF52;
+  }
+
+  .res_section {
+    margin: 20px 0;
+    position:absolute;
+    top:270px;
+    left:20px;
+  }
+  
+  .information_ {
+    background: #C1FF52;
+    width: 130px;
+    height:46px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color: black;
+    font-weight: 700;
+    font-size: 15px;
+    border: 1px solid black;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+  }
+  
+  .res_check{
+    width:30px;
+    margin-left:10px;
+  }
+
+  .bottom_nav {
+    position: fixed;
+    height: 74px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 401px;
+    margin: auto;
+    background: inherit;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.664);
+    box-shadow:
+      0 0 30px rgba(255, 255, 255, 0.6),
+      0 0 8px rgba(255, 255, 255, 0.8),
+      inset 0 0 3px rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 7px 0;
+    z-index: 1000;
+  }
+  
+  .bottom_nav a {
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .map_page {
+    width: 16px;
+  }
+  
+  .home_page {
+    width: 24px;
+  }
+  
+  .shopping_page {
+    font-size: 20px;
+    font-weight: 600;
+    color: #D9D9D9;
+  }
+  
+  .selected_nav {
+    background-color: #C1FF52;
+    border: 1px solid black;
+    border-radius: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+  }
+  
+  .selected_nav a {
+    color: black;
+  }
+  
+  .nav_box {
+    position: relative;
+  }
+  
+  .now_page {
+    width: 10.7px;
+    position: absolute;
+    bottom: 72px;
+    left: 195px;
+  }
+  
+  .side_deco {
+    transform: rotate(-90deg);
+    width: 19.65px;
+    height: auto;
+    display: block;
+  }
+  
+  .decoration_right {
+    position: absolute;
+    right: 100px;
+    top: 180px;
+    z-index: 10;
+  }
+  .twinkle{
+    width:20px;
+    margin-bottom:-5px;
+  }
+
+  .boom{
+    width:40px;
+    margin-left:10px;
+  }
+  .hello{
+    width:300px;
+    margin:0;
+    display:flex;
+    align-items: flex-end;
+  }
+
+  .information-card {
+    background: linear-gradient(#ffffff, #617c57);
+    border-radius: 16px;
+    overflow: hidden;
+    width: 365px;
+    height: 513px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .information_hugger{
+    width:315px;
+    height: 321px;
+    background: linear-gradient(#ffffff, #daf6cf);
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 23px;
+    margin-top:15px;
+  }
+
+  .information_zone{
+    display:flex;
+    flex-direction:column;
+    position:absolute;
+    top:350px;
+  }
+
+  .product-img-wrap {
+    position: relative;
+    width: 285px;
+  
+  }
+  
+  .product-img {
+    width: 100%;
+    height: 190.5px;
+    object-fit: cover;
+    border-radius:17px;
+  }
+  .change_photo_btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+  .change_photo{
+    width:18px;
+    z-index:10;
+  }
+  .product-info {
+    margin-top: -40px; /* 프로필 겹치는 공간 확보 */
+    text-align: left;
+    font-size: 13px;
+    font-weight:700;
+    color:black;
+    width:265px;
+    height:92.6px;
+    border: 0.7px solid #828282;
+    border-radius:16px;
+    padding:40px 10px 0 10px;
+    background-color:rgba(255, 255, 255, 0.8);
+  }
+  
+  .product-info li{
+    margin: -5px 0;
+  }
+.recog{
+    position:absolute;
+    bottom: 70px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.textbox{
+    width:183.7px;
+    margin-bottom: 5px;
+    position:absolute;
+    bottom:25px;
+    left:-70px;
+}
+.texts{
+  position: absolute;
+  font-size: 12px;
+  font-weight:700;
+  left: 10px;
+  color: black;
+  white-space: nowrap;
+  bottom:60px;
+  left:-60px;
+}
+.text_box_hugger{
+    position: relative;
+}
+.voice_recognization_btn{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    width: 46.4px;
+    height:46.4px;
+    border-radius: 50%;
+    background-color: #C1FF52;
+}
+.mic{
+    width:20px;
+}
+
+
+
+/* 모달 전체 */
+.voice_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* 숨김 클래스 */
+  .hidden {
+    display: none;
+  }
+  
+  /* 배경 오버레이 */
+  .voice_modal_overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* 모달 내부 콘텐츠 */
+  .voice_modal_content {
+    position: absolute;
+    border: 1px solid white; 
+    box-shadow:
+    24px 24px 24px rgba(42, 42, 42, 0.3),
+    18px 18px 18px rgba(109, 109, 109, 0.12),
+    inset 0 0 8px rgba(255, 255, 255, 0.35);
+    border-radius: 20px;
+    width: 339px;
+    height: 161px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #C1FF52;
+    transition: transform .18s ease, opacity .18s ease;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    bottom:10vh;
+  }
+  
+  
+  
+  /* 안내 텍스트 */
+  .voice_modal_text {
+    width:161px;
+  }
+  
+  /* 닫기 버튼 */
+  .voice_modal_close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .voice_modal_ann{
+    width:161px;
+    margin-bottom:10px;
+  }
+  .voice_recognizing_btn{
+    width:47px;
+    height:47px;
+    border:2px solid #C1FF52;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    transition: background-color 0.2s;
+  }
+  /* 마이크 아이콘 */
+  .voice_modal_mic {
+    width: 21px;
+  }
+
+.voice_recognizing_btn.recording {
+    background-color: #C1FF52; 
+  }
+  

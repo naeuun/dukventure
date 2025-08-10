@@ -28,7 +28,7 @@
 
           <!-- 말풍선 -->
           <div class="text_box_text">
-            <img src="{% static 'img/text_box.png' %}" alt="말풍선" class="textbox" />
+            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox" />
             <span class="texts">누르면 <span style="color:grey;">갤러리로 연결돼요!</span></span>
           </div>
 
@@ -82,7 +82,7 @@
       <div class="btn_hugger">
         <div class="voice_recognization">
           <div class="voice_texts">
-            <img src="{% static 'img/text_box.png' %}" alt="말풍선" class="voice_textbox" />
+            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
             <span class="texts">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
           </div>
           <button class="circle_btn">
@@ -97,7 +97,10 @@
     <div class="voice_modal_overlay"></div>
     <div class="voice_modal_content">
       <button class="voice_modal_close">✕</button>
-      <img src="{% static 'img/voice_recognization.png' %}" alt="음성 인식 안내 메세지" class="voice_modal_ann">
+      <div class="text_box_area">
+        <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+        <div class="ann_text">버튼을 누르고, 말하세요!</div>
+      </div>
       <div class="voice_recognizing_btn">
         <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
       </div>

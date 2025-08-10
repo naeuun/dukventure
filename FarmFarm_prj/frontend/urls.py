@@ -18,4 +18,6 @@ urlpatterns = [
     path("storescustomer", storescustomer, name="storescustomer"),
     
     path("reservationsseller", reservationsseller, name="reservationsseller"),
+    
+    path("sellerhomepage", sellerhomepage, name="sellerhomepage"),
 ]

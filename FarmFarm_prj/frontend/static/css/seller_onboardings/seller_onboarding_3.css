@@ -9,8 +9,7 @@ body {
 }
 
 .container {
-    min-height: calc(100vh - 35px); /* 35px은 네비게이션 바 높이 */
-    padding: 16px;
+    min-height: 100vh;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -45,26 +44,37 @@ body {
     align-items: center;
     color: white;
 }
-
-.bigger_content {
-    font-size: 24px;
+.title{
+  font-size:24px;
     color: white;
     font-weight: 800;
-    position:relative;
+}
+.bigger_content {
     padding-top: 50px; /* 진행바 높이 + 여유 공간 */
+    position:relative;
 }
 .brocoli{
     width:217px;
     position:absolute;
-    top:-50px;
-    left:-150px;
+    left:10px;
+    top:80px;
 }
 .brocoli_says{
-    width:117px;
     position:absolute;
-    top:-10px;
-    left:-50px;
+    width:162px;
+    top:105px;
+    left:110px;
+}
 
+.text{
+  position:absolute;
+  z-index: 10;
+  width:162px;
+  top:112px;
+  left:119px;
+  color:black;
+  font-size: 13px;
+  font-weight: 700;
 }
 .prev_page {
     position: absolute;
@@ -301,10 +311,6 @@ body {
     font-weight: 900;
     cursor: pointer;
   }
-  .voice_modal_ann{
-    width:161px;
-    margin-bottom:10px;
-  }
   .voice_recognizing_btn{
     width:47px;
     height:47px;
@@ -325,3 +331,20 @@ body {
   }
   
   
+
+/*음성인식모달*/
+.text_box_area{
+  position:relative;
+}
+.voice_modal_ann{
+  width:195px;
+  top:0;
+}
+.ann_text{
+  color:black;
+  position:absolute;
+  top:10px;
+  left:23px;
+  font-size: 14px;
+  font-weight: 700;
+}

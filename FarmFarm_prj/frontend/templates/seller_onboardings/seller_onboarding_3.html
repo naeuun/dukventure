@@ -18,10 +18,12 @@
         </div>
         <div class="content">
             <p class="bigger_content">
-                <!--말풍선을 구현하기보다 이미지를 사용하는게 훨씬 빠르고 간편할 것 같아 불가피하게 이미지로 말풍선을 대체했습니다.-->
-                <img src="{% static 'img/brocoli_says.png' %}" alt="브로콜리의 안냇말" class="brocoli_says">
-                <img src="{% static 'img/voice_brocoli.png' %}" alt="음성녹음 안내 브로콜리" class="brocoli">
-                가게 등록
+                <div class="textboxarea">
+                    <img src="{% static 'img/textbox/side_vertical_text_box.png' %}" alt="말풍선" class="brocoli_says">
+                    <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli">
+                    <div class="text">음성녹음 <span style="color:grey;">등록이 가능해요!</span></div>
+                </div>
+                <span class="title">가게 등록</span>
             </p>
             <div class="register_box">
                 <div class="scrollable_container">
@@ -90,7 +92,10 @@
     <div class="voice_modal_overlay"></div>
     <div class="voice_modal_content">
       <button class="voice_modal_close">✕</button>
-      <img src="{% static 'img/voice_recognization.png' %}" alt="음성 인식 안내 메세지" class="voice_modal_ann">
+      <div class="text_box_area">
+        <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+        <div class="ann_text">버튼을 누르고, 말하세요!</div>
+      </div>
       <div class="voice_recognizing_btn">
         <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
       </div>
