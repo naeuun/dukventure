@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h2>당신은 무엇인가요?</h2>
+
+    <form action="{% url 'users:auto_login' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" name="role" value="buyer">구매자 바로가기</button>
+        <button type="submit" name="role" value="seller">판매자 바로가기</button>
+    </form>
+
+{% endblock %}
+
