@@ -9,9 +9,18 @@
     {% block content %}
     {% endblock %}
     <footer>
-        <a href="{% url 'users:onboarding' %}">
-            홈으로 돌아가기
-        </a>
+        <hr>
+        <a href="{% url 'users:onboarding' %}">홈</a> 
+        <!-- 개발용 로그인 상태 정보 표시 -->
+        {% if request.user.is_authenticated %}
+            <small>
+                [ 로그인됨: {{ request.user.username }} ({{ request.user.usertype }}) ]
+            </small>
+        {% else %}
+            <small>
+                [ 로그인되지 않음 ]
+            </small>
+        {% endif %}
     </footer>
 </body>
 </html>

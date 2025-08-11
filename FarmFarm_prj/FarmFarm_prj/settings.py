@@ -137,4 +137,6 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'users.User' #사용자 모델 변경 
+
+# User Model
+AUTH_USER_MODEL = 'users.User' 
