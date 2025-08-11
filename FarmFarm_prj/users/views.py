@@ -61,7 +61,7 @@ def auto_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 auth_login(request, user)
-                return redirect('users:seller_step1')  # 구매자 온보딩 화면으로 이동 
+                return redirect('users:seller_home')  # 판매자 홈 화면으로 이동 
 
     return redirect('users:onboarding')  # GET 요청 또는 실패 시 홈으로 이동
 
