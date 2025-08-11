@@ -1,13 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <h2>당신은 무엇인가요?</h2>
+    {% if request.user.is_authenticated %}
 
-    <form action="{% url 'users:auto_login' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" name="role" value="buyer">구매자 바로가기</button>
-        <button type="submit" name="role" value="seller">판매자 바로가기</button>
-    </form>
+        <h2>환영합니다, {{ request.user.usertype }} - {{ request.user.username }}님!</h2>
+        <a href="{% url 'users:logout' %}">로그아웃</a><br>
+
+        {% if request.user.usertype == 'BUYER' %}
+            <p>구매자 홈으로 이동: <a href="{% url 'users:buyer_home' %}">구매자 홈</a></p>
+        {% elif request.user.usertype == 'SELLER' %}
+            <p>판매자 홈으로 이동: <a href="{% url 'users:seller_home' %}">판매자 홈</a></p>
+        {% endif %}
+
+    {% else %}
+
+        <p>아직 로그인하지 않으셨나요? <a href="{% url 'users:login' %}">로그인</a></p>
+        <p>아직 회원이 아니신가요? <a href="{% url 'users:signup' %}">회원가입</a></p>
+
+        <hr>
+
+        <h2>페르소나로 자동 로그인하기</h2>
+        <h4>당신은 무엇인가요?</h4>
+            
+        <form action="{% url 'users:auto_login' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" name="role" value="buyer">구매자 김OO 바로가기</button>
+            <button type="submit" name="role" value="seller">판매자 박OO 바로가기</button>
+        </form>
+
+        <br>
+
+    {% endif %}
 
 {% endblock %}
 

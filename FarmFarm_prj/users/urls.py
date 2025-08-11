@@ -13,4 +13,7 @@ urlpatterns = [
     path('seller-step4/', seller_step4, name='seller_step4'),
     path('seller-step5/', seller_step5, name='seller_step5'),
     path('seller-home/', seller_home, name='seller_home'),
+    path('signup/', signup, name='signup'), # 개발용
+    path('login/', login, name='login'), # 개발용
+    path('logout/', logout, name='logout'), # 개발용
 ]
