@@ -7,17 +7,17 @@
 | `main`                  | 최종 배포용 브랜치      |
 | `BACKEND`               | 백엔드 공용 작업 브랜치   |
 | `FRONTEND`              | 프론트엔드 공용 작업 브랜치 |
-| `fe/feature/#이슈번호-작업내용` | 프론트엔드 기능 개발 브랜치 |
-| `be/feature/#이슈번호-작업내용` | 백엔드 기능 개발 브랜치   |
-| `fe/fix/#이슈번호-작업내용`     | 프론트엔드 버그 수정 브랜치 |
-| `be/fix/#이슈번호-작업내용`     | 백엔드 버그 수정 브랜치   |
+| `fe/feature/#이슈번호` | 프론트엔드 기능 개발 브랜치 |
+| `be/feature/#이슈번호` | 백엔드 기능 개발 브랜치   |
+| `fe/fix/#이슈번호`     | 프론트엔드 버그 수정 브랜치 |
+| `be/fix/#이슈번호`     | 백엔드 버그 수정 브랜치   |
 
 ### 📌 브랜치 이름 예시
 
 ```
-fe/feature/#12-login-ui
-be/feature/#34-login-api
-fe/fix/#21-button-color
+fe/feature/#12
+be/feature/#34
+fe/fix/#21
 ```
 
 ---
@@ -140,4 +140,5 @@ fe/fix/#21-button-color
 6. **최종 배포 전 main 브랜치에 병합**
 
 ## 6️⃣ 덕벤처 파이팅 ..🌠  
+
 
