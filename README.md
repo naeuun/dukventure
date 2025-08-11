@@ -1,5 +1,3 @@
-# dukventure
-
 # 초기 페르소나 계정 적용 방법
 
 (admin 계정은 createsuperuser로 생성해주세요!)
