@@ -51,23 +51,104 @@ document.addEventListener("DOMContentLoaded", function () {
   const bottomSheet = document.getElementById("bottomSheet");
 
   let startY = 0;
-  let isDragging = false;
+bottomSheet.addEventListener("touchstart", (e) => {
+  startY = e.touches[0].clientY;
+  isDragging = true;
+});
 
-  bottomSheet.addEventListener("touchstart", (e) => {
-    startY = e.touches[0].clientY;
-  });
+bottomSheet.addEventListener("touchmove", (e) => {
+  if (!isDragging) return;
+  const moveY = e.touches[0].clientY;
+  const diffY = startY - moveY;
 
-  bottomSheet.addEventListener("touchmove", (e) => {
-    const moveY = e.touches[0].clientY;
-    const diffY = startY - moveY;
+  if (diffY > 30 && !bottomSheet.classList.contains("expanded")) {
+    bottomSheet.classList.add("expanded");
+  } else if (diffY < -30 && bottomSheet.classList.contains("expanded")) {
+    bottomSheet.classList.remove("expanded");
+  }
+});
 
-    if (diffY > 30 && !bottomSheet.classList.contains("expanded")) {
-      bottomSheet.classList.add("expanded");
+bottomSheet.addEventListener("touchend", (e) => {
+  const endY = e.changedTouches[0].clientY;
+  const diffY = startY - endY;
+  isDragging = false;
+
+  if (diffY < -400) {
+    hideBottomSheet();
+  }
+});
+
+  const sheetContent = document.querySelector(".sheet_content_v2");
+
+  let lastScrollTop = 0;
+  let isExpanded = false;
+
+  sheetContent.addEventListener("scroll", () => {
+    const currentScrollTop = sheetContent.scrollTop;
+
+    if (currentScrollTop > lastScrollTop) {
+      // 아래로 스크롤 중
+      if (!isExpanded) {
+        bottomSheet.classList.add("expanded");
+        isExpanded = true;
+      }
+    } else {
+      // 위로 스크롤 중
+      if (isExpanded) {
+        bottomSheet.classList.remove("expanded");
+        isExpanded = false;
+      }
     }
+
+    lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
   });
+
+function hideBottomSheet() {
+  bottomSheet.classList.remove("show", "expanded");
+  bottomSheet.classList.add("hidden");
+}
 
   testBtn.addEventListener("click", () => {
     bottomSheet.classList.remove("hidden");
     bottomSheet.classList.add("show");
+  });
+
+  const mapContainer = document.getElementById("map");
+  mapContainer.addEventListener("click", () => {
+    hideBottomSheet();
+  });
+
+
+  // 수량 및 시간 조절: 각 .per_stores 단위별로 이벤트 바인딩
+  document.querySelectorAll(".per_stores").forEach((store) => {
+    const minusBtn = store.querySelector(".minusBtn");
+    const plusBtn = store.querySelector(".plusBtn");
+    const quantitySpan = store.querySelector(".quantity");
+    const hourInput = store.querySelector(".hourInput");
+    const minuteInput = store.querySelector(".minuteInput");
+
+    let quantity = 0;
+
+    minusBtn.addEventListener("click", () => {
+      if (quantity > 0) {
+        quantity--;
+        quantitySpan.textContent = quantity;
+      }
+    });
+
+    plusBtn.addEventListener("click", () => {
+      quantity++;
+      quantitySpan.textContent = quantity;
+    });
+
+    hourInput.addEventListener("input", () => {
+      if (hourInput.value > 23) hourInput.value = 23;
+      if (hourInput.value < 0) hourInput.value = 0;
+    });
+
+    minuteInput.addEventListener("input", () => {
+      if (minuteInput.value > 59) minuteInput.value = 59;
+      if (minuteInput.value < 0) minuteInput.value = 0;
+    });
   });
 });

@@ -350,23 +350,25 @@ body {
     width:183.7px;
     margin-bottom: 5px;
     position:absolute;
-    bottom:25px;
-    left:-70px;
+    bottom:30px;
+    left:-100px;
 }
 .texts{
   position: absolute;
   font-size: 12px;
   font-weight:700;
-  left: 10px;
   color: black;
   white-space: nowrap;
-  bottom:60px;
-  left:-60px;
+  bottom:43px;
+  left:-90px;
 }
 .text_box_hugger{
     position: relative;
 }
 .voice_recognization_btn{
+  position: absolute;
+  bottom:36px;
+  right:-140px;
     display:flex;
     justify-content: center;
     align-items: center;
@@ -451,10 +453,23 @@ body {
     font-weight: 900;
     cursor: pointer;
   }
-  .voice_modal_ann{
-    width:161px;
-    margin-bottom:10px;
-  }
+
+/*음성인식모달*/
+.text_box_area{
+  position:relative;
+}
+.voice_modal_ann{
+  width:195px;
+  top:0;
+}
+.ann_text{
+  color:black;
+  position:absolute;
+  top:10px;
+  left:23px;
+  font-size: 14px;
+  font-weight: 700;
+}
   .voice_recognizing_btn{
     width:47px;
     height:47px;

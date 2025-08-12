@@ -428,3 +428,9 @@ body {
   font-size: 14px;
   font-weight: 700;
 }
+.before_page{
+  position: absolute;
+  left:30px;
+  top:55px;
+  width:8px;
+}

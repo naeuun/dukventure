@@ -188,21 +188,30 @@ body {
 .stores_per {
   width: 20px;
 }
-
 .bottom_sheet {
   position: fixed;
   left: 0;
   right: 0;
+  bottom: 0;
   max-width: 402px;
   margin: auto;
-  background-color:black;
+  background-color: black;
   border-radius: 38px 38px 0 0;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
-  height: 550px;
+  height: 60vh; /* 초기 높이 비율로 변경 */
   max-height: 80vh;
-  transition: bottom 0.3s ease-in-out;
+  transition: height 0.3s ease-in-out, bottom 0.3s ease-in-out;
   z-index: 10;
+  overflow: hidden;
 }
+#bottomSheet::-webkit-scrollbar {
+  display: none;
+}
+
+#bottomSheet {
+  scrollbar-width: none;
+}
+
 
 .bottom_sheet.hidden {
   bottom: -550px;
@@ -315,10 +324,12 @@ body {
   font-size: 15px;
   cursor: pointer;
 }
-.per_stores:last-child{
+.per_stores:last-child, .per_stores_s:last-child{
   margin-bottom:130px;
 }
-
+.per_stores_s{
+  margin:10px 0;
+}
 .msg {
   position: relative;
   opacity: 1;
@@ -345,4 +356,92 @@ body {
   bottom:75px;
   right:90px;
   animation: fadeOut 1s ease forwards 2s;
+}
+
+
+
+/* 기존 스타일 유지 + 추가 */
+.reserve_controls {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin:10px 0;
+    gap: 10px;
+}
+
+.quantity_box {
+  width:134.75px;
+  height:51.8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: black;
+  border: 1px solid #C1FF52;
+  border-radius: 27px;
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.qty_btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.time_box {
+  width:124.75px;
+  height:51.8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: black;
+  border: 1px solid #C1FF52;
+  border-radius: 27px;
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  padding-right:10px;
+}
+.time_box input {
+  width: 25px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  outline: none;
+  margin-bottom:-3px;
+  font-weight: 700;
+  margin-right:-10px;
+  text-align: right;
+}
+.time_box input::placeholder{
+  font-size: 20px;
+  font-weight: 700;
+
+}
+.time_box input::-webkit-inner-spin-button,
+.time_box input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.reserve_btn {
+    background-color: #C1FF52;
+    border: none;
+    border-radius: 26px;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-size: 16px;
+    width: 150px;
+    cursor: pointer;
+}
+.resbuttonhugger{
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
