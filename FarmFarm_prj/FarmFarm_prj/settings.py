@@ -27,7 +27,6 @@ STATICFILES_DIRS = [
 
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -140,3 +139,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # User Model
 AUTH_USER_MODEL = 'users.User' 
+
+# Media files (for file uploads)
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
