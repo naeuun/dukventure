@@ -8,12 +8,16 @@ def selleronboarding1(request):
     return render(request, "seller_onboardings/seller_onboarding_1.html")
 def selleronboarding2(request):
     return render(request, "seller_onboardings/seller_onboarding_2.html")
+def signuppage(request):
+    return render(request, "seller_onboardings/signup_page.html")
 def selleronboarding3(request):
     return render(request, "seller_onboardings/seller_onboarding_3.html")
 def selleronboarding4(request):
     return render(request, "seller_onboardings/seller_onboarding_4.html")
 def selleronboarding5(request):
     return render(request, "seller_onboardings/seller_onboarding_5.html")
+def selleronboarding6(request):
+    return render(request, "seller_onboardings/seller_onboarding_6.html")
 def commononboarding(request):
     return render(request, "common_onboarding.html")
 
