@@ -28,12 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // 샘플 가게들
     const stores = [
       {
-        name: "가게1",
+        name: "4.19민주역 달걀 할머니",
         lat: 37.6495,
         lng: 127.0141,
       },
       {
-        name: "가게2",
+        name: "4.19민주역 달걀 할머니",
         lat: 37.6495,
         lng: 127.0151,
       },
@@ -61,15 +61,43 @@ document.addEventListener("DOMContentLoaded", function () {
     searchInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") searchPlaces();
     });
+function searchPlaces() {
+  const keyword = searchInput.value.trim();
+  if (!keyword) {
+    alert("검색어를 입력하세요!");
+    return;
+  }
 
-    function searchPlaces() {
-      const keyword = searchInput.value.trim();
-      if (!keyword) {
-        alert("검색어를 입력하세요!");
-        return;
-      }
-      ps.keywordSearch(keyword, placesSearchCB);
-    }
+  // stores 중 이름에 keyword 포함하는 가게만 필터링
+  const filteredStores = stores.filter((store) => store.name.includes(keyword));
+
+  if (filteredStores.length === 0) {
+    alert("검색 결과가 없습니다.");
+    return;
+  }
+
+  // 기존 검색 마커 제거
+  if (marker) {
+    marker.setMap(null);
+  }
+
+  // 만약 여러 개면 첫 번째 가게 위치로 지도 이동하고 마커 표시
+  const firstStore = filteredStores[0];
+  const coords = new kakao.maps.LatLng(firstStore.lat, firstStore.lng);
+  map.setCenter(coords);
+
+  marker = new kakao.maps.Marker({
+    position: coords,
+    map: map,
+    title: firstStore.name,
+  });
+
+  // 마커 클릭 시 바텀시트 열기
+  kakao.maps.event.addListener(marker, "click", () => {
+    openBottomSheet();
+  });
+}
+
 
     function placesSearchCB(data, status) {
       if (status === kakao.maps.services.Status.OK) {
