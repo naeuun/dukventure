@@ -38,6 +38,8 @@ def reservationsseller(request):
 
 def sellerhomepage(request):
     return render(request, "seller_homepage.html")
+def sellerhomepage2(request): #연동 이후 홈페이지와 합칠 페이지입니다
+    return render(request, "seller_homepage_ver2.html")
 
 def shoppingpage(request):
     return render(request, "shopping_page.html")

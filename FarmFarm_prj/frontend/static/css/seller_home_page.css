@@ -490,3 +490,46 @@ body {
     background-color: #C1FF52; 
   }
   
+.brocoli{
+  width:326px;
+  position:absolute;
+  top:50px;
+  opacity: 30%;
+}
+.smalltext{
+  position:absolute;
+  white-space: nowrap;
+  top:146px;
+  left:115px;
+  font-size: 13px;
+  font-weight:700;
+}
+.small_brocoli{
+  position:absolute;
+  width:217px;
+  top:130px;
+}
+.textbox_small{
+  position:absolute;
+  top:140px;
+  left:105px;
+  width:162px;
+}
+.letsregister{
+  width: 152.8px;
+  height:52px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 28px;
+  position:absolute;
+  bottom:165px;
+  background-color: black;
+  color: #C1FF52;
+  border: 1px solid #C1FF52;
+}
+.letsregister:hover{
+  background-color: #C1FF52;
+  color: black;
+  border: none;
+}

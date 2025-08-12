@@ -52,7 +52,7 @@
 
     <div class="res_section">
       <div class="information_">
-        가게정보
+        예약확인
         <img src="{% static 'img/reservation_icon.png' %}" alt="예약확인 아이콘" class="res_check" />
       </div>
     </div>
@@ -62,40 +62,20 @@
     </div>
     
     <div class="information_zone">
-      
       <div class="per_res">
         <div class="information-card">
-            <div class="information_hugger">
-                <div class="product-img-wrap">
-                    <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="product-img">
-                    <input type="file" id="change_photo_input" accept="image/*" style="display:none" /> 
-                    <button type="button" value="이미지 변경" class="change_photo_btn">
-                        <img src="{% static 'img/add_photo.png' %}" alt="이미지 변경" class="change_photo">
-                    </button>
-                </div>
-                
-                <div class="product-info">
-                    <ul>
-                        <li>판매자: 창동시장 달걀 할머니 (김말선)</li>
-                        <li>위치: 덕성여대 후문 옆</li>
-                        <li>판매 시간: 매일 오전 10시 ~ 12시</li>
-                        <li>가격: 5알 1000원</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="recog">
-                <div class="text_box_hugger">
-                    <img src="{% static 'img/textbox/wide_text_box.png' %}" alt="말풍선" class="textbox">
-                    <div class="texts">
-                        음성녹음<span style="color:grey;">으로</span><br>
-                        오늘 판매 물건<span style="color:grey;">을</span> <span style="color:grey;">수정</span>하세요! 
-                    </div>
-                    <button type="button" value="음성인식" class="voice_recognization_btn">
-                        <img src="{% static 'img/mic.png' %}" alt="마이크" class="mic">
-                    </button>
-                </div>
-                
-            </div>
+          <img src="{% static 'img/smiling_brocoli.png' %}" alt="브로콜리" class="brocoli" />
+          <div>
+            <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="textbox_small" />
+            <span class="smalltext">음성녹음 <span style="color:grey;">등록이 가능해요!</span>
+          </div>
+          <img src="{% static 'img/voice_brocoli.png' %}" alt="쪼꼬미브로콜리" class="small_brocoli" />
+          <button 
+          type="button"
+          class="letsregister"
+          onclick="location.href='selleronboarding3'">
+            등록하기
+          </button>
         </div>
 
       </div>
