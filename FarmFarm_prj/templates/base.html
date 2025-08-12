@@ -10,7 +10,7 @@
     {% endblock %}
     <footer>
         <hr>
-        <a href="{% url 'users:onboarding' %}">홈</a> 
+        <a href="{% url 'users:onboarding' %}">초기 온보딩 화면</a> 
         <!-- 개발용 로그인 상태 정보 표시 -->
         {% if request.user.is_authenticated %}
             <small>

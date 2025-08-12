@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from stores.models import Store
 
 class UserType(models.TextChoices):
     BUYER = 'BUYER', '구매자'
@@ -20,14 +21,6 @@ class Seller(models.Model):
     
     def __str__(self):
         return f'Seller: {self.user.username}'
-    
-class Store(models.Model):
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='stores')
-    name = models.CharField(max_length=100)
-    address = models.CharField(max_length=255)
-    
-    def __str__(self):
-        return f'Store: {self.name} ({self.seller.user.username})'    
     
 class Buyer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='buyer')

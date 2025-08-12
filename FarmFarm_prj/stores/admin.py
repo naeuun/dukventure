@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Store, Keyword, StoreReport
 
-# Register your models here.
+admin.site.register(Store)
+admin.site.register(Keyword)
+admin.site.register(StoreReport)    
