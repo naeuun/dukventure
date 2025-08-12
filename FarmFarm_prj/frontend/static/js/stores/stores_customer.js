@@ -170,14 +170,6 @@ document.addEventListener("DOMContentLoaded", function () {
     hideBottomSheet();
   });
 
-  // 필요시 테스트 버튼 클릭 시 바텀시트 열기
-  const testBtn = document.getElementById("test");
-  if (testBtn) {
-    testBtn.addEventListener("click", () => {
-      openBottomSheet();
-    });
-  }
-
   // 수량 및 시간 조절: 각 .per_stores 단위별로 이벤트 바인딩
   document.querySelectorAll(".per_stores").forEach((store) => {
     const minusBtn = store.querySelector(".minusBtn");

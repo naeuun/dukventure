@@ -6,8 +6,11 @@
 {% endblock style %}
 
 {% block script %}
+<script>
+  const markerImageSrc = "{% static 'img/stores.png' %}";
+</script>
 <!-- 카카오맵 SDK -->
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_APP_KEY&libraries=services"></script>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 
 <script src="{% static 'js/stores/stores_seller.js' %}"></script>
 {% endblock script %}
@@ -28,13 +31,7 @@
         </div>
         <div id="errorMessage"></div>
       </div>
-      
-      <!--가게 클릭시 가게정보 띄우기용 테스트 버튼 -->
-      <button type="button" value="테스트 버튼" id="test">
-        <img src="{% static 'img/stores.png' %}" alt="가게들" class="stores_per">
-      </button>
     
-      <!-- 아래에서 올라오는 바텀시트 -->
       <!-- 아래에서 올라오는 바텀시트 -->
       <div id="bottomSheet" class="bottom_sheet hidden">
         <div class="sheet_content_v2">
