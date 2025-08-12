@@ -32,6 +32,8 @@ def splash(request):
 def reservationsseller(request):
     return render(request, "reservations_seller.html")
 
-
 def sellerhomepage(request):
     return render(request, "seller_homepage.html")
+
+def shoppingpage(request):
+    return render(request, "shopping_page.html")

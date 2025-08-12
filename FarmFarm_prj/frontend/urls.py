@@ -20,4 +20,6 @@ urlpatterns = [
     path("reservationsseller", reservationsseller, name="reservationsseller"),
     
     path("sellerhomepage", sellerhomepage, name="sellerhomepage"),
+    
+    path("shoppingpage", shoppingpage, name="shoppingpage"),
 ]
