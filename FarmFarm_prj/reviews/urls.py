@@ -4,8 +4,12 @@ from . import views
 app_name = 'reviews'
 
 urlpatterns = [
-    # path('create/', views.review_create, name='create'),
-    # path('<int:pk>.json', views.review_detail, name='detail_json'),
-    # path('store/<int:store_id>.json', views.review_list_by_store, name='store_list_json'),
-    # path('buyer/<int:buyer_id>.json', views.review_list_by_buyer, name='buyer_list_json'),
+    # 리뷰 생성 (예약 ID 필요)
+    path('create/<int:reservation_id>/', views.review_create, name='create'),
+    
+    # 구매자: 내가 쓴 리뷰 목록
+    path('my-reviews/', views.my_review_list, name='my_list'),
+    
+    # 판매자: 내 가게에 달린 리뷰 목록
+    path('store-reviews/', views.store_review_list, name='store_list'),
 ]

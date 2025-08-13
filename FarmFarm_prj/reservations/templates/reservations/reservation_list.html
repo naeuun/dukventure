@@ -51,6 +51,10 @@
         </select>
         <button class="btn btn-ghost" type="submit">상태 변경</button>
       </form>
+      <!-- 예약 카드 내부 -->
+{% if r.status == 'PICKED_UP' and not r.review %}
+    <a href="{% url 'reviews:create' r.pk %}" class="btn btn-review">리뷰쓰기</a>
+{% endif %}
     </div>
   {% empty %}
     <p>예약이 없습니다.</p>
