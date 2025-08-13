@@ -1,4 +1,7 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.db.models import F, IntegerField, Sum, ExpressionWrapper, CheckConstraint, Q
 
 class ReservationStatus(models.TextChoices):
     PENDING    = 'PENDING', '대기'
@@ -20,21 +23,19 @@ class RejectReason(models.TextChoices):
     OTHER            = 'OTHER', '기타'
 
 class Reservation(models.Model):
-    # FK (users 앱 기준)
-    store = models.ForeignKey('users.Store', on_delete=models.CASCADE, related_name='reservations')
-    buyer = models.ForeignKey('users.Buyer', on_delete=models.CASCADE, related_name='reservations')
+    # 다른 앱 FK는 실제 프로젝트 모델명에 맞춰 변경해줘요!
+    store = models.ForeignKey('stores.Store', on_delete=models.CASCADE, related_name='reservations', null=False, default=1)
+    buyer = models.ForeignKey('users.Buyer', on_delete=models.CASCADE,
+                          related_name='reservations', null=False, default=1) 
 
-    # 요청 정보
     requested_pickup_at = models.DateTimeField(help_text='구매자가 희망한 픽업 시간')
     note = models.CharField(max_length=200, blank=True)
 
-    # 상태/사유
     status = models.CharField(max_length=20, choices=ReservationStatus.choices, default=ReservationStatus.PENDING)
     rejected_reason = models.CharField(max_length=30, choices=RejectReason.choices, blank=True)
     rejected_reason_detail = models.CharField(max_length=200, blank=True)
     cancelled_reason = models.CharField(max_length=200, blank=True)
 
-    # 타임스탬프 (뷰에서 필요 시 채움)
     accepted_at = models.DateTimeField(null=True, blank=True)
     prepared_at = models.DateTimeField(null=True, blank=True)
     ready_at = models.DateTimeField(null=True, blank=True)
@@ -43,27 +44,20 @@ class Reservation(models.Model):
     rejected_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # 금액 스냅샷
     total_price = models.PositiveIntegerField(default=0, help_text='예약 시점 총액(원)')
 
-    # 카드 표시용 스냅샷
     contact_phone = models.CharField(max_length=20, blank=True)
     display_image = models.ImageField(upload_to='reservations/cover/%Y/%m/%d/', blank=True)
 
-    # 픽업 검증 코드
-    reservation_code = models.CharField(max_length=12, unique=True, blank=True)
+    reservation_code = models.CharField(max_length=12, unique=True, db_index=True, blank=True)
 
-    # 판매자 메모/ETA
     seller_note = models.CharField(max_length=200, blank=True)
     prep_eta_minutes = models.PositiveSmallIntegerField(default=0, help_text='준비 예상 소요 분')
 
-    # 리워드 지급 여부
-    point_rewarded = models.BooleanField(default=False)
-
-    # (선택) 픽업 윈도우
     pickup_window_start = models.DateTimeField(null=True, blank=True)
     pickup_window_end   = models.DateTimeField(null=True, blank=True)
 
+    point_rewarded = models.BooleanField(default=False)
     class Meta:
         indexes = [
             models.Index(fields=['store', 'status']),
@@ -73,15 +67,29 @@ class Reservation(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'[{self.get_status_display()}] {self.store.name} - {self.buyer.user.username}'
+        return f'[{self.get_status_display()}] {self.store} - {self.buyer}'
 
-    # 최소 동작만 유지: 최초 생성 시 코드 발급
+    def clean(self):
+        if self.requested_pickup_at < timezone.now():
+            raise ValidationError('과거 시간으로는 예약할 수 없습니다.')
+        if self.pickup_window_start and self.pickup_window_end:
+            if self.pickup_window_end <= self.pickup_window_start:
+                raise ValidationError('픽업 윈도우 시간이 올바르지 않습니다.')
+
     def save(self, *args, **kwargs):
         if not self.pk and not self.reservation_code:
             import secrets, string
             alphabet = string.ascii_uppercase + string.digits
             self.reservation_code = ''.join(secrets.choice(alphabet) for _ in range(8))
         super().save(*args, **kwargs)
+
+    def recompute_total(self):
+        total = self.items.aggregate(
+            s=Sum(ExpressionWrapper(F('unit_price') * F('quantity'), output_field=IntegerField()))
+        )['s'] or 0
+        if total != self.total_price:
+            self.total_price = total
+            super().save(update_fields=['total_price'])
 
 class ReservationItem(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, related_name='items')
@@ -92,11 +100,15 @@ class ReservationItem(models.Model):
     memo = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to='reservations/items/%Y/%m/%d/', blank=True)
 
+    class Meta:
+        constraints = [
+            CheckConstraint(check=Q(quantity__gte=1), name='quantity_gte_1'),
+            CheckConstraint(check=Q(unit_price__gte=0), name='unit_price_gte_0'),
+        ]
+
     def __str__(self):
         return f'{self.item_name} x {self.quantity}'
 
-    # 최소 동작만 유지: 합계 갱신
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        total = sum(i.unit_price * i.quantity for i in self.reservation.items.all())
-        Reservation.objects.filter(pk=self.reservation_id).update(total_price=total)
+        self.reservation.recompute_total()

@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>내 예약 목록</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <style>
+    .card{background:#e7ffd9;border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 6px 14px rgba(0,0,0,.1)}
+    .badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#222;color:#fff;font-size:12px}
+    .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .muted{color:#666;font-size:13px}
+    .btn{border:none;border-radius:12px;padding:8px 12px;cursor:pointer}
+    .btn-dark{background:#111;color:#fff}
+    .btn-ghost{background:#fff;border:1px solid #ddd}
+  </style>
+</head>
+<body>
+  <h2>내 예약</h2>
+  <p class="muted">{{ now }}</p>
+
+  <p>
+    <a class="btn btn-dark" href="{% url 'reservations:create_form' %}">새 예약 하기</a>
+  </p>
+
+  {% for r in reservations %}
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="badge">{{ r.get_status_display }}</div>
+          <h3 style="margin:8px 0 4px">{{ r.store }}</h3>
+          <div class="muted">픽업 예정: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</div>
+          <div class="muted">예약코드: {{ r.reservation_code }}</div>
+        </div>
+        <div><strong>{{ r.total_price|default:0 }}원</strong></div>
+      </div>
+
+      <ul>
+        {% for it in r.items.all %}
+          <li>{{ it.item_name }} — {{ it.quantity }}{{ it.unit }} × {{ it.unit_price }}원</li>
+        {% empty %}
+          <li class="muted">아이템 없음</li>
+        {% endfor %}
+      </ul>
+
+      <form method="post" action="{% url 'reservations:change_status' r.pk %}" class="row">
+        {% csrf_token %}
+        <select name="to_status">
+          <option value="CANCELLED">구매자 취소</option>
+          <option value="PICKED_UP">픽업 완료</option>
+        </select>
+        <button class="btn btn-ghost" type="submit">상태 변경</button>
+      </form>
+    </div>
+  {% empty %}
+    <p>예약이 없습니다.</p>
+  {% endfor %}
+</body>
+</html>

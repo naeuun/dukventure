@@ -1,73 +1,89 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>판매자 예약 관리</title>
+  <meta charset="UTF-8">
+  <title>예약 관리 (판매자)</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    h1 { font-size: 1.5rem; }
-    .reservation { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
-    .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; background-color: #eee; }
-    button { margin-right: 5px; }
+    .wrap{max-width:900px;margin:24px auto;padding:0 16px}
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+    .card{background:#eefee3;border-radius:14px;padding:14px;margin:12px 0;box-shadow:0 6px 14px rgba(0,0,0,.08)}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .muted{color:#666}
+    input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
+    .btn{border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .btn-dark{background:#111;color:#fff}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#222;color:#fff;font-size:12px}
+    .items{margin:6px 0 0 0}
   </style>
 </head>
 <body>
-  <h1>판매자 예약 관리</h1>
-  <div id="reservation-list"></div>
+  <div class="wrap">
+    <h2>예약 관리 — {{ store }}</h2>
 
-  <script>
-    const storeId = 1;
-    const apiUrl = `/reservations/store/${storeId}/`;
+    <form class="toolbar" method="get">
+      <select name="status">
+        <option value="">전체 상태</option>
+        {% for key,label in status_choices %}
+          <option value="{{ key }}" {% if status_now == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <input type="date" name="date" value="{{ date }}">
+      <input type="text" name="q" placeholder="구매자/예약코드" value="{{ q }}">
+      <button class="btn">필터</button>
+      <a class="btn" href="{% url 'reservations:seller_list' %}">초기화</a>
+    </form>
 
-    const dummyData = [
-      {
-        id: 2,
-        buyer_name: "예성",
-        status_label: "승인 대기",
-        badge_text: "승인 대기",
-        requested_pickup_at: "2025-08-11T15:30:00",
-        total_price: 5000,
-        items: [
-          { item_name: "딸기잼", quantity: 1, unit_price: 5000 }
-        ]
-      }
-    ];
-
-    function renderReservations(data) {
-      const container = document.getElementById("reservation-list");
-      container.innerHTML = "";
-      data.forEach(r => {
-        const div = document.createElement("div");
-        div.className = "reservation";
-        div.innerHTML = `
-          <strong>고객: ${r.buyer_name}</strong> 
-          <span class="badge">${r.badge_text}</span><br/>
-          픽업 요청 시간: ${r.requested_pickup_at}<br/>
-          총 금액: ${r.total_price}원
-          <div class="items">
-            ${r.items.map(it => `${it.item_name} (${it.quantity}개)`).join(", ")}
+    {% for r in page_obj %}
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="badge">{{ r.get_status_display }}</div>
+            <div><strong>예약코드:</strong> {{ r.reservation_code }}</div>
+            <div class="muted">구매자: {{ r.buyer.user.username }} | 요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</div>
+            <ul class="items">
+              {% for it in r.items.all %}
+                <li>{{ it.item_name }} — {{ it.quantity }}{{ it.unit }} × {{ it.unit_price }}원</li>
+              {% endfor %}
+            </ul>
           </div>
-          <div class="actions">
-            <button onclick="accept(${r.id})">승인</button>
-            <button onclick="reject(${r.id})">거절</button>
+          <div>
+            <div style="text-align:right"><strong>{{ r.total_price }}원</strong></div>
+            <form method="post" action="{% url 'reservations:change_status' r.pk %}">
+              {% csrf_token %}
+              <select name="to_status">
+                <option value="ACCEPTED">수락</option>
+                <option value="REJECTED">거절</option>
+                <option value="PREPARING">준비중</option>
+                <option value="READY">픽업준비완료</option>
+                <option value="PICKED_UP">픽업완료</option>
+              </select>
+              <button class="btn btn-dark" type="submit">변경</button>
+            </form>
           </div>
-        `;
-        container.appendChild(div);
-      });
-    }
+        </div>
+      </div>
+    {% empty %}
+      <p>예약이 없습니다.</p>
+    {% endfor %}
 
-    function accept(id) {
-      alert(`${id}번 예약 승인`);
-      // API 연동 시: fetch(`/reservations/${id}/accept/`, {method:"POST"});
-    }
+    <div class="row">
+      <div>
+        {% if page_obj.has_previous %}
+          <a class="btn" href="?page={{ page_obj.previous_page_number }}&status={{ status_now }}&q={{ q }}&date={{ date }}">이전</a>
+        {% endif %}
+      </div>
+      <div class="muted">페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</div>
+      <div>
+        {% if page_obj.has_next %}
+          <a class="btn" href="?page={{ page_obj.next_page_number }}&status={{ status_now }}&q={{ q }}&date={{ date }}">다음</a>
+        {% endif %}
+      </div>
+    </div>
 
-    function reject(id) {
-      alert(`${id}번 예약 거절`);
-      // API 연동 시: fetch(`/reservations/${id}/reject/`, {method:"POST", body: JSON.stringify({reason:"OUT_OF_STOCK"})});
-    }
-
-    // API 연동 시: fetch(apiUrl).then(res => res.json()).then(renderReservations);
-    renderReservations(dummyData);
-  </script>
+    <p style="margin-top:12px">
+      <a class="btn" href="{% url 'users:seller_home' %}">← 판매자 홈으로</a>
+    </p>
+  </div>
 </body>
 </html>

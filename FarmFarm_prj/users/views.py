@@ -8,6 +8,10 @@ from django.contrib.auth import login as auth_login  # 개발용
 from django.contrib.auth import logout as auth_logout # 개발용
 from django.views.decorators.cache import never_cache # 뒤로가기 후 로그인했을 때 캐시 문제 해결
 
+from django.contrib.auth.decorators import login_required
+from reservations.models import Reservation
+from users.models import UserType
+
 @never_cache   
 def onboarding(request):
     return render(request, 'users/onboarding.html')
@@ -99,5 +103,24 @@ def seller_step5(request):
 def buyer_home(request):
     return render(request, 'users/buyer-home.html')
 
+
+@login_required
 def seller_home(request):
-    return render(request, 'users/seller-home.html')
+    # 판매자 권한 체크 (프로젝트에 맞게 보정)
+    if request.user.usertype != UserType.SELLER or not hasattr(request.user, 'seller'):
+        return redirect('users:onboarding')
+
+    seller = request.user.seller
+    store = getattr(seller, 'store', None)  # Seller에 store가 연결돼 있다고 가정
+
+    reservations = Reservation.objects.none()
+    if store:
+        reservations = (Reservation.objects
+                        .filter(store=store)
+                        .select_related('buyer__user')
+                        .prefetch_related('items'))
+
+    return render(request, 'users/seller-home.html', {
+        'reservations': reservations,
+        'store': store,
+    })
