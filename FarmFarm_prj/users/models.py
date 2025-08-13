@@ -18,7 +18,8 @@ class User(AbstractUser):
 class Seller(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='seller')
     is_registered = models.BooleanField(default=False)  # 사업자 등록 여부
-    
+    has_store = models.BooleanField(default=False)      # 가게 등록 여부
+
     def __str__(self):
         return f'Seller: {self.user.username}'
     

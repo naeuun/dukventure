@@ -1,0 +1,10 @@
+<footer>
+    <hr>
+    <a href="{% url 'stores:map' %}">지도</a>
+    <a href="{% url 'users:home' %}">홈</a>
+    {% if user.usertype == 'BUYER' %}
+        <a href="#">AI</a>
+    {% elif user.usertype == 'SELLER' %}
+        <a href="#">예약관리</a>
+    {% endif %}
+</footer>
