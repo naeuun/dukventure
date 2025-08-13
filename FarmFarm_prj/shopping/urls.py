@@ -1,12 +1,9 @@
 from django.urls import path
-from . import views
+from .views import AiShoppingView
 
-app_name = 'shopping'
+app_name = 'shopping'  # 템플릿에서 {% url 'shopping:ai_shopping' %} 처럼 사용하기 위해 네임스페이스를 지정합니다.
 
 urlpatterns = [
-    # path('plans/create/', views.plan_create, name='plan_create'),
-    # path('plans/<int:pk>.json', views.plan_detail, name='plan_detail'),
-    # path('plans/<int:pk>/add-item/', views.plan_add_item, name='plan_add_item'),
-    # path('plans/<int:pk>/items/<int:item_id>/suggest-store/', views.plan_suggest_store, name='plan_suggest_store'),
-    # path('plans/<int:pk>/items/<int:item_id>/reserve/', views.plan_reserve_item, name='plan_reserve_item'),
+    # /shopping/ai/ 경로로 접속하면 AiShoppingView를 실행합니다.
+    path('ai/', AiShoppingView.as_view(), name='ai_shopping'),
 ]

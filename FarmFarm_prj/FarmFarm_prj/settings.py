@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
 BUYER_PASSWORD = os.getenv('BUYER_PASSWORD')
 SELLER_PASSWORD = os.getenv('SELLER_PASSWORD')
 
