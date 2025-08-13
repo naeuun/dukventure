@@ -1,12 +1,102 @@
-.button_hugger{
+body {
+    margin: 0;
+}
+
+.big_hugger {
+    margin: 0 auto;
+    max-width: 402px;
+    background-color: black;
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.progress_bar {
+    background-color: #F4F5EF;
+    width: 345px;
+    height: 28px;
+    border-radius: 32px;
+    position: absolute;
+    top: 30px;
+    border: 1px solid #C1FF52;
+}
+
+.now_step {
+    background-color: #C1FF52;
+    border: 0.5px solid black;
+    height: 19.5px;
+    border-radius: 32px;
+    position: absolute;
+    top: 4px;
+    left: 3px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+.title{
+  font-size:24px;
+    color: white;
+    font-weight: 800;
+}
+.bigger_content {
+    padding-top: 50px; /* 진행바 높이 + 여유 공간 */
+    position:relative;
+}
+.brocoli{
+    width:217px;
+    position:absolute;
+    left:10px;
+    top:80px;
+}
+.brocoli_says{
+    position:absolute;
+    width:162px;
+    top:105px;
+    left:110px;
+}
+
+.text{
+  position:absolute;
+  z-index: 10;
+  width:162px;
+  top:112px;
+  left:119px;
+  color:black;
+  font-size: 13px;
+  font-weight: 700;
+}
+.prev_page {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    cursor: pointer;
+}
+
+.prev_page img {
+    width: 13.8px;
+}
+
+.button_hugger {
     margin-top: 20px;
     position: relative;
-    width:100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.register_button{
+
+.register_button {
     border: 1px solid #C1FF52;
     width: 152px;
     height: 51px;
@@ -16,25 +106,245 @@
     background-color: black;
     color: white;
 }
-.voice_recognition_btn{
+
+.voice_recognition_btn {
     background-color: #C1FF52;
     width: 46.5px;
     height: 46.5px;
     border-radius: 50%;
-    font-size: 20px;
     position: absolute;
-    margin-left:230px;
-    display:flex;
+    margin-left: 230px;
+    display: flex;
     justify-content: center;
     align-items: center;
+}
 
+.voice_recognition_btn img {
+    width: 19px;
 }
-.voice_recognition_btn img{
-    width:19px;
-}
-.register_box{
+
+.register_box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 303px;
-    height: 55vh;
+    height: 449px;
     border: 1px solid #C1FF52;
     border-radius: 27px;
+}
+
+.form_fields {
+    padding-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.form_row {
+    width: 93.5%;
+    border-bottom: 1px solid #C1FF52;
+    display: flex;
+    font-size: 13px;
+    color: #C1FF52;
+    padding:0 10px 6.4px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form_row:nth-child(9){
+    display:flex;
+    justify-content: space-between;
+    height:25px;
+}
+.form_row:last-child{
+    border-bottom:none;
+}
+.form_row label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #C1FF52;
+    white-space: nowrap;
+}
+.file_upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file_upload input[type="file"] {
+    flex: 1;
+    color: white;
+}
+
+.upload_icon {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-right:5px;
+}
+/* 파일명 + 삭제 버튼 영역 */
+.file_info_wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px; /* 라벨 아이콘과 간격 */
+  }
+  
+  /* 파일명 스타일 */
+  .file_name {
+    font-size: 12px;
+    color: #EDEDED;
+    max-width: 90px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* 삭제 버튼 */
+  .delete_file_btn {
+    background: transparent;
+    border: 1px solid #C1FF52;
+    color: #C1FF52;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  
+  .delete_file_btn:hover {
+    background: #C1FF52;
+    color: black;
+  }
+  
+.form_row input[type="text"]{
+    width: 100%;
+    box-sizing: border-box;
+    background-color: black;
+    border: none;
+    border: 1px solid #C1FF52;
+    border-radius: 20px;
+    color: white;
+    font-size: 11px;
+    padding: 7px 10px;
+    margin-left:5px;
+}
+.form_row input[type="text"]::placeholder{
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.register_button.enabled {
+    background-color: #C1FF52; /* 연두 */
+    color: black;
+    border-color: #C1FF52;
+  }
+  
+
+
+/* 모달 전체 */
+.voice_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* 숨김 클래스 */
+  .hidden {
+    display: none;
+  }
+  
+  /* 배경 오버레이 */
+  .voice_modal_overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* 모달 내부 콘텐츠 */
+  .voice_modal_content {
+    position: absolute;
+    border: 1px solid white; 
+    box-shadow:
+    24px 24px 24px rgba(42, 42, 42, 0.3),
+    18px 18px 18px rgba(109, 109, 109, 0.12),
+    inset 0 0 8px rgba(255, 255, 255, 0.35);
+    border-radius: 20px;
+    width: 280px;
+    height: 133px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #C1FF52;
+    transition: transform .18s ease, opacity .18s ease;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    bottom:3vh;
+  }
+  
+  
+  
+  /* 안내 텍스트 */
+  .voice_modal_text {
+    width:161px;
+  }
+  
+  /* 닫기 버튼 */
+  .voice_modal_close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .voice_recognizing_btn{
+    width:47px;
+    height:47px;
+    border:2px solid #C1FF52;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
+  /* 마이크 아이콘 */
+  .voice_modal_mic {
+    width: 21px;
+  }
+
+.voice_recognizing_btn.recording {
+    background-color: #C1FF52; 
+  }
+  
+  
+
+/*음성인식모달*/
+.text_box_area{
+  position:relative;
+}
+.voice_modal_ann{
+  width:195px;
+  top:0;
+}
+.ann_text{
+  color:black;
+  position:absolute;
+  top:10px;
+  left:23px;
+  font-size: 14px;
+  font-weight: 700;
 }

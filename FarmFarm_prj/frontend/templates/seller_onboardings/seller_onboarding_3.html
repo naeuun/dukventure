@@ -2,7 +2,6 @@
 
 {% load static %}
 {% block style %}
-<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
 <link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
 
 {% endblock style %}
@@ -18,9 +17,52 @@
             <div class="now_step" style="width: 270px;"></div>
         </div>
         <div class="content">
-            <p class="bigger_content">가게 등록</p>
+            <p class="bigger_content">
+                <div class="textboxarea">
+                    <img src="{% static 'img/textbox/side_vertical_text_box.png' %}" alt="말풍선" class="brocoli_says">
+                    <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli">
+                    <div class="text">음성녹음 <span style="color:grey;">등록이 가능해요!</span></div>
+                </div>
+                <span class="title">가게 등록</span>
+            </p>
             <div class="register_box">
+                <div class="scrollable_container">
+                    <form class="form_fields">
+                        {% comment %} 1~10번 입력 필드 반복 {% endcomment %}
+                        {% for i in "0123456789" %}
+                        <div class="form_row">
+                            <label for="field{{ forloop.counter }}">
+                                {{ forloop.counter }}. 
+                                {% if forloop.counter == 1 %}가게 이름
+                                {% elif forloop.counter == 2 %}사업자 등록번호
+                                {% elif forloop.counter == 3 %}판매 품목
+                                {% elif forloop.counter == 4 %}가게 정보 (선택)
+                                {% elif forloop.counter == 5 %}판매 장소
+                                {% elif forloop.counter == 6 %}판매 요일/시간대
+                                {% elif forloop.counter == 7 %}결제 수단
+                                {% elif forloop.counter == 8 %}판매자 연락 수단 (선택)
+                                {% elif forloop.counter == 9 %}가게 사진 업로드 (선택)
+                                {% elif forloop.counter == 10 %}특이사항 또는 판매 메시지 (선택)
+                                {% endif %}
+                            </label>
+            
+                            {% if forloop.counter == 9 %}
+                                <div class="file_upload">
+                                    <input type="file" id="field9" name="store_photo" accept="image/*" style="display: none;">
+                                    <label for="field9">
+                                        <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon" />
+                                    </label>
+                                </div>
+                            {% else %}
+                                <input type="text" id="field{{ forloop.counter }}" name="field{{ forloop.counter }}" placeholder="입력하시오..." />
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+                    </form>
+                </div>
             </div>
+                        
             <div class="button_hugger">
                 <button
                 type="button" 
@@ -45,4 +87,19 @@
         </div>
     </div>
 </div>
+<!-- 음성 인식 모달 -->
+<div class="voice_modal hidden">
+    <div class="voice_modal_overlay"></div>
+    <div class="voice_modal_content">
+      <button class="voice_modal_close">✕</button>
+      <div class="text_box_area">
+        <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+        <div class="ann_text">버튼을 누르고, 말하세요!</div>
+      </div>
+      <div class="voice_recognizing_btn">
+        <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
+      </div>
+    </div>
+  </div>
+  
 {% endblock body %}

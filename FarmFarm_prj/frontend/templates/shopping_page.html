@@ -1,8 +1,8 @@
-{% extends "../base.html" %}
-
+{% extends "./base.html" %}
 {% load static %}
+
 {% block style %}
-<link rel="stylesheet" href="{% static 'css/stores.css' %}" />
+<link rel="stylesheet" href="{% static 'css/shopping_page.css' %}" />
 {% endblock style %}
 
 {% block script %}
@@ -11,33 +11,83 @@
 </script>
 <!-- 카카오맵 SDK -->
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
-
-<script src="{% static 'js/stores/stores_customer.js' %}"></script>
+<script src="{% static 'js/shopping_page.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
 <div class="big_hugger">
-    <div class="container">
-        <div class="search_box">
-            <img src="{% static 'img/map_deco.png' %}" alt="지도 검색창 위 데코" class="map_deco">
-            <div class="searching_">
-                <input type="text" id="searchInput" placeholder="입력하시오..."/>
-                <button id="searchBtn">
-                    <img src="{% static 'img/search.png' %}" alt="검색 아이콘">
-                </button>
-            </div>
+  <div class="container onboarding">
+    <div class="greeting_section">
+      <img src="{% static 'img/home_deco.png' %}" alt="클로버 배경" class="clover_bg" />
+      <img src="{% static 'img/logo.png' %}" alt="로고" class="logo" />
+      <div class="greeting_card">
+        <div class="greeting_text">
+          <p class="hello">
+            <span class="username">김말선</span>
+            님 반가워요!
+            <img src="{% static 'img/welcome_boom.png' %}" alt="폭죽" class="boom">
+        </p>
+          <p class="desc">
+            <span>
+                이제
+                <span class="highlight">
+                    우리 동네 손님들과 연결
+                </span>
+                될 준비가 끝났어요.<br>
+            </span>
+            <span>
+                <span class="highlight" style="font-size:17px;">
+                    AI
+                </span>
+                가 손님에게 가게 소식을 잘 전해드릴게요! 
+                <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
+            </span>
+        </p>
         </div>
-      <!-- 지도 영역 -->
-      <div id="map">
-        <div id="errorMessage"></div>
+        <div class="profile_section">
+          <div class="profile_img">
+            <img src="{% static 'img/logo_leaves.png' %}" alt="더미프로필" />
+          </div>
+          <p class="profile_name">김말선</p>
+        </div>
       </div>
-      <div class="add_store_msg" class="msg">
-        <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox">
-        <div class="text">노점<span style="color:grey;">을 추가해주세요!</span></div>
+    </div>
+
+    <!-- 첫 화면 -->
+    <div class="firstsight">
+      <img src="{% static 'img/smiling_brocoli.png' %}" alt="브로콜리" class="brocoli" />
+    </div>
+
+    <!-- 검색 박스 -->
+    <div class="search_box">
+      <div class="searching_">
+        <input type="text" id="searchInput" placeholder="입력하시오..."/>
+        <button id="searchBtn">
+          <img src="{% static 'img/search.png' %}" alt="검색 아이콘">
+        </button>
       </div>
-      <a href="/storesplus"><button type="button" value="가게 추가" id="add_store">+</button></a>
-      
-      <!-- 바텀시트 -->
+      <div class="foods_hugger">
+        <div class="example_foods">
+          <button type="button" class="per_foods">#비빔밥</button>
+          <button type="button" class="per_foods">#샐러드</button>
+          <button type="button" class="per_foods">#고등어조림</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 지도 -->
+    <div id="map" style="display:none;">
+      <div id="errorMessage"></div>
+    </div>
+
+    <!-- 토글 버튼 -->
+    <div class="toggle_hugger" style="display:none;">
+      <div class="toggle_box" id="toggleBox">
+        <div class="toggle_button" id="toggleButton"></div>
+      </div>
+    </div>
+
+    <!-- 바텀시트 -->
       <div id="bottomSheet" class="bottom_sheet hidden">
         <div class="sheet_content_v2">
           <div class="per_stores">
@@ -104,22 +154,23 @@
           </div>
         </div>
       </div> 
-    
-    <div class="nav_box">
-        <nav class="bottom_nav">
-          <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
-          <div class="btn selected_nav"><a href="/storescustomoer">
-            <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
-          </a></div>
-          <div class="btn"><a href="#">
-            <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
-          </a></div>
-          <div class="btn"><a href="#">
-            <span class="shopping_page">AI</span>
-          </a></div>
-          </div>
-        </nav>
-      </div>
   </div>
 
+  <div class="nav_box">
+    <nav class="bottom_nav">
+        <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
+        <div class="btn"><a href="/storesseller">
+          <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
+        </a></div>
+        <div class="btn"><a href="/sellerhomepage">
+          <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+        </a></div>
+        <div class="btn selected_nav"><a href="/reservationsseller">
+          <span class="shopping_page">AI</span>
+        </a></div>
+        </div>
+      </nav>
+  </div>
+
+</div>
 {% endblock body %}
