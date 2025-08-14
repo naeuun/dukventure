@@ -434,3 +434,25 @@ body {
   top:55px;
   width:8px;
 }
+
+
+
+
+
+.keyword-option {
+  padding: 8px 14px;
+  border: 1px solid #C1FF52;
+  border-radius: 50px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+/* 체크박스 선택 시 스타일 */
+.keyword-option input[type="checkbox"]:checked + span,
+.keyword-option:has(input[type="checkbox"]:checked) {
+  background-color: #C1FF52;
+  color: black;
+}
