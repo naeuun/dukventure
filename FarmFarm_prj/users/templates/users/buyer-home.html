@@ -1,39 +1,17 @@
-{% extends "base.html" %}
-{% block content %}
-<style>
-    body { background-color: #1a1a1a; color: #fff; font-family: sans-serif; }
-    .home-container { max-width: 600px; margin: auto; padding: 20px; }
-    .section-header { text-align: left; margin-top: 2rem; margin-bottom: 1rem; }
-    .section-header h2 {
-        display: inline-block; background-color: #eefee3; color: #000;
-        padding: 10px 20px; border-radius: 20px; font-size: 1.2rem; font-weight: bold;
-    }
-    .reservation-list, .review-list { background: #000; border-radius: 20px; padding: 1rem; }
-    .res-card {
-        background: #2a2a2a; border: 1px solid #3a3a3a;
-        border-radius: 15px; padding: 1rem; margin-bottom: 1rem;
-    }
-    .res-card-image { text-align: center; margin-bottom: 1rem; }
-    .res-card-image img { max-width: 100%; border-radius: 10px; }
-    .res-card-info p { margin: 0.3rem 0; font-size: 0.9rem; color: #ccc; }
-    .res-card-info strong { color: #fff; }
-    .res-card-actions { display: flex; gap: 10px; margin-top: 1rem; }
-    .btn {
-        border: none; border-radius: 20px; padding: 10px 20px;
-        font-weight: bold; cursor: pointer; flex-grow: 1; text-align: center;
-    }
-    .btn-dark { background-color: #111; color: #fff; }
-    .btn-light { background-color: #eefee3; color: #000; }
-    .review-stars { color: #FFD700; }
-    /* Modal Styles */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); }
-    .modal-content { background-color: #2a2a2a; margin: 15% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; }
-</style>
+{% extends "users/base_home.html" %}
+{% block role_content %}
+<hr>
+<h3>마이 캐릭터 🧸</h3>
+
+<h3>리워드 현황 🧩</h3>
+
+
+<h3>구매 내역 🎇</h3>
 
 <div class="home-container">
     <!-- 예약 현황 섹션 -->
     <div class="section-header">
-        <h2>예약 현황 👛</h2>
+        <h3>예약 현황 👛</h3>
     </div>
     <div class="reservation-list">
         <h3>- 진행 중인 예약</h3>
@@ -74,7 +52,7 @@
         
         <hr style="border-color: #333; margin: 2rem 0;">
 
-        <h3>- 지난 예약</h3>
+        <h4>- 지난 예약</h4>
         <div id="past-reservations-list">
             {% for r in past_reservations %}
                  <div class="res-card" style="opacity: 0.6;">
@@ -95,11 +73,9 @@
         </div>
     </div>
     
-    <!-- ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ -->
-    <!-- 내가 쓴 리뷰 섹션 (추가됨) -->
-    <!-- ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ -->
+
     <div class="section-header">
-        <h2>내가 쓴 리뷰 🎀</h2>
+        <h3>내가 쓴 리뷰 🎀</h3>
     </div>
     <div class="review-list">
         {% for review in reviews %}
@@ -253,3 +229,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+

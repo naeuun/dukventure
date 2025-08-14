@@ -1,75 +1,114 @@
 {% extends "base.html" %}
+
 {% block content %}
+<h2>가게 지도</h2>
+<div id="map" style="width:100%;height:500px;"></div>
+
+{{ stores|json_script:"store-data" }}
+
 <style>
-    /* 지도와 UI 요소들의 스타일 */
     #map { height: 100vh; }
     .bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: #000; color: #fff; border-radius: 20px 20px 0 0; transition: bottom 0.3s ease-in-out; padding: 20px; max-height: 80vh; overflow-y: auto; }
     .bottom-sheet.active { bottom: 0; }
     .item-card { background: #eefee3; color: #000; padding: 1rem; border-radius: 15px; margin-bottom: 1rem; }
 </style>
 
-<div id="map"></div>
-
 <div id="storeSheet" class="bottom-sheet">
     <h3 id="storeName"></h3>
     <div id="itemList"></div>
 </div>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // ... 지도 생성 및 마커 표시 로직 ...
-    // 마커 클릭 시 fetchStoreItems(store.id, store.name) 호출
+var mapContainer = document.getElementById('map');
+var mapOption = {
+    center: new kakao.maps.LatLng(37.6509, 127.0164),
+    level: 5
+};
+var map = new kakao.maps.Map(mapContainer, mapOption);
 
-    const storeSheet = document.getElementById('storeSheet');
-    const itemListEl = document.getElementById('itemList');
+var stores = JSON.parse(document.getElementById('store-data').textContent);
 
-    async function fetchStoreItems(storeId, storeName) {
-        const response = await fetch(`/reservations/api/store/${storeId}/items/`);
-        const data = await response.json();
-        
-        document.getElementById('storeName').textContent = storeName;
-        itemListEl.innerHTML = ''; 
-
-        data.items.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'item-card';
-            card.innerHTML = `
-                <h4>${item.name}</h4>
-                <p>${item.price}원 / ${item.unit}</p>
-                <div class="reservation-ui" style="display:none;">
-                    <label>수량: <input type="number" class="quantity" value="1" min="1"></label>
-                    <label>픽업 시간: <input type="time" class="pickup-time"></label>
-                    <button class="reserve-btn" data-item-id="${item.id}">예약 확정</button>
-                </div>
-                <button class="show-reserve-ui-btn">예약하기</button>
-            `;
-            itemListEl.appendChild(card);
-        });
-        storeSheet.classList.add('active');
-    }
-
-    itemListEl.addEventListener('click', function(e) {
-        if (e.target.classList.contains('show-reserve-ui-btn')) {
-            // ... 예약 UI 표시 로직 ...
-        }
-        if (e.target.classList.contains('reserve-btn')) {
-            const reservationData = { /* ... 데이터 수집 ... */ };
-            createReservation(reservationData);
+stores.forEach(function(store) {
+    var geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(store.address, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+            var infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="padding:5px; min-width:120px;"><b>' + store.name + '</b><br>판매자: ' + store.seller + '<br>' + store.address + '</div>'
+            });
+            kakao.maps.event.addListener(marker, 'click', function() {
+                infowindow.open(map, marker);
+                fetchStoreItems(store.id, store.name);
+            });
         }
     });
+});
 
-    async function createReservation(data) {
-        const response = await fetch('/reservations/api/create/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-            body: JSON.stringify(data),
-        });
-        // ... 결과 처리 로직 ...
+// 아래는 품목 및 예약 UI 관련 JS
+const storeSheet = document.getElementById('storeSheet');
+const itemListEl = document.getElementById('itemList');
+
+async function fetchStoreItems(storeId, storeName) {
+    const response = await fetch(`/reservations/api/store/${storeId}/items/`);
+    const data = await response.json();
+    
+    document.getElementById('storeName').textContent = storeName;
+    itemListEl.innerHTML = ''; 
+
+    data.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+            <h4>${item.name}</h4>
+            <p>${item.price}원 / ${item.unit}</p>
+            <div class="reservation-ui" style="display:none;">
+                <label>수량: <input type="number" class="quantity" value="1" min="1"></label>
+                <label>픽업 시간: <input type="time" class="pickup-time"></label>
+                <button class="reserve-btn" data-item-id="${item.id}">예약 확정</button>
+            </div>
+            <button class="show-reserve-ui-btn">예약하기</button>
+        `;
+        itemListEl.appendChild(card);
+    });
+    storeSheet.classList.add('active');
+}
+
+itemListEl.addEventListener('click', function(e) {
+    if (e.target.classList.contains('show-reserve-ui-btn')) {
+        const card = e.target.closest('.item-card');
+        const ui = card.querySelector('.reservation-ui');
+        ui.style.display = 'block';
+        e.target.style.display = 'none';
+    }
+    if (e.target.classList.contains('reserve-btn')) {
+        const card = e.target.closest('.item-card');
+        const quantity = card.querySelector('.quantity').value;
+        const pickupTime = card.querySelector('.pickup-time').value;
+        const itemId = e.target.dataset.itemId;
+        const reservationData = {
+            item_id: itemId,
+            quantity: quantity,
+            pickup_time: pickupTime
+        };
+        createReservation(reservationData);
     }
 });
+
+async function createReservation(data) {
+    const response = await fetch('/reservations/api/create/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify(data),
+    });
+    // ... 결과 처리 로직 ...
+}
 </script>
 {% endblock %}
