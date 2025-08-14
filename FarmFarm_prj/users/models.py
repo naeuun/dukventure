@@ -11,7 +11,8 @@ class UserType(models.TextChoices):
 class User(AbstractUser):
     username = models.CharField(max_length=10, unique=True)
     usertype = models.CharField(max_length=10, choices=UserType.choices)
-    
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+
     def __str__(self):
         return f'{self.usertype} - {self.username}'
     

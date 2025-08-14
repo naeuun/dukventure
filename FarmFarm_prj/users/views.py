@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import requests
 import json
+from users.forms import ProfileEditForm
 
 @never_cache
 def onboarding(request):
@@ -40,7 +41,13 @@ def login(request):
     form = AuthenticationForm(request, request.POST)
     if form.is_valid():
         auth_login(request, form.user_cache)
-        return redirect('users:onboarding')
+        usertype = form.user_cache.usertype
+        if usertype == 'SELLER':
+            return redirect('users:seller_home')
+        elif usertype == 'BUYER':
+            return redirect('users:buyer_home')
+        else:
+            return redirect('users:onboarding')
     return render(request, 'users/login.html', {'form': form})
 
 def logout(request):
@@ -175,5 +182,26 @@ def buyer_home(request):
 @login_required
 def seller_home(request):
     return render(request, 'users/seller-home.html')
+
+@login_required
+def profile_edit(request):
+    user = request.user
+    if request.method == 'POST':
+        edit_type = request.POST.get('edit_type')
+        form = ProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            # 사진만 수정
+            if edit_type == 'image':
+                user.profile_image = form.cleaned_data['profile_image']
+                user.save()
+            # 이름만 수정
+            elif edit_type == 'name':
+                user.username = form.cleaned_data['username']
+                user.save()
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    else:
+        form = ProfileEditForm(instance=user)
+        return render(request, 'users/profile_edit_form.html', {'form': form})
 
 
