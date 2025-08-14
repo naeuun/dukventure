@@ -40,6 +40,6 @@
     margin-bottom:10px;
 }
 .form_row li::before {
-  content: counter(item) ".";
-  user-select: none;
+    content: counter(item) ".";
+    user-select: none;
 }
