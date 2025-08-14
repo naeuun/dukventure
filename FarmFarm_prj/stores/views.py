@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-# Create your views here.
-
 def map(request):
     return render(request, 'stores/map.html')
+
+def register(request):
+    return render(request, 'stores/register.html')

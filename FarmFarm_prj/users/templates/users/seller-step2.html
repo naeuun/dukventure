@@ -13,6 +13,9 @@
 <div id="result-message" style="margin-top: 10px; font-weight: bold;"></div>
 <div id="welcome-message" style="display:none; margin-top:20px;">
     <h3>{{ request.user.username }}님 반가워요! 회원가입이 완료되었습니다.</h3>
+    <p>이제 우리 동네 손님들과 연결될 준비가 끝났어요.<br>
+    AI가 손님에게 가게 소식을 잘 전달해드릴게요!</p>
+    <h3>가게등록을 하러 가볼까요?</h3>
     <a href="{% url 'users:seller_home' %}" class="btn btn-primary">홈으로</a>
 </div>
 

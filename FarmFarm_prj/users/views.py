@@ -1,11 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.conf import settings
-from users.models import User 
-from users.forms import SignUpForm #개발용
-from django.contrib.auth.forms import AuthenticationForm #개발용
-from django.contrib.auth import login as auth_login  # 개발용 
-from django.contrib.auth import logout as auth_logout # 개발용
+from users.forms import SignUpForm
+from django.contrib.auth.forms import AuthenticationForm 
+from django.contrib.auth import login as auth_login 
+from django.contrib.auth import logout as auth_logout 
 from django.views.decorators.cache import never_cache # 뒤로가기 후 로그인했을 때 캐시 문제 해결
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -99,7 +98,7 @@ def check_business_number(business_number):
     if business_number in TEST_VALID_BUSINESS_NUMBERS:
         return True
 
-    # 국세청 사업자등록 상태조회 API
+    # 공공 데이터 포털 - 국세청 사업자 등록 (상태 조회)
     service_key = "0YKRXsmW1KINyKdg6Xk%2BAKRSZ3j26xCEka8xG5lGtDjCOEuwUeppamSFWgL6xf6Ov8Y8%2B51zdDG83Tjpdv5lUQ%3D%3D"
     url = f"https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=0YKRXsmW1KINyKdg6Xk%2BAKRSZ3j26xCEka8xG5lGtDjCOEuwUeppamSFWgL6xf6Ov8Y8%2B51zdDG83Tjpdv5lUQ%3D%3D"
 
@@ -129,27 +128,18 @@ def check_business_number(business_number):
 
 @login_required
 def seller_step2(request):
-    if request.method == 'POST':
-        business_number = request.POST.get('business_number')
-        is_valid = check_business_number(business_number)
-
-        seller = request.user.seller
-        seller.business_number = business_number
-        seller.is_registered = is_valid
-        seller.save()
-
-        if is_valid:
-            return redirect('users:seller_step4')  # 인증 성공 시 다음 단계
-        else:
-            return render(request, 'users/seller-step2.html', {'error': '유효하지 않은 사업자등록번호입니다.'})
-
     return render(request, 'users/seller-step2.html')
 
 
+@login_required
 def seller_business_verify(request):
     if request.method == 'POST':
         business_number = request.POST.get('business_number')
         is_valid = check_business_number(business_number)
+        seller = request.user.seller
+        seller.business_number = business_number
+        seller.is_registered = is_valid
+        seller.save()
         return JsonResponse({'is_valid': is_valid})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
