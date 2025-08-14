@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
 BUYER_PASSWORD = os.getenv('BUYER_PASSWORD')
 SELLER_PASSWORD = os.getenv('SELLER_PASSWORD')
 
@@ -38,6 +40,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'users.User'
+
 
 # Application definition
 
@@ -55,6 +59,7 @@ INSTALLED_APPS = [
     'shopping',
     'reviews',
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .wrap { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .card-content { display: flex; justify-content: space-between; align-items: center; }
+    .action-buttons { display: flex; gap: 8px; }
+    .btn { border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: bold; }
+    .btn-accept { background-color: #28a745; color: white; }
+    .btn-reject { background-color: #dc3545; color: white; }
+    /* Modal Styles */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: #fff; margin: 15% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; }
+</style>
+
+<div class="wrap">
+    <h2>예약 관리</h2>
+    <!-- ... 필터링 UI ... -->
+
+    {% for r in page_obj %}
+        <div class="card" id="res-card-seller-{{ r.pk }}">
+            <div class="card-content">
+                <div>
+                    <span class="status">{{ r.get_status_display }}</span>
+                    <p><strong>예약코드:</strong> {{ r.reservation_code }}</p>
+                    <p>구매자: {{ r.buyer.user.username }} | 요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+                </div>
+                <div class="action-buttons">
+                    {% if r.status == 'PENDING' %}
+                        <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
+                        <button type="button" class="btn btn-reject" onclick="openRejectModal({{ r.pk }})">거절</button>
+                    {% elif r.status == 'ACCEPTED' %}
+                        <span>수락 완료</span>
+                    {% elif r.status == 'PICKED_UP' %}
+                        <span style="color: green; font-weight: bold;">픽업 완료</span>
+                    {% elif r.status == 'REJECTED' %}
+                        <span style="color: red;">거절됨</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>예약이 없습니다.</p>
+    {% endfor %}
+    <!-- ... 페이지네이션 ... -->
+</div>
+
+<!-- 거절 사유 선택 모달 -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <h3>예약 거절 사유</h3>
+        <form id="rejectForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="to_status" value="REJECTED">
+            {{ reject_form.as_p }}
+            <button type="submit">거절 확정</button>
+            <button type="button" onclick="closeRejectModal()">취소</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const csrftoken = '{{ csrf_token }}';
+
+// 거절 모달 제어
+const rejectModal = document.getElementById('rejectModal');
+const rejectForm = document.getElementById('rejectForm');
+function openRejectModal(reservationId) {
+    rejectForm.action = `/reservations/${reservationId}/change-status/`;
+    rejectModal.style.display = 'block';
+}
+function closeRejectModal() {
+    rejectModal.style.display = 'none';
+}
+
+// '수락' 버튼 AJAX 처리
+document.querySelectorAll('.accept-btn').forEach(button => {
+    button.addEventListener('click', async function() {
+        const reservationId = this.dataset.pk;
+        const url = `/reservations/${reservationId}/change-status/`;
+        const formData = new FormData();
+        formData.append('to_status', 'ACCEPTED');
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+            if (response.ok) {
+                const card = document.getElementById(`res-card-seller-${reservationId}`);
+                card.querySelector('.status').textContent = result.new_status;
+                card.querySelector('.action-buttons').innerHTML = '<span>수락 완료</span>';
+            } else {
+                alert('오류: ' + result.message);
+            }
+        } catch (error) {
+            alert('요청 중 오류가 발생했습니다.');
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,3 +1,85 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.http import JsonResponse
+from .models import Review
+from .forms import ReviewForm
+from reservations.models import Reservation, ReservationStatus
+from users.models import UserType, Seller
+from stores.models import Store
+@login_required
+def review_create(request, reservation_id):
+    reservation = get_object_or_404(Reservation, pk=reservation_id)
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
-# Create your views here.
+    # --- 권한 검증 ---
+    if reservation.buyer.user != request.user:
+        raise PermissionDenied("리뷰를 작성할 권한이 없습니다.")
+    if reservation.status != ReservationStatus.PICKED_UP:
+        message = "픽업이 완료된 예약에만 리뷰를 작성할 수 있습니다."
+        if is_ajax: return JsonResponse({'status': 'error', 'message': message}, status=403)
+        messages.error(request, message)
+        return redirect('users:buyer_home')
+    if hasattr(reservation, 'review'):
+        message = "이미 리뷰를 작성한 예약입니다."
+        if is_ajax: return JsonResponse({'status': 'error', 'message': message}, status=403)
+        messages.error(request, message)
+        return redirect('users:buyer_home')
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, request.FILES)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.reservation = reservation
+            review.author = request.user.buyer
+            review.store = reservation.store
+            review.save()
+            
+            if is_ajax:
+                return JsonResponse({'status': 'success', 'message': '소중한 리뷰가 등록되었습니다.'})
+            
+            messages.success(request, "소중한 리뷰가 등록되었습니다.")
+            return redirect('users:buyer_home')
+        else:
+            message = "입력 내용을 확인해주세요."
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': message, 'errors': form.errors}, status=400)
+            messages.error(request, message)
+            return redirect('users:buyer-home')
+
+    # GET 요청은 홈으로 리다이렉트 (모달 방식이므로 직접 접근할 이유 없음)
+    return redirect('users:buyer-home')
+
+@login_required
+def my_review_list(request):
+    """구매자가 본인이 작성한 리뷰 목록을 보는 페이지"""
+    if request.user.usertype != UserType.BUYER:
+        raise PermissionDenied("구매자만 접근할 수 있습니다.")
+    
+    reviews = Review.objects.filter(author=request.user.buyer).select_related('store', 'author__user')
+    return render(request, 'reviews/my_review_list.html', {'reviews': reviews})
+
+@login_required
+def store_review_list(request):
+    """판매자가 자신의 가게에 달린 리뷰 목록을 보는 페이지 (개선된 버전)"""
+    if request.user.usertype != UserType.SELLER:
+        raise PermissionDenied("판매자만 접근할 수 있습니다.")
+
+    # 현재 로그인한 판매자 객체를 가져옵니다.
+    seller = getattr(request.user, 'seller', None)
+    if not seller:
+        raise PermissionDenied("판매자 프로필이 존재하지 않습니다.")
+
+    # 판매자가 소유한 모든 가게를 가져옵니다.
+    # (Store 모델에 seller라는 이름의 ForeignKey가 있다고 가정)
+    stores_owned_by_seller = Store.objects.filter(seller=seller)
+
+    if not stores_owned_by_seller.exists():
+        messages.info(request, "등록된 가게가 없습니다.")
+        return render(request, 'reviews/store_review_list.html', {'reviews': []})
+
+    # 판매자의 모든 가게에 달린 리뷰들을 한 번에 가져옵니다.
+    reviews = Review.objects.filter(store__in=stores_owned_by_seller).select_related('author__user')
+    
+    return render(request, 'reviews/store_review_list.html', {'reviews': reviews})

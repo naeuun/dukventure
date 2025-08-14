@@ -1,11 +1,25 @@
-from django.shortcuts import render, redirect
-from django.forms import modelformset_factory
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Store, StoreItem
+from items.models import Item
 from .forms import StoreForm, StoreItemForm
 from django.contrib.auth.decorators import login_required
-from items.models import Item
-from .models import StoreItem, Store
 from django.http import JsonResponse
 
+
+def map_view(request):
+    # 나중에 지도에 표시할 가게 데이터를 여기서 전달할 수 있습니다.
+    # stores = Store.objects.all()
+    # context = {'stores': stores}
+    return render(request, 'stores/map.html') # 올바른 템플릿 경로
+
+def store_list_view(request): ##임시
+    stores = Store.objects.all()
+    return render(request, 'stores/store_list.html', {'stores': stores})
+
+def store_detail_view(request, store_id): ##임시
+    store = get_object_or_404(Store, pk=store_id)
+    items = Item.objects.filter(stores=store) # 'stores' 필드 사용
+    return render(request, 'stores/store_detail.html', {'store': store, 'items': items})
 def map(request):
     stores_qs = Store.objects.all()
     stores = []
@@ -76,7 +90,7 @@ def edit_store(request, store_id):
         form = StoreForm(request.POST, request.FILES, instance=store)
         if form.is_valid():
             form.save()
-            # 품목 반복적으로 저장 (새 품목 추가)
+            # 품목 반복적으로 저장 (수정/추가)
             idx = 0
             while True:
                 item_id = request.POST.get(f'item_id_{idx}')
@@ -86,7 +100,6 @@ def edit_store(request, store_id):
                 photo = request.FILES.get(f'item_photo_{idx}')
                 if not name and not price and not desc and not photo:
                     break
-                from items.models import Item
                 item_obj, _ = Item.objects.get_or_create(name=name)
                 if item_id:
                     # 기존 품목 수정
@@ -125,7 +138,6 @@ def edit_item(request, item_id):
         price = request.POST.get('item_price')
         desc = request.POST.get('item_desc')
         photo = request.FILES.get('item_photo')
-        from items.models import Item
         item_obj, _ = Item.objects.get_or_create(name=name)
         store_item.item = item_obj
         store_item.price = price

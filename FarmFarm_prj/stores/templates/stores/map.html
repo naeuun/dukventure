@@ -6,6 +6,18 @@
 
 {{ stores|json_script:"store-data" }}
 
+<style>
+    #map { height: 100vh; }
+    .bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: #000; color: #fff; border-radius: 20px 20px 0 0; transition: bottom 0.3s ease-in-out; padding: 20px; max-height: 80vh; overflow-y: auto; }
+    .bottom-sheet.active { bottom: 0; }
+    .item-card { background: #eefee3; color: #000; padding: 1rem; border-radius: 15px; margin-bottom: 1rem; }
+</style>
+
+<div id="storeSheet" class="bottom-sheet">
+    <h3 id="storeName"></h3>
+    <div id="itemList"></div>
+</div>
+
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 <script>
 var mapContainer = document.getElementById('map');
@@ -31,12 +43,72 @@ stores.forEach(function(store) {
             });
             kakao.maps.event.addListener(marker, 'click', function() {
                 infowindow.open(map, marker);
+                fetchStoreItems(store.id, store.name);
             });
         }
     });
 });
-</script>
-<script>
-console.log("stores 데이터:", document.getElementById('store-data').textContent);
+
+// 아래는 품목 및 예약 UI 관련 JS
+const storeSheet = document.getElementById('storeSheet');
+const itemListEl = document.getElementById('itemList');
+
+async function fetchStoreItems(storeId, storeName) {
+    const response = await fetch(`/reservations/api/store/${storeId}/items/`);
+    const data = await response.json();
+    
+    document.getElementById('storeName').textContent = storeName;
+    itemListEl.innerHTML = ''; 
+
+    data.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+            <h4>${item.name}</h4>
+            <p>${item.price}원 / ${item.unit}</p>
+            <div class="reservation-ui" style="display:none;">
+                <label>수량: <input type="number" class="quantity" value="1" min="1"></label>
+                <label>픽업 시간: <input type="time" class="pickup-time"></label>
+                <button class="reserve-btn" data-item-id="${item.id}">예약 확정</button>
+            </div>
+            <button class="show-reserve-ui-btn">예약하기</button>
+        `;
+        itemListEl.appendChild(card);
+    });
+    storeSheet.classList.add('active');
+}
+
+itemListEl.addEventListener('click', function(e) {
+    if (e.target.classList.contains('show-reserve-ui-btn')) {
+        const card = e.target.closest('.item-card');
+        const ui = card.querySelector('.reservation-ui');
+        ui.style.display = 'block';
+        e.target.style.display = 'none';
+    }
+    if (e.target.classList.contains('reserve-btn')) {
+        const card = e.target.closest('.item-card');
+        const quantity = card.querySelector('.quantity').value;
+        const pickupTime = card.querySelector('.pickup-time').value;
+        const itemId = e.target.dataset.itemId;
+        const reservationData = {
+            item_id: itemId,
+            quantity: quantity,
+            pickup_time: pickupTime
+        };
+        createReservation(reservationData);
+    }
+});
+
+async function createReservation(data) {
+    const response = await fetch('/reservations/api/create/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify(data),
+    });
+    // ... 결과 처리 로직 ...
+}
 </script>
 {% endblock %}

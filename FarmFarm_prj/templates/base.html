@@ -6,6 +6,16 @@
     <title>Document</title>
 </head>
 <body>
+    {% if messages %}
+        <ul class="messages" style="list-style: none; padding: 10px; margin: 10px; background-color: #f0f0f0; border: 1px solid #ccc;">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% block content %}
     {% endblock %}
 
@@ -18,11 +28,11 @@
                 <a href="#">AI</a>
             {% elif user.usertype == 'SELLER' %}
                 <a href="{% url 'users:seller_home' %}">홈</a>
-                <a href="#">예약관리</a>
+                <a href="{% url 'reservations:seller_list' %}">예약관리</a>
             {% endif %}
-
             <hr>
-            <a href="{% url 'users:onboarding' %}">초기 온보딩 화면</a> 
+            <a href="{% url 'users:onboarding' %}">초기 온보딩 화면</a>
+            <!-- 개발용 로그인 상태 정보 표시 -->
             <small>
                 [ 로그인됨: {{ request.user.username }} ({{ request.user.usertype }}) ]
             </small>

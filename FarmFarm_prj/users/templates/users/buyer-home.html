@@ -5,9 +5,228 @@
 
 <h3>리워드 현황 🧩</h3>
 
-<h3>예약 현황 🎟️</h3>
-
-<h3>내가 쓴 리뷰 🎀</h3>
 
 <h3>구매 내역 🎇</h3>
+
+<div class="home-container">
+    <!-- 예약 현황 섹션 -->
+    <div class="section-header">
+        <h3>예약 현황 👛</h3>
+    </div>
+    <div class="reservation-list">
+        <h3>- 진행 중인 예약</h3>
+        <div id="active-reservations-list">
+            {% for r in active_reservations %}
+                <div class="res-card" id="res-card-{{ r.pk }}">
+                    {% with item=r.items.first %}
+                    <div class="res-card-image">
+                        <img src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
+                    </div>
+                    <div class="res-card-info">
+                        <p><strong>판매자:</strong> {{ r.store.name }}</p>
+                        <p><strong>위치:</strong> {{ r.store.address }}</p>
+                        <p><strong>가격:</strong> {{ item.unit_price }}원</p>
+                        <p><strong>개수:</strong> {{ item.quantity }}개</p>
+                        <p><strong>상태:</strong> <span class="status-text">{{ r.get_status_display }}</span></p>
+                    </div>
+                    {% endwith %}
+                    <div class="res-card-actions">
+                        {% if r.status == 'PENDING' %}
+                            <span class="btn btn-dark">수락 대기중</span>
+                        {% else %}
+                            <span class="btn btn-dark time-info">
+                            {% if r.remaining_minutes > 0 %}
+                                {{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능
+                            {% else %}
+                                픽업 시간입니다
+                            {% endif %}
+                            </span>
+                            <button type="button" class="btn btn-light pickup-before-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">픽업 전</button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p id="no-active-reservations" style="text-align:center; color: #aaa;">진행 중인 예약이 없습니다.</p>
+            {% endfor %}
+        </div>
+        
+        <hr style="border-color: #333; margin: 2rem 0;">
+
+        <h4>- 지난 예약</h4>
+        <div id="past-reservations-list">
+            {% for r in past_reservations %}
+                 <div class="res-card" style="opacity: 0.6;">
+                    <div class="res-card-info">
+                        <p><strong>판매자:</strong> {{ r.store.name }}</p>
+                        <p><strong>예약일:</strong> {{ r.created_at|date:"Y.m.d" }}</p>
+                        <p><strong>상태:</strong> <span class="status-text">{{ r.get_status_display }}</span></p>
+                    </div>
+                    <div class="res-card-actions">
+                        {% if r.status == 'PICKED_UP' and not r.review %}
+                            <button type="button" class="btn btn-light write-review-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">리뷰쓰기</button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                 <p id="no-past-reservations" style="text-align:center; color: #aaa;">지난 예약 내역이 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+
+    <div class="section-header">
+        <h3>내가 쓴 리뷰 🎀</h3>
+    </div>
+    <div class="review-list">
+        {% for review in reviews %}
+            <div class="res-card">
+                <div class="res-card-info">
+                     <p><strong>{{ review.store.name }}</strong></p>
+                     <p><span class="review-stars">{% for i in "12345" %}{% if i|add:0 <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span></p>
+                     <p>{{ review.content|truncatewords:20 }}</p>
+                     <p style="font-size: 0.8em; color: #aaa; text-align: right;">{{ review.created_at|date:"Y.m.d" }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p style="text-align:center; color: #aaa;">작성한 리뷰가 없습니다.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 리뷰 작성 모달 -->
+<div id="reviewModal" class="modal">
+    <div class="modal-content">
+        <h3 id="reviewModalTitle">리뷰 작성</h3>
+        <form id="reviewForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit">등록</button>
+            <button type="button" onclick="closeReviewModal()">닫기</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const csrftoken = '{{ csrf_token }}';
+
+    document.body.addEventListener('click', function(event) {
+        const target = event.target;
+        const card = target.closest('.res-card');
+        if (!card) return;
+
+        const reservationId = card.id.replace('res-card-', '');
+        const actionDiv = card.querySelector('.res-card-actions');
+        const storeName = target.dataset.storeName;
+
+        // '픽업 전' 버튼 클릭
+        if (target.classList.contains('pickup-before-btn')) {
+            actionDiv.innerHTML = `
+                <button type="button" class="btn btn-light pickup-complete-btn" data-pk="${reservationId}" data-store-name="${storeName}">픽업 완료</button>
+            `;
+        }
+
+        // '픽업 완료' 버튼 클릭
+        if (target.classList.contains('pickup-complete-btn')) {
+            handlePickupComplete(reservationId, storeName);
+        }
+
+        // '리뷰쓰기' 버튼 클릭
+        if (target.classList.contains('write-review-btn')) {
+            openReviewModal(reservationId, storeName);
+        }
+    });
+
+    // '픽업 완료' 서버 요청 처리
+    async function handlePickupComplete(reservationId, storeName) {
+        const url = `/reservations/${reservationId}/change-status/`;
+        const formData = new FormData();
+        formData.append('to_status', 'PICKED_UP');
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                const card = document.getElementById(`res-card-${reservationId}`);
+                card.remove(); // '진행 중' 목록에서 카드 제거
+
+                // '지난 예약' 목록에 새 카드 추가
+                const pastList = document.getElementById('past-reservations-list');
+                const newCardHTML = `
+                    <div class="res-card" style="opacity: 0.6;" id="res-card-${reservationId}">
+                        <div class="res-card-info">
+                            <p><strong>판매자:</strong> ${storeName}</p>
+                            <p><strong>상태:</strong> <span class="status-text">${result.new_status}</span></p>
+                        </div>
+                        <div class="res-card-actions">
+                            <button type="button" class="btn btn-light write-review-btn" data-pk="${reservationId}" data-store-name="${storeName}">리뷰쓰기</button>
+                        </div>
+                    </div>`;
+                pastList.insertAdjacentHTML('afterbegin', newCardHTML);
+                
+                // 목록 비었을 때 메시지 처리
+                if (document.getElementById('active-reservations-list').querySelectorAll('.res-card').length === 0) {
+                    const noActiveMsg = document.getElementById('no-active-reservations');
+                    if(noActiveMsg) noActiveMsg.style.display = 'block';
+                }
+                const noPastMsg = document.getElementById('no-past-reservations');
+                if (noPastMsg) noPastMsg.style.display = 'none';
+            } else {
+                alert('오류: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('상태 변경 중 오류가 발생했습니다.');
+        }
+    }
+
+    // 리뷰 폼 AJAX 제출 처리
+    const reviewForm = document.getElementById('reviewForm');
+    reviewForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const url = this.action;
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                closeReviewModal();
+                const reservationId = url.split('/').slice(-2)[0];
+                const reviewButton = document.querySelector(`.write-review-btn[data-pk="${reservationId}"]`);
+                if (reviewButton) reviewButton.remove();
+            } else {
+                alert('오류: ' + (result.message || '리뷰 등록 실패'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('리뷰 등록 중 오류가 발생했습니다.');
+        }
+    });
+
+    // 모달 제어 함수
+    const reviewModal = document.getElementById('reviewModal');
+    const reviewModalTitle = document.getElementById('reviewModalTitle');
+    function openReviewModal(reservationId, storeName) {
+        reviewModalTitle.textContent = `${storeName} 리뷰 작성`;
+        reviewForm.action = `/reviews/create/${reservationId}/`;
+        reviewModal.style.display = 'block';
+    }
+    function closeReviewModal() {
+        reviewModal.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}
+

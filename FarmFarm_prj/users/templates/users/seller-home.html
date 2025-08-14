@@ -46,6 +46,8 @@
     <button type="button"><a href="{% url 'stores:register' %}">가게 등록하기</a></button>
 {% endif %}
 
+<a href="{% url 'reviews:store_list' %}">받은 리뷰 보기</a>
+
 <!-- 품목 수정 모달 -->
 <div id="editItemModal" style="display:none; position:fixed; top:20%; left:35%; width:30%; background:#fff; z-index:3000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:20px;">
     <form id="editItemForm" method="post" enctype="multipart/form-data">

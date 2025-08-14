@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ store.name }}</h2>
+<p>{{ store.description }}</p>
+<hr>
+<h3>판매 상품</h3>
+{% for item in items %}
+    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+        <h4>{{ item.name }}</h4>
+        <p>{{ item.price }}원 / {{ item.unit }}</p>
+        
+        <form action="{% url 'reservations:create_from_form' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="store_id" value="{{ store.id }}">
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <label>수량: <input type="number" name="quantity" value="1" min="1" style="width: 50px;"></label>
+            <label>픽업 시간: <input type="time" name="pickup_time" required></label>
+            <button type="submit">이 상품으로 예약하기</button>
+        </form>
+    </div>
+{% empty %}
+    <p>판매 중인 상품이 없습니다.</p>
+{% endfor %}
+<a href="{% url 'stores:list' %}">다른 가게 보기</a>
+{% endblock %}
