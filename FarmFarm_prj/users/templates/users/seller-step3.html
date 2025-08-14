@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>사업자 등록하지 않으면 서비스 사용 불가!</h2>
+    <h2>사업자 등록하지 않으면 서비스 사용 불가합니다.</h2>
+    
+    <a href="https://hometax.go.kr/">등록 하러 가기</a>
+
+    <p>사업자 등록 혜택</p>
+
+    <a href="{% url 'users:seller_step1' %}">이전으로</a>
 {% endblock %}
     

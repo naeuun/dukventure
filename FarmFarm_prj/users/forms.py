@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from .models import User
 
 class SignUpForm(UserCreationForm):
     class Meta:
@@ -13,3 +14,8 @@ class SignUpForm(UserCreationForm):
         self.fields['usertype'].label = "사용자 유형"
         self.fields['password1'].label = "비밀번호"
         self.fields['password2'].label = "비밀번호 확인"
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'profile_image']

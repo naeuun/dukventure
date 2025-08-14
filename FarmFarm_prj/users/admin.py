@@ -3,5 +3,4 @@ from .models import User, Seller, Store, Buyer
 
 admin.site.register(User)
 admin.site.register(Seller)
-admin.site.register(Store)
 admin.site.register(Buyer)
