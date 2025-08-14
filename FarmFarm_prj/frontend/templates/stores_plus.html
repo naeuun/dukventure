@@ -10,132 +10,123 @@
 {% endblock script %}
 
 {% block body %}
-  <div class="welcome_overlay"></div>
-  <div class="big_hugger">
-    <div class="container">
-      <img src="{% static 'img/map_deco.png' %}" alt="위 데코" class="deco" />
-      <img src="{% static 'img/left_back_neon.png' %}" alt="뒤로가기" class="before_page"  onclick="history.back()"/>
-      <!-- 이미지 업로드 -->
-      <div class="gapsection">
-        <label class="section-title">이미지</label>
-        <div class="file_upload">
-          <!-- 파일 업로드 input -->
-          <input type="file" id="field9" name="store_photo" accept="image/*" style="display: none;">
+<div class="welcome_overlay"></div>
 
-          <!-- 아이콘 -->
-          <label for="field9" class="upload_label">
-            <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon" />
-          </label>
+<div class="big_hugger">
+  <div class="container">
+    <img src="{% static 'img/map_deco.png' %}" alt="위 데코" class="deco" />
+    <img src="{% static 'img/left_back_neon.png' %}" alt="뒤로가기" class="before_page" onclick="history.back()" />
 
-          <!-- 말풍선 -->
-          <div class="text_box_text">
-            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox" />
-            <span class="texts">누르면 <span style="color:grey;">갤러리로 연결돼요!</span></span>
-          </div>
+    <!-- 이미지 업로드 -->
+    <div class="gapsection">
+      <label class="section-title">이미지</label>
+      <div class="file_upload">
+        <!-- 파일 업로드 input -->
+        <input type="file" id="field9" name="store_photo" accept="image/*" style="display: none;" />
 
-          <!-- 업로드된 파일 정보 -->
-          <div class="file_info_wrap" style="display: none;">
-            <span class="file_name"></span>
-            <button type="button" class="delete_file_btn">삭제</button>
-          </div>
+        <!-- 아이콘 -->
+        <label for="field9" class="upload_label">
+          <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon" />
+        </label>
+
+        <!-- 말풍선 -->
+        <div class="text_box_text">
+          <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox" />
+          <span class="texts">누르면 <span style="color:grey;">갤러리로 연결돼요!</span></span>
+        </div>
+
+        <!-- 업로드된 파일 정보 -->
+        <div class="file_info_wrap" style="display: none;">
+          <span class="file_name"></span>
+          <button type="button" class="delete_file_btn">삭제</button>
         </div>
       </div>
-
-
-
-      <!-- 음식 종류 -->
-      <div class="section">
-        <label class="section-title">음식종류</label>
-        <input type="text" class="text-input" placeholder="입력하시오..." />
-      </div>
-
-      <!-- 장소 -->
-      <div class="section">
-        <label class="section-title">장소</label>
-        <input type="text" class="text-input" placeholder="입력하시오..." />
-      </div>
-
-      <!-- 시간 -->
-      <div class="gapsection">
-        <label class="section-title">시간</label>
-        <input type="text" class="text-input" placeholder="입력하시오..." />
-      </div>
-
-      <!-- 키워드 -->
-      <div class="keyword_section">
-        <label class="section-title">#키워드</label>
-        <div class="keyword-list">
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="신선해요" hidden>
-            #신선해요
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="저렴해요" hidden>
-            #저렴해요
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="친절해요" hidden>
-            #친절해요
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="국내산" hidden>
-            #국내산
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="매일판매" hidden>
-            #매일판매
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="할인있어요" hidden>
-            #할인있어요
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="정직해요" hidden>
-            #정직해요
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="한정판매" hidden>
-            #한정판매
-          </label>
-          <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="수확직송" hidden>
-            #수확직송
-          </label>
-        </div>
-      </div>
-
-
-      
     </div>
-    <!-- 등록 버튼 -->
-      <div class="btn_hugger">
-        <div class="voice_recognization">
-          <div class="voice_texts">
-            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
-            <span class="texts">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
-          </div>
-          <button class="circle_btn">
-            <img src="{% static 'img/mic.png' %}" alt="음성인식버튼" class="voice_recognization_btn" />
-          </button>
-        </div>
-        <button type="submit" class="register_btn">등록하기</button>
+
+    <!-- 음식 종류 -->
+    <div class="section">
+      <label class="section-title">음식종류</label>
+      <input type="text" class="text-input" placeholder="입력하시오..." />
+    </div>
+
+    <!-- 장소 -->
+    <div class="section">
+      <label class="section-title">장소</label>
+      <input type="text" class="text-input" placeholder="입력하시오..." />
+    </div>
+
+    <!-- 시간 -->
+    <div class="gapsection">
+      <label class="section-title">시간</label>
+      <input type="text" class="text-input" placeholder="입력하시오..." />
+    </div>
+
+    <!-- 키워드 -->
+    <div class="keyword_section">
+      <label class="section-title">#키워드</label>
+      <div class="keyword-list">
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="신선해요" hidden>#신선해요
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="저렴해요" hidden>#저렴해요
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="친절해요" hidden>#친절해요
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="국내산" hidden>#국내산
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="매일판매" hidden>#매일판매
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="할인있어요" hidden>#할인있어요
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="정직해요" hidden>#정직해요
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="한정판매" hidden>#한정판매
+        </label>
+        <label class="keyword-option">
+          <input type="checkbox" name="keywords" value="수확직송" hidden>#수확직송
+        </label>
       </div>
+    </div>
   </div>
-  <!-- 음성 인식 모달 -->
-<div class="voice_modal hidden">
-    <div class="voice_modal_overlay"></div>
-    <div class="voice_modal_content">
-      <button class="voice_modal_close">✕</button>
-      <div class="text_box_area">
-        <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
-        <div class="ann_text">버튼을 누르고, 말하세요!</div>
+
+  <!-- 등록 버튼 -->
+  <div class="btn_hugger">
+    <div class="voice_recognization">
+      <div class="voice_texts">
+        <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
+        <span class="texts">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
       </div>
-      <div class="voice_recognizing_btn">
-        <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
-      </div>
+      <button class="circle_btn">
+        <img src="{% static 'img/mic.png' %}" alt="음성인식버튼" class="voice_recognization_btn" />
+      </button>
     </div>
+    <button type="submit" class="register_btn">등록하기</button>
+  </div>
 </div>
 
+<!-- 음성 인식 모달 -->
+<div class="voice_modal hidden">
+  <div class="voice_modal_overlay"></div>
+  <div class="voice_modal_content">
+    <button class="voice_modal_close">✕</button>
+    <div class="text_box_area">
+      <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+      <div class="ann_text">버튼을 누르고, 말하세요!</div>
+    </div>
+    <div class="voice_recognizing_btn">
+      <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
+    </div>
+  </div>
+</div>
+
+<!-- 환영 메시지 -->
 <div class="welcome_content">
   <p class="welcoming">
     <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli">
@@ -149,11 +140,8 @@
   </p>
   <p class="under_texts">
     <span class="sub_text">
-      <span>
-        우리 동네 손님들과의 만남이 곧 시작됩니다.
-      </span>
+      우리 동네 손님들과의 만남이 곧 시작됩니다.
     </span>
   </p>
 </div>
-
 {% endblock body %}
