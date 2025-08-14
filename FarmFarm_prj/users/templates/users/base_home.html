@@ -32,7 +32,6 @@
         <br>
         <span>{{ request.user.username }}</span>
         <a href="#" id="profileEditBtn">프로필 편집</a>
-        <hr>
         <div id="profileEditModal">
             <form id="profileEditForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -55,7 +54,6 @@
     {% block role_content %}
     {% endblock %}
 </main>
-{% include "users/partials/footer_navbar.html" %}
 
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

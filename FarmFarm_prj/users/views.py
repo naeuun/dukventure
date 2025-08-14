@@ -171,7 +171,10 @@ def buyer_home(request):
 
 @login_required
 def seller_home(request):
-    return render(request, 'users/seller-home.html')
+    seller = request.user.seller
+    store = getattr(seller, 'store', None)  # 없으면 None
+    return render(request, 'users/seller-home.html', {'store': store})
+
 
 @login_required
 def profile_edit(request):

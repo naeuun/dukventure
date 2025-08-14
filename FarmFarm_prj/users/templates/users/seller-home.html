@@ -1,8 +1,30 @@
 {% extends "users/base_home.html" %}
 {% block role_content %}
-
+<hr>
 <h3>가게 정보 🎇</h3>
-<p><b>음성녹음</b> 등록이 가능해요!</p>
-<button type="button"><a href="#">등록하기</a></button>
+{% if store %}
+    {% for store_item in store.store_items.all %}
+        <div style="border:1px solid #eee; padding:16px; margin-bottom:16px;">
+            {% if store_item.photo %}
+                <img src="{{ store_item.photo.url }}" alt="품목 사진" style="width:200px; height:auto; display:block; margin-bottom:10px;">
+            {% else %}
+                <img src="/static/img/default_item.png" alt="기본 품목 사진" style="width:200px; height:auto; display:block; margin-bottom:10px;">
+            {% endif %}
+            <p><b>판매자 :</b> {{ store.name }}({{ store.seller.user.username }})</p>
+            <p><b>품목명:</b> {{ store_item.item.name }}</p>
+            <p><b>위치:</b> {{ store.address }}</p>
+            <p><b>판매 시간:</b> {{ store.sale_hours }}</p>
+            <p><b>가격:</b> {{ store_item.price }}원</p>
+            <span>{{ store_item.description }}</span>
+        </div>
+    {% empty %}
+        <div>등록된 품목이 없습니다.</div>
+    {% endfor %}
+{% else %}
+    <p>아직 등록된 가게가 없습니다.</p>
+    <button type="button"><a href="{% url 'stores:register' %}">가게 등록하기</a></button>
+{% endif %}
+
+<h3>받은 리뷰 🎀</h3>
 
 {% endblock %}

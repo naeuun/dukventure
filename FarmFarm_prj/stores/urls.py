@@ -8,4 +8,5 @@ app_name = 'stores'
 urlpatterns = [
     path('', map, name='map'),
     path('register/', register, name='register'),
+    path('register-success/', register_success, name='register_success')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
