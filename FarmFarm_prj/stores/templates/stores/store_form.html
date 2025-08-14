@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>가게 등록</h2>
+<h2>{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</h2>
 <hr>
 <form method="post" enctype="multipart/form-data" id="storeForm">
     {% csrf_token %}
@@ -27,18 +27,33 @@
             <ul id="searchResult" style="list-style:none; padding:10px; margin:0; max-height:250px; overflow-y:auto;"></ul>
         </div>
         <br>
-        <input type="text" id="addressInput" name="address" placeholder="주소를 직접 입력하거나, 지도에서 선택하세요">
+        <input type="text" id="addressInput" name="address"
+               value="{{ form.address.value|default_if_none:'' }}"
+               placeholder="주소를 직접 입력하거나, 지도에서 선택하세요">
         <span style="font-size:0.9em;color:#888;">(주소 검색은 카카오 지도에서 가능합니다)</span>
     </div>
     <div id="itemList">
         <p>4. 판매 품목 및 가격/사진/설명</p>
-        <div>
-            <input type="text" name="item_name_0" placeholder="품목명">
-            <input type="number" name="item_price_0" placeholder="가격">           
-            <input type="text" name="item_desc_0" placeholder="설명">
-            <input type="file" name="item_photo_0" accept="image/*">
-            <button type="button" onclick="removeItem(this)">제거</button>
-        </div>
+        {% if store and store.store_items.all %}
+            {% for store_item in store.store_items.all %}
+                <div>
+                    <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
+                    <input type="text" name="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
+                    <input type="number" name="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
+                    <input type="text" name="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
+                    <input type="file" name="item_photo_{{ forloop.counter0 }}" accept="image/*">
+                    <button type="button" onclick="removeItem(this)">제거</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div>
+                <input type="text" name="item_name_0" placeholder="품목명">
+                <input type="number" name="item_price_0" placeholder="가격">
+                <input type="text" name="item_desc_0" placeholder="설명">
+                <input type="file" name="item_photo_0" accept="image/*">
+                <button type="button" onclick="removeItem(this)">제거</button>
+            </div>
+        {% endif %}
     </div>
     <button type="button" id="addItemBtn">추가</button>
 
@@ -67,8 +82,9 @@
         <textarea name="description" rows="2" cols="40" placeholder="간단한 메시지를 입력하세요">{{ form.description.value|default_if_none:'' }}</textarea>
     </div>
     <hr>
-    <button type="submit">등록하기</button>
+    <button type="submit">{% if mode == 'edit' %}수정 완료{% else %}등록하기{% endif %}</button>
 </form>
+<a href="{% url 'users:seller_home' %}">판매자 홈으로 돌아가기</a>
 
 <!-- 지도 모달 -->
 <div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
@@ -120,12 +136,17 @@ document.getElementById('searchBtn').onclick = function() {
                 li.style.padding = '8px 0';
                 // 장소 검색 결과 선택 시 한글 주소로 변환
                 li.onclick = function() {
-                    // 좌표로부터 한글 주소 얻기
                     geocoder.coord2Address(place.x, place.y, function(result, status) {
-                        if (status === kakao.maps.services.Status.OK) {
+                        if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
                             addressInput.value = result[0].address.address_name; // 한글 주소
                         } else {
-                            addressInput.value = place.address_name; // fallback
+                            // place.address_name이 한글인지 확인 후 입력
+                            if (/[\uac00-\ud7a3]/.test(place.address_name)) {
+                                addressInput.value = place.address_name; // 한글 주소만 입력
+                            } else {
+                                addressInput.value = ""; // 영어 주소는 입력하지 않음
+                                alert("주소 변환에 실패했습니다. 한글 주소를 직접 입력해주세요.");
+                            }
                         }
                     });
                     // 지도 위치 이동
@@ -170,7 +191,7 @@ document.getElementById('mapBtn').onclick = function() {
             const defaultPos = new kakao.maps.LatLng(37.6509, 127.0164);
             mapInit(defaultPos);
         }
-    }, 100); // 모달이 보인 뒤에 지도 초기화
+    }, 100);
 };
 
 document.getElementById('closeModal').onclick = function() {
@@ -189,8 +210,11 @@ function mapInit(center) {
         const latlng = mouseEvent.latLng;
         marker.setPosition(latlng);
         geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
-            if (status === kakao.maps.services.Status.OK) {
+            if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
                 addressInput.value = result[0].address.address_name;
+            } else {
+                addressInput.value = "";
+                alert("주소 변환에 실패했습니다. 한글 주소를 직접 입력해주세요.");
             }
         });
     });

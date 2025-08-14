@@ -147,13 +147,6 @@ def seller_business_verify(request):
 def seller_step3(request):
     return render(request, 'users/seller-step3.html')
 
-@login_required
-def seller_step4(request):
-    return render(request, 'users/seller-step4.html')
-
-@login_required
-def seller_step5(request):
-    return render(request, 'users/seller-step5.html')
 
 @login_required
 def home(request):

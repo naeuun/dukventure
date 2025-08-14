@@ -1,0 +1,6 @@
+<h2>이미 등록된 가게가 있습니다.</h2>
+<p>한 판매자는 하나의 가게만 등록할 수 있습니다.</p>
+<p>가게 이름: <b>{{ store.name }}</b></p>
+<p>가게 주소: <b>{{ store.address }}</b></p>
+<hr>
+<a href="{% url 'users:seller_home' %}">판매자 홈으로 이동</a>

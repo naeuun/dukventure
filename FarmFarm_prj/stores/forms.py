@@ -4,7 +4,7 @@ from .models import Store, StoreItem
 class StoreForm(forms.ModelForm):
     class Meta:
         model = Store
-        exclude = ['seller', 'address', 'business_number', 'items']  # business_number도 제외
+        fields = ['name', 'address', 'sale_days', 'sale_hours', 'payment_methods', 'contact', 'photo', 'description']
         labels = {
             'name': '가게 이름',
             'price_info': '가격 정보',
