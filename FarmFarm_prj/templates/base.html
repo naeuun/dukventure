@@ -6,8 +6,20 @@
     <title>Document</title>
 </head>
 <body>
+    {% if messages %}
+        <ul class="messages" style="list-style: none; padding: 10px; margin: 10px; background-color: #f0f0f0; border: 1px solid #ccc;">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="color: {% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %};">
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% block content %}
     {% endblock %}
+
+    
     <footer>
         <hr>
         <a href="{% url 'users:onboarding' %}">초기 온보딩 화면</a> 

@@ -38,7 +38,7 @@ class Reservation(models.Model):
 
     status = models.CharField(max_length=20, choices=ReservationStatus.choices, default=ReservationStatus.PENDING)
     rejected_reason = models.CharField(max_length=30, choices=RejectReason.choices, blank=True)
-    rejected_reason_detail = models.CharField(max_length=200, blank=True)
+    # rejected_reason_detail 필드를 제거했습니다.
     cancelled_reason = models.CharField(max_length=200, blank=True)
 
     accepted_at = models.DateTimeField(null=True, blank=True)
@@ -101,7 +101,8 @@ class Reservation(models.Model):
         if user.usertype == UserType.BUYER and self.buyer.user_id == user.id:
             allowed = {
                 ReservationStatus.PENDING: {ReservationStatus.CANCELLED},
-                ReservationStatus.ACCEPTED: {ReservationStatus.CANCELLED},
+                ReservationStatus.ACCEPTED: {ReservationStatus.CANCELLED, ReservationStatus.PICKED_UP},
+                ReservationStatus.PREPARING: {ReservationStatus.PICKED_UP},
                 ReservationStatus.READY: {ReservationStatus.PICKED_UP},
             }
             return self.status in allowed and new_status in allowed.get(self.status, set())
@@ -133,13 +134,12 @@ class Reservation(models.Model):
             update_fields.append(ts_map[new_status])
         self.save(update_fields=update_fields)
 
-    def reject(self, reason, detail=""):
+    def reject(self, reason):
         """예약을 거절하고 사유를 기록"""
         self.status = ReservationStatus.REJECTED
         self.rejected_reason = reason
-        self.rejected_reason_detail = detail
         self.rejected_at = timezone.now()
-        self.save(update_fields=['status', 'rejected_reason', 'rejected_reason_detail', 'rejected_at'])
+        self.save(update_fields=['status', 'rejected_reason', 'rejected_at'])
 
 
 class ReservationItem(models.Model):
@@ -151,7 +151,6 @@ class ReservationItem(models.Model):
     memo = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to='reservations/items/%Y/%m/%d/', blank=True)
     
-    # [제안] 원본 상품 연결 (선택 사항, 나중에 분석/확장용)
     original_item = models.ForeignKey(
         'items.Item', 
         on_delete=models.SET_NULL, 
@@ -172,6 +171,5 @@ class ReservationItem(models.Model):
     def save(self, *args, **kwargs):
         is_new = self._state.adding
         super().save(*args, **kwargs)
-        # 생성되거나 수량이 변경될 때만 총액을 다시 계산하도록 최적화
         if is_new or 'quantity' in kwargs.get('update_fields', []):
             self.reservation.recompute_total()

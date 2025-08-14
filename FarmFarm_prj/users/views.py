@@ -7,10 +7,14 @@ from django.contrib.auth.forms import AuthenticationForm #개발용
 from django.contrib.auth import login as auth_login  # 개발용 
 from django.contrib.auth import logout as auth_logout # 개발용
 from django.views.decorators.cache import never_cache # 뒤로가기 후 로그인했을 때 캐시 문제 해결
-
+from django.http import JsonResponse 
 from django.contrib.auth.decorators import login_required
-from reservations.models import Reservation
+from reservations.models import Reservation, ReservationStatus
+from reviews.forms import ReviewForm 
+from reviews.models import Review
 from users.models import UserType
+from django.contrib import messages 
+from django.utils import timezone
 
 @never_cache   
 def onboarding(request):
@@ -100,8 +104,51 @@ def seller_step4(request):
 def seller_step5(request):
     return render(request, 'users/seller-step5.html')
 
+@login_required
 def buyer_home(request):
-    return render(request, 'users/buyer-home.html')
+    """구매자 홈: 예약 현황과 내가 쓴 리뷰를 함께 보여주는 뷰"""
+    if request.user.usertype != UserType.BUYER or not hasattr(request.user, 'buyer'):
+        return redirect('users:onboarding')
+
+    buyer = request.user.buyer
+    
+    # 구매자와 관련된 모든 예약을 가져옵니다.
+    all_reservations = Reservation.objects.filter(
+        buyer=buyer
+    ).select_related('store').prefetch_related('items').order_by('-created_at')
+
+    # '진행 중'인 예약과 '지난' 예약을 구분합니다.
+    active_statuses = [
+        ReservationStatus.PENDING, 
+        ReservationStatus.ACCEPTED, 
+        ReservationStatus.PREPARING, 
+        ReservationStatus.READY
+    ]
+    
+    now = timezone.now()
+    active_reservations = []
+    for r in all_reservations:
+        if r.status in active_statuses:
+            # 템플릿에서 사용할 추가 정보를 객체에 직접 추가합니다.
+            time_diff = r.requested_pickup_at - now
+            r.remaining_minutes = time_diff.total_seconds() // 60
+            active_reservations.append(r)
+
+    past_reservations = [r for r in all_reservations if r.status not in active_statuses]
+
+    # 내가 쓴 리뷰 목록
+    my_reviews = Review.objects.filter(
+        author=buyer
+    ).select_related('store', 'author__user').order_by('-created_at')[:5]
+
+    context = {
+        'active_reservations': active_reservations,
+        'past_reservations': past_reservations,
+        'reviews': my_reviews,
+        'review_form': ReviewForm(), # 리뷰 작성 모달을 위한 빈 폼
+    }
+    return render(request, 'users/buyer-home.html', context)
+
 
 
 @login_required

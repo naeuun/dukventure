@@ -1,139 +1,104 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>예약 관리 (판매자) - {{ store.name }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: sans-serif; background-color: #f8f9fa; color: #333; }
-        .wrap { max-width: 900px; margin: 24px auto; padding: 0 16px; }
-        h2 { text-align: center; color: #000; }
-        .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; padding: 16px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px; margin-bottom: 16px; box-shadow: 0 6px 14px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
-        .card-body { padding-left: 10px; border-left: 3px solid #eefee3; }
-        .card-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-        .muted { color: #6c757d; font-size: 0.9em; }
-        input, select { padding: 8px 12px; border: 1px solid #ced4da; border-radius: 10px; font-size: 14px; }
-        .btn { border: none; border-radius: 10px; padding: 10px 16px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; text-align: center; }
-        .btn-primary { background-color: #28a745; color: white; }
-        .btn-secondary { background-color: #6c757d; color: white; }
-        .btn-danger { background-color: #dc3545; color: white; }
-        .btn-warning { background-color: #ffc107; color: #212529; }
-        .btn-filter { background-color: #333; color: white; }
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; color: #fff; font-size: 12px; }
-        .badge-pending { background-color: #ffc107; color: #212529; }
-        .badge-accepted { background-color: #28a745; }
-        .badge-rejected { background-color: #dc3545; }
-        .badge-preparing { background-color: #17a2b8; }
-        .badge-ready { background-color: #007bff; }
-        .badge-picked_up { background-color: #6c757d; }
-        .items { margin: 10px 0 0 0; padding-left: 20px; }
-        /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 12px; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="wrap">
-        <h2>예약 관리 — {{ store.name }}</h2>
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .wrap { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .card-content { display: flex; justify-content: space-between; align-items: center; }
+    .action-buttons { display: flex; gap: 8px; }
+    .btn { border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: bold; }
+    .btn-accept { background-color: #28a745; color: white; }
+    .btn-reject { background-color: #dc3545; color: white; }
+    /* Modal Styles */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: #fff; margin: 15% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; }
+</style>
 
-        <form class="toolbar" method="get">
-            <!-- ... 필터링 UI ... -->
-        </form>
+<div class="wrap">
+    <h2>예약 관리</h2>
+    <!-- ... 필터링 UI ... -->
 
-        {% for r in page_obj %}
-        <div class="card">
-            <div class="card-header">
+    {% for r in page_obj %}
+        <div class="card" id="res-card-seller-{{ r.pk }}">
+            <div class="card-content">
                 <div>
-                    <span class="badge badge-{{ r.status|lower }}">{{ r.get_status_display }}</span>
-                    <div><strong>예약코드:</strong> {{ r.reservation_code }}</div>
+                    <span class="status">{{ r.get_status_display }}</span>
+                    <p><strong>예약코드:</strong> {{ r.reservation_code }}</p>
+                    <p>구매자: {{ r.buyer.user.username }} | 요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
                 </div>
-                <div style="text-align:right"><strong>{{ r.total_price }}원</strong></div>
-            </div>
-            <div class="card-body">
-                <div class="muted">구매자: {{ r.buyer.user.username }} | 요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</div>
-                <ul class="items">
-                    {% for it in r.items.all %}
-                    <li>{{ it.item_name }} — {{ it.quantity }}{{ it.unit }} × {{ it.unit_price }}원</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="card-footer">
-                {% if r.status == 'PENDING' %}
-                    <form method="post" action="{% url 'reservations:change_status' r.pk %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="to_status" value="ACCEPTED">
-                        <button class="btn btn-primary" type="submit">수락</button>
-                    </form>
-                    <button type="button" class="btn btn-danger" onclick="openRejectModal({{ r.pk }})">거절</button>
-                {% elif r.status == 'ACCEPTED' %}
-                    <form method="post" action="{% url 'reservations:change_status' r.pk %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="to_status" value="PREPARING">
-                        <button class="btn btn-warning" type="submit">준비중</button>
-                    </form>
-                {% elif r.status == 'PREPARING' %}
-                    <form method="post" action="{% url 'reservations:change_status' r.pk %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="to_status" value="READY">
-                        <button class="btn btn-primary" type="submit">준비완료</button>
-                    </form>
-                {% endif %}
+                <div class="action-buttons">
+                    {% if r.status == 'PENDING' %}
+                        <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
+                        <button type="button" class="btn btn-reject" onclick="openRejectModal({{ r.pk }})">거절</button>
+                    {% elif r.status == 'ACCEPTED' %}
+                        <span>수락 완료</span>
+                    {% elif r.status == 'PICKED_UP' %}
+                        <span style="color: green; font-weight: bold;">픽업 완료</span>
+                    {% elif r.status == 'REJECTED' %}
+                        <span style="color: red;">거절됨</span>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        {% empty %}
-        <p style="text-align:center; padding: 40px;">조건에 맞는 예약이 없습니다.</p>
-        {% endfor %}
+    {% empty %}
+        <p>예약이 없습니다.</p>
+    {% endfor %}
+    <!-- ... 페이지네이션 ... -->
+</div>
 
-        <!-- ... 페이지네이션 ... -->
+<!-- 거절 사유 선택 모달 -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <h3>예약 거절 사유</h3>
+        <form id="rejectForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="to_status" value="REJECTED">
+            {{ reject_form.as_p }}
+            <button type="submit">거절 확정</button>
+            <button type="button" onclick="closeRejectModal()">취소</button>
+        </form>
     </div>
+</div>
 
-    <!-- 거절 사유 선택 모달 -->
-    <div id="rejectModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>예약 거절 사유</h3>
-                <span class="close" onclick="closeRejectModal()">&times;</span>
-            </div>
-            <form id="rejectForm" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="to_status" value="REJECTED">
-                
-                <!-- views.py에서 전달한 seller_update_form 렌더링 -->
-                <div style="padding: 10px 0;">{{ seller_update_form.rejected_reason }}</div>
-                <div style="margin-top: 10px;">{{ seller_update_form.rejected_reason_detail.label_tag }} {{ seller_update_form.rejected_reason_detail }}</div>
-                
-                <div style="text-align:right; margin-top:20px;">
-                    <button class="btn btn-secondary" type="button" onclick="closeRejectModal()">취소</button>
-                    <button class="btn btn-danger" type="submit">거절 확정</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<script>
+const csrftoken = '{{ csrf_token }}';
 
-    <script>
-    const modal = document.getElementById('rejectModal');
-    const rejectForm = document.getElementById('rejectForm');
+// 거절 모달 제어
+const rejectModal = document.getElementById('rejectModal');
+const rejectForm = document.getElementById('rejectForm');
+function openRejectModal(reservationId) {
+    rejectForm.action = `/reservations/${reservationId}/change-status/`;
+    rejectModal.style.display = 'block';
+}
+function closeRejectModal() {
+    rejectModal.style.display = 'none';
+}
 
-    function openRejectModal(reservationId) {
-        rejectForm.action = `/reservations/${reservationId}/change-status/`; // URL 패턴에 맞게 수정
-        modal.style.display = 'block';
-    }
+// '수락' 버튼 AJAX 처리
+document.querySelectorAll('.accept-btn').forEach(button => {
+    button.addEventListener('click', async function() {
+        const reservationId = this.dataset.pk;
+        const url = `/reservations/${reservationId}/change-status/`;
+        const formData = new FormData();
+        formData.append('to_status', 'ACCEPTED');
 
-    function closeRejectModal() {
-        modal.style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            closeRejectModal();
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+            if (response.ok) {
+                const card = document.getElementById(`res-card-seller-${reservationId}`);
+                card.querySelector('.status').textContent = result.new_status;
+                card.querySelector('.action-buttons').innerHTML = '<span>수락 완료</span>';
+            } else {
+                alert('오류: ' + result.message);
+            }
+        } catch (error) {
+            alert('요청 중 오류가 발생했습니다.');
         }
-    }
-    </script>
-</body>
-</html>
+    });
+});
+</script>
+{% endblock %}

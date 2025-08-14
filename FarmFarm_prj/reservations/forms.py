@@ -34,4 +34,4 @@ class SellerReservationUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Reservation
-        fields = ['rejected_reason', 'rejected_reason_detail', 'seller_note']
+        fields = ['rejected_reason']
