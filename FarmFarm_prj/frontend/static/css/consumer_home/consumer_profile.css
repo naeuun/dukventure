@@ -1,0 +1,241 @@
+body {
+    margin: 0;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+}
+
+/* 전체 앱 화면 컨테이너 */
+.big_hugger {
+    margin: 0 auto;
+    width: 402px; /* 앱 화면 너비 고정 */
+    min-height: 100vh; /* 전체 높이 화면 기준 */
+    background-color: black;
+    color: white;
+}
+
+/* 상단 프로필 영역 */
+.profile-section {
+    height: auto;
+    background-color: black;
+}
+.logo{
+    position: relative; 
+}
+
+.logo img:last-child {
+    position: absolute;
+    top: 10px;   /* 상단 여백 */
+    right: 10px; /* 오른쪽 여백 */
+}
+.welcome-box {
+    position: relative;
+    width: 381.444px;
+    height: 134.276px;
+    border: 1px solid rgba(231, 255, 187, 0.80);
+    border-radius: 26px;
+    margin: 0 10px 10px 10px;
+    /* overflow: hidden; */
+}
+.profile-text{
+    margin: 10px;
+}
+
+.backgroundimg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+.backgroundimg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    position: relative;
+    z-index: 1; /* 배경보다 위로 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+/* 폰트와 색상 스타일 */
+.nickname-highlight {
+    color: #C1FF52;
+    font-family: Pretendard;
+    font-size: 20px;
+    font-weight: 700;
+}
+.welcome-text {
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-weight: 700;
+}
+.textbox1 div{
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 12px;
+    font-weight: 700;
+}
+.textbox1 p{
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 9px;
+    font-weight: 700;
+}
+.green_small {
+    color: #C1FF52;
+    font-family: Pretendard;
+    font-size: 9px;
+    font-weight: 700;
+}
+.desc-text {
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 8px;
+    font-weight: 700;
+}
+.farmfarm {
+    color: #C1FF52;
+    font-family: Pretendard;
+    font-size: 15px;
+    font-weight: 700;
+}
+.textbox {
+    margin: 5px;
+}
+.textbox1 {
+    width: 232.975px;
+    height: 55.318px;
+    border: 1px solid #fff;
+    border-radius: 25px;
+    filter: drop-shadow(2px 4px 2px rgba(0, 0, 0, 0.25));
+    padding: 10px;
+    background-color: #000;
+}
+
+/* 마이 캐릭터 */
+.section-title {
+    background-color: #C1FF52;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 15px 0;
+}
+.character-card {
+    border-radius: 15px;
+    background: #1b1b1b;
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.character-img {
+    width: 100px;
+    height: auto;
+}
+.character-info {
+    flex: 1;
+}
+.character-name {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: #F4F5EF;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background-color: #C1FF52;
+}
+.progress-percent {
+    font-size: 12px;
+}
+
+/* 리워드 버튼 */
+.reward-section {
+    margin: 20px 0;
+}
+.reward-button {
+    width: 100%;
+    background-color: #C1FF52;
+    border: none;
+    padding: 10px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 14px;
+}
+/* 모달 배경 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 모달창 스타일 */
+  .modal-content {
+    width: 105.528px;
+    height: 84.622px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    border: 0.6px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.07);
+    background-blend-mode: plus-lighter;
+    box-shadow:
+      -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
+      -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
+      1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
+      0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
+    backdrop-filter: blur(2.72px);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .modal-content input[type="text"] {
+    padding: 4px;
+    width: 90%;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+  }
+
+  .modal-content input[type="file"] {
+    font-size: 0.8rem;
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .modal-btns button {
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+

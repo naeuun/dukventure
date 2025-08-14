@@ -43,3 +43,7 @@ def sellerhomepage2(request): #연동 이후 홈페이지와 합칠 페이지입
 
 def shoppingpage(request):
     return render(request, "shopping_page.html")
+
+
+def consumerprofile(request):
+    return render(request, "consumer_home/consumer_profile.html")
