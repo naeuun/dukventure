@@ -14,7 +14,8 @@ urlpatterns = [
     path('home/', home, name='home'),
     path('buyer-home/', buyer_home, name='buyer_home'),
     path('seller-home/', seller_home, name='seller_home'),
-    path('signup/', signup, name='signup'), # 개발용
-    path('login/', login, name='login'), # 개발용
-    path('logout/', logout, name='logout'), # 개발용
+    path('signup/', signup, name='signup'),
+    path('login/', login, name='login'),
+    path('logout/', logout, name='logout'),
+    path('seller-business-verify/', seller_business_verify, name='seller_business_verify'),
 ]
