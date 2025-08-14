@@ -22,3 +22,6 @@ def reservations(request):
 
 def storesplus(request):
     return render(request, "stores_plus.html")
+
+def consumerprofile(request):
+    return render(request, "consumer_home/consumer_profile.html")

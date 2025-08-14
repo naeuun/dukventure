@@ -16,7 +16,7 @@ body {
 
 /* 상단 프로필 영역 */
 .profile-section {
-    height: 240px;
+    height: auto;
     background-color: black;
 }
 .logo{
@@ -35,7 +35,7 @@ body {
     border: 1px solid rgba(231, 255, 187, 0.80);
     border-radius: 26px;
     margin: 0 10px 10px 10px;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 .profile-text{
     margin: 10px;
@@ -179,5 +179,63 @@ body {
     font-weight: 700;
     font-size: 14px;
 }
+/* 모달 배경 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
 
+  /* 모달창 스타일 */
+  .modal-content {
+    width: 105.528px;
+    height: 84.622px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    border: 0.6px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.07);
+    background-blend-mode: plus-lighter;
+    box-shadow:
+      -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
+      -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
+      1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
+      0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
+    backdrop-filter: blur(2.72px);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .modal-content input[type="text"] {
+    padding: 4px;
+    width: 90%;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+  }
+
+  .modal-content input[type="file"] {
+    font-size: 0.8rem;
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .modal-btns button {
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
 

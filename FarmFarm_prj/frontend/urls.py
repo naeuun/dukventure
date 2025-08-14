@@ -12,4 +12,5 @@ urlpatterns = [
     
     path("reservations", reservations, name="reservations"),
     path("storesplus", storesplus, name="storesplus"),
+    path("consumerprofile", consumerprofile, name="consumerprofile"),
 ]
