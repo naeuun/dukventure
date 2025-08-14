@@ -326,6 +326,9 @@ body {
   font-size: 15px;
   cursor: pointer;
 }
+.per_stores{
+  margin:10px;
+}
 .per_stores:last-child, .per_stores_s:last-child{
   margin-bottom:130px;
 }
@@ -447,4 +450,23 @@ body {
   display:flex;
   justify-content: center;
   align-items: center;
+}
+
+.many_items_store{
+  background: linear-gradient(#f4f5ef9d, #A4FF00);
+  border-radius: 23px;
+  padding:10px 5px;
+}
+.many_items_store_name{
+   display: inline-flex;
+   height:41px;
+   justify-content: center;
+   align-items: center;
+   background-color: #C1FF52;
+   border:1px solid black;
+   border-radius: 27px;
+   font-size: 16px;
+   font-weight:700;
+   padding: 0 12px; /* 글자 좌우 여백 */
+   width: auto; /* 너비 자동 */
 }
