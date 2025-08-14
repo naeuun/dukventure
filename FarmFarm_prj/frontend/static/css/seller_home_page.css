@@ -8,7 +8,7 @@ body {
   max-width: 402px;
   min-height: 100vh;
   overflow-y: auto;
-    background: linear-gradient(#ffffff, #daf6cf);
+  background: linear-gradient(#ffffff, #daf6cf);
   
 }
 
@@ -269,7 +269,7 @@ body {
     border-radius: 16px;
     overflow: hidden;
     width: 365px;
-    height: 513px;
+    height: 433px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     border: 1px solid black;
     display: flex;
@@ -350,8 +350,8 @@ body {
     width:183.7px;
     margin-bottom: 5px;
     position:absolute;
-    bottom:30px;
     left:-100px;
+    bottom:-40px;
 }
 .texts{
   position: absolute;
@@ -359,7 +359,7 @@ body {
   font-weight:700;
   color: black;
   white-space: nowrap;
-  bottom:43px;
+  bottom:-28px;
   left:-90px;
 }
 .text_box_hugger{
@@ -367,7 +367,7 @@ body {
 }
 .voice_recognization_btn{
   position: absolute;
-  bottom:36px;
+  bottom:-36px;
   right:-140px;
     display:flex;
     justify-content: center;
@@ -532,4 +532,89 @@ body {
   background-color: #C1FF52;
   color: black;
   border: none;
+}
+.review_section{
+    margin: 20px 0;
+    position:absolute;
+    top:780px;
+    left:20px;
+  
+}
+/*리뷰내역요소*/
+.review_hugger{
+  position:relative;
+  top:870px;
+  width:366.6px;
+  height:606px;
+  background: linear-gradient(black, #0b2401);
+  border:1px solid #C1FF52;
+  border-radius: 35px 35px 0 0 ;
+  display:flex;
+  padding:10px;
+  flex-direction: column;
+}
+.review_deco{
+  position:absolute;
+  width:22.6px;
+  right:20px;
+  top:60px;
+}
+.per_review{
+  margin:10px;
+  width:302px;
+  height:90px;
+  background: linear-gradient(#ffffff, #daf6cf);
+  border:1px solid black;
+  border-radius: 23px;
+  position:relative;
+}
+.reviewer_profile{
+  width:46.5px;
+  height:46.5px;
+  border:2px solid #C1FF52;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top:-10px;
+  z-index: 10;
+}
+.r_profile_p{
+  width:46.5px;
+  height:46.5px;
+  border-radius: 50%;
+}
+.stars{
+  display:flex;
+  position: absolute;
+  left:55px;
+  top:8px;
+}
+.per_star{
+  width:15px;
+  margin:0 2.2px;
+}
+.review_content{
+  width:150px;
+  height:54px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  position:absolute;
+  top:28px;
+  left:10px;
+  background-color: #FFFFFF;
+  border:1px solid black;
+  opacity: 70%;
+  border-radius: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  padding:0 20px;
+}
+.date{
+  position: absolute;
+  top:10px;
+  right:20px;
+  font-size: 7px;
+  font-weight: 700;
+  color: #828282;
 }

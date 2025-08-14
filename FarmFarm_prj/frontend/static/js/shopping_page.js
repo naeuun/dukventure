@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
     mapEl.style.display = "block";
     toggleHugger.style.display = "flex";
     firstSight.style.display = "none";
-        if (map) {
-          map.relayout();
-          map.setCenter(new kakao.maps.LatLng(37.6495, 127.0141));
-        }
+    if (map) {
+      map.relayout();
+      map.setCenter(new kakao.maps.LatLng(37.6495, 127.0141));
+    }
   });
 
   if (typeof kakao !== "undefined" && kakao.maps) {
@@ -121,11 +121,33 @@ document.addEventListener("DOMContentLoaded", function () {
     function openBottomSheet() {
       bottomSheet.classList.remove("hidden");
       bottomSheet.classList.add("show");
+      applyManyItemsStoreMargin();
     }
 
     function hideBottomSheet() {
       bottomSheet.classList.remove("show", "expanded");
       bottomSheet.classList.add("hidden");
+    }
+
+    // many_items_store 위치 확인 후 margin 적용
+    function applyManyItemsStoreMargin() {
+      const sheetContent = bottomSheet.querySelector(".sheet_content_v2");
+      if (!sheetContent) return;
+
+      const manyItemsStores =
+        sheetContent.querySelectorAll(".many_items_store");
+      if (manyItemsStores.length === 0) return;
+
+      const lastElement = sheetContent.lastElementChild;
+      manyItemsStores.forEach((store) => {
+        store.style.marginBottom = "";
+        if (store === lastElement) {
+          const huggerElements = document.getElementsByClassName("per_stores");
+          const hugger = huggerElements[huggerElements.length - 1];
+          hugger.style.marginBottom = "0px";
+          store.style.marginBottom = "130px";
+        }
+      });
     }
 
     // 바텀시트 터치 드래그로 확장/축소 및 숨기기 기능

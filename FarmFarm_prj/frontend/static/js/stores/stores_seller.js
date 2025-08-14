@@ -61,43 +61,44 @@ document.addEventListener("DOMContentLoaded", function () {
     searchInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") searchPlaces();
     });
-function searchPlaces() {
-  const keyword = searchInput.value.trim();
-  if (!keyword) {
-    alert("검색어를 입력하세요!");
-    return;
-  }
+    function searchPlaces() {
+      const keyword = searchInput.value.trim();
+      if (!keyword) {
+        alert("검색어를 입력하세요!");
+        return;
+      }
 
-  // stores 중 이름에 keyword 포함하는 가게만 필터링
-  const filteredStores = stores.filter((store) => store.name.includes(keyword));
+      // stores 중 이름에 keyword 포함하는 가게만 필터링
+      const filteredStores = stores.filter((store) =>
+        store.name.includes(keyword)
+      );
 
-  if (filteredStores.length === 0) {
-    alert("검색 결과가 없습니다.");
-    return;
-  }
+      if (filteredStores.length === 0) {
+        alert("검색 결과가 없습니다.");
+        return;
+      }
 
-  // 기존 검색 마커 제거
-  if (marker) {
-    marker.setMap(null);
-  }
+      // 기존 검색 마커 제거
+      if (marker) {
+        marker.setMap(null);
+      }
 
-  // 만약 여러 개면 첫 번째 가게 위치로 지도 이동하고 마커 표시
-  const firstStore = filteredStores[0];
-  const coords = new kakao.maps.LatLng(firstStore.lat, firstStore.lng);
-  map.setCenter(coords);
+      // 만약 여러 개면 첫 번째 가게 위치로 지도 이동하고 마커 표시
+      const firstStore = filteredStores[0];
+      const coords = new kakao.maps.LatLng(firstStore.lat, firstStore.lng);
+      map.setCenter(coords);
 
-  marker = new kakao.maps.Marker({
-    position: coords,
-    map: map,
-    title: firstStore.name,
-  });
+      marker = new kakao.maps.Marker({
+        position: coords,
+        map: map,
+        title: firstStore.name,
+      });
 
-  // 마커 클릭 시 바텀시트 열기
-  kakao.maps.event.addListener(marker, "click", () => {
-    openBottomSheet();
-  });
-}
-
+      // 마커 클릭 시 바텀시트 열기
+      kakao.maps.event.addListener(marker, "click", () => {
+        openBottomSheet();
+      });
+    }
 
     function placesSearchCB(data, status) {
       if (status === kakao.maps.services.Status.OK) {
@@ -133,6 +134,7 @@ function searchPlaces() {
   function openBottomSheet() {
     bottomSheet.classList.remove("hidden");
     bottomSheet.classList.add("show");
+    applyManyItemsStoreMargin();
   }
   function hideBottomSheet() {
     bottomSheet.classList.remove("show", "expanded");
@@ -198,4 +200,23 @@ function searchPlaces() {
     hideBottomSheet();
   });
 
+  // many_items_store 위치 확인 후 margin 적용
+  function applyManyItemsStoreMargin() {
+    const sheetContent = bottomSheet.querySelector(".sheet_content_v2");
+    if (!sheetContent) return;
+
+    const manyItemsStores = sheetContent.querySelectorAll(".many_items_store");
+    if (manyItemsStores.length === 0) return;
+
+    const lastElement = sheetContent.lastElementChild;
+    manyItemsStores.forEach((store) => {
+      store.style.marginBottom = "";
+      if (store === lastElement) {
+        const huggerElements = document.getElementsByClassName("per_stores");
+        const hugger = huggerElements[huggerElements.length - 1];
+        hugger.style.marginBottom = "0px";
+        store.style.marginBottom = "130px";
+      }
+    });
+  }
 });

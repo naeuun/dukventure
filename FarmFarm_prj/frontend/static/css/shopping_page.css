@@ -374,7 +374,7 @@ body {
   bottom: 0;
   max-width: 402px;
   margin: auto;
-  background-color: black;
+  background: linear-gradient(black, #0c2502);
   border-radius: 38px 38px 0 0;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
   height: 60vh; /* 초기 높이 비율로 변경 */
@@ -503,11 +503,11 @@ body {
   font-size: 15px;
   cursor: pointer;
 }
-.per_stores:last-child, .per_stores_s:last-child{
-  margin-bottom:130px;
+.per_stores{
+  margin:10px;
 }
-.per_stores_s{
-  margin:10px 0;
+.per_stores:last-child{
+  margin-bottom:130px;
 }
 .perimg{
     width:78px;
@@ -635,4 +635,23 @@ body {
     align-items: center;
     position:absolute;
     top:430px;
+}
+
+.many_items_store{
+  background: linear-gradient(#f4f5ef9d, #A4FF00);
+  border-radius: 23px;
+  padding:10px 5px;
+}
+.many_items_store_name{
+   display: inline-flex;
+   height:41px;
+   justify-content: center;
+   align-items: center;
+   background-color: #C1FF52;
+   border:1px solid black;
+   border-radius: 27px;
+   font-size: 16px;
+   font-weight:700;
+   padding: 0 12px; /* 글자 좌우 여백 */
+   width: auto; /* 너비 자동 */
 }
