@@ -1,0 +1,29 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+{% endblock style %}
+
+{% block script %}
+<script src="{% static 'js/seller_onboardings/seller_onboarding_6.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="progress_bar">
+            <div class="now_step" style="width: 199px;"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content"><span class="green_highlight">사업자등록</span>을 인증해주세요!</p>
+            <div class="button_hugger">
+                <button type="button" value="사업자 등록 인증" class="btns" id="verify">
+                    <span id="text">인증하기</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

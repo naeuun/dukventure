@@ -10,48 +10,122 @@
 {% endblock script %}
 
 {% block body %}
-<form id="storeForm" method="POST">
-  {% csrf_token %}
+  <div class="welcome_overlay"></div>
   <div class="big_hugger">
     <div class="container">
-      <p>이미지</p>
-      <div class="image-upload-container">
-        {% for i in "123" %}
-        <label class="image-box">
-          <input type="file" accept="image/*" onchange="handleBoxImageUpload(event, '{{ forloop.counter0 }}')" />
-          <span class="plus-icon">＋</span>
-          <img class="preview-img" />
-        </label>
-        {% endfor %}
+      <img src="{% static 'img/map_deco.png' %}" alt="위 데코" class="deco" />
+      <img src="{% static 'img/left_back_neon.png' %}" alt="뒤로가기" class="before_page"  onclick="history.back()"/>
+      <!-- 이미지 업로드 -->
+      <div class="gapsection">
+        <label class="section-title">이미지</label>
+        <div class="file_upload">
+          <!-- 파일 업로드 input -->
+          <input type="file" id="field9" name="store_photo" accept="image/*" style="display: none;">
+
+          <!-- 아이콘 -->
+          <label for="field9" class="upload_label">
+            <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon" />
+          </label>
+
+          <!-- 말풍선 -->
+          <div class="text_box_text">
+            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox" />
+            <span class="texts">누르면 <span style="color:grey;">갤러리로 연결돼요!</span></span>
+          </div>
+
+          <!-- 업로드된 파일 정보 -->
+          <div class="file_info_wrap" style="display: none;">
+            <span class="file_name"></span>
+            <button type="button" class="delete_file_btn">삭제</button>
+          </div>
+        </div>
       </div>
 
-      <p>음식 종류</p>
-      <div class="food-list" id="foodList">
-        <div class="food-option" onclick="toggleFood(this)">토마토</div>
-        <div class="food-option" onclick="toggleFood(this)">오이</div>
-        <div class="food-option" onclick="toggleFood(this)">가지</div>
-        <div class="food-option add-food-btn" onclick="showFoodInput()">＋</div>
-        <input type="text" class="food-input" placeholder="음식 이름 입력..." />
-      </div>
-      <input type="hidden" name="selected_foods" id="selectedFoodsInput" />
 
-      <p>키워드</p>
-      <div class="food-list" id="keywordList">
-        <div class="food-option" onclick="toggleFood(this)">신선해요</div>
-        <div class="food-option" onclick="toggleFood(this)">친절해요</div>
-        <div class="food-option" onclick="toggleFood(this)">저렴해요</div>
-        <div class="food-option" onclick="toggleFood(this)">맛있어요</div>
-        <div class="food-option" onclick="toggleFood(this)">쾌적해요</div>
-        <div class="food-option" onclick="toggleFood(this)">조용해요</div>
+
+      <!-- 음식 종류 -->
+      <div class="section">
+        <label class="section-title">음식종류</label>
+        <input type="text" class="text-input" placeholder="입력하시오..." />
       </div>
-      <input type="hidden" name="selected_keywords" id="selectedKeywordsInput" />
+
+      <!-- 장소 -->
+      <div class="section">
+        <label class="section-title">장소</label>
+        <input type="text" class="text-input" placeholder="입력하시오..." />
+      </div>
+
+      <!-- 시간 -->
+      <div class="gapsection">
+        <label class="section-title">시간</label>
+        <input type="text" class="text-input" placeholder="입력하시오..." />
+      </div>
+
+      <!-- 키워드 -->
+      <div class="keyword_section">
+        <label class="section-title">#키워드</label>
+        <div class="keyword-list">
+          <div class="keyword-option">#신선해요</div>
+          <div class="keyword-option">#저렴해요</div>
+          <div class="keyword-option">#친절해요</div>
+          <div class="keyword-option">#국내산</div>
+          <div class="keyword-option">#매일판매</div>
+          <div class="keyword-option">#할인있어요</div>
+          <div class="keyword-option">#정직해요</div>
+          <div class="keyword-option">#한정판매</div>
+          <div class="keyword-option">#수확직송</div>
+        </div>
+      </div>
+
+      
     </div>
-
-    <div class="nav_box">
-      <nav class="bottom_nav">
+    <!-- 등록 버튼 -->
+      <div class="btn_hugger">
+        <div class="voice_recognization">
+          <div class="voice_texts">
+            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
+            <span class="texts">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
+          </div>
+          <button class="circle_btn">
+            <img src="{% static 'img/mic.png' %}" alt="음성인식버튼" class="voice_recognization_btn" />
+          </button>
+        </div>
         <button type="submit" class="register_btn">등록하기</button>
-      </nav>
-    </div>
+      </div>
   </div>
-</form>
+  <!-- 음성 인식 모달 -->
+<div class="voice_modal hidden">
+    <div class="voice_modal_overlay"></div>
+    <div class="voice_modal_content">
+      <button class="voice_modal_close">✕</button>
+      <div class="text_box_area">
+        <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+        <div class="ann_text">버튼을 누르고, 말하세요!</div>
+      </div>
+      <div class="voice_recognizing_btn">
+        <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
+      </div>
+    </div>
+</div>
+
+<div class="welcome_content">
+  <p class="welcoming">
+    <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli">
+    가게를
+    <span class="green_highlight"> 등록</span>
+    해주셔서
+    <img src="{% static 'img/tongue_face.png' %}" alt="혀내민 표정" class="face">
+    <br>
+    <span class="green_highlight_">감사합니다!</span>
+    <img src="{% static 'img/welcome_boom.png' %}" alt="축하 폭죽" class="welcome_boom">
+  </p>
+  <p class="under_texts">
+    <span class="sub_text">
+      <span>
+        우리 동네 손님들과의 만남이 곧 시작됩니다.
+      </span>
+    </span>
+  </p>
+</div>
+
 {% endblock body %}
