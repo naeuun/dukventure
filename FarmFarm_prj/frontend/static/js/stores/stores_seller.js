@@ -195,10 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
     lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
   });
 
-  // 지도 클릭 시 바텀시트 닫기
-  container.addEventListener("click", () => {
-    hideBottomSheet();
-  });
 
   // many_items_store 위치 확인 후 margin 적용
   function applyManyItemsStoreMargin() {

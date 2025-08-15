@@ -195,11 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
     lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
   });
 
-  // 지도 클릭 시 바텀시트 닫기
-  container.addEventListener("click", () => {
-    hideBottomSheet();
-  });
-
   // 수량 및 시간 조절: 각 .per_stores 단위별로 이벤트 바인딩
   document.querySelectorAll(".per_stores").forEach((store) => {
     const minusBtn = store.querySelector(".minusBtn");
