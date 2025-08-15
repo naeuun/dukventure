@@ -22,104 +22,6 @@ body {
   padding: 0;
   }
   
-  .greeting_section {
-  top:0;
-  position: absolute;
-  width: 100%;
-  }
-  
-  .clover_bg {
-  width: 80%;
-  display: block;
-  }
-  
-  .logo{
-  width:40px;
-  position:absolute;
-  top:8px;
-  right:8px;
-  }
-
-  .greeting_card {
-  position: absolute;
-  top: 90px;
-  left: 12px;
-  right: 12px;
-  background: #5278107a;
-  border:1px solid white;
-  border-radius: 30px;
-  padding: 10px;
-  padding-bottom: 0px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  }
-  
-  .greeting_text {
-  max-width: 60%;
-  color: white;
-  }
-  .username {
-  display:flex;
-  color: #C1FF52;
-  font-weight: 800;
-  font-size: 20px;
-  margin-left: 20px;
-  max-width: 100px;
-  overflow: hidden;
-  
-  }
-  
-  .desc {
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 12px;
-  margin: 5px 0;
-  width:250px;
-  height:50px;
-  border:1px solid white;
-  border-radius: 20px;
-  padding:15px 5px;
-  }
-  
-  .highlight {
-  color: #C1FF52;
-  font-weight: bold;
-  margin-right: -3px;
-  }
-  
-  .profile_section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #2a2a2a;
-  border-radius: 14px;
-  padding: 8px;
-  box-shadow: 0 0 6px rgba(193, 255, 82, 0.4);
-  }
-  
-  .profile_img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid #C1FF52;
-  margin-bottom: 5px;
-  }
-  
-  .profile_img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  }
-  
-  .profile_name {
-  font-size: 13px;
-  color: white;
-  }
 
   .bottom_nav {
   position: fixed;
@@ -613,11 +515,11 @@ body {
 
 #map {
   position: relative; 
-  top: 240px;
+  top: 155px;
   width: 390px;
   height: 513px;
   margin-top: 120px; 
-  
+  border-radius:32px 32px 0 0 ;
 }
   .toggle_hugger {
   position: relative;
@@ -625,7 +527,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 80px;
+  bottom:10px;
   }
 
   
@@ -654,4 +556,41 @@ body {
    font-weight:700;
    padding: 0 12px; /* 글자 좌우 여백 */
    width: auto; /* 너비 자동 */
+}
+
+
+
+.profile-section{
+  position:absolute;
+  top:0;
+}
+.textbox0{
+  position:absolute;
+  top:10px;
+  left:30px;
+  z-index:2;
+}
+.textbox0 img{
+  position:absolute;
+  top:-7px;
+}
+.textbox1{
+  width:233px;
+  height:53px;
+  position:absolute;
+  bottom:0;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+.silly_face{
+  width:30px;
+  position: absolute;
+  top:-5px;
+}
+.whatdoyoueat{
+  font-size: 13px;
+  font-weight:700;
+  margin-left:-30px;
+  position:relative;
 }

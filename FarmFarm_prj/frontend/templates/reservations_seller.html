@@ -3,10 +3,12 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/reservations_seller.css' %}" />
+<link rel="stylesheet" href="{% static 'css/consumer_home/consumer_profile.css' %}" />
 {% endblock style %}
 
 {% block script %}
 <script src="{% static 'js/reservations_seller.js' %}"></script>
+<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
@@ -14,37 +16,92 @@
   <div class="container onboarding">
 
     <!-- 인사 섹션 -->
-    <div class="greeting_section">
-      <img src="{% static 'img/home_deco.png' %}" alt="클로버 배경" class="clover_bg" />
-      <img src="{% static 'img/farmfarm_logo.png' %}" alt="로고" class="logo" />
-      <div class="greeting_card">
-        <div class="greeting_text">
-          <p class="hello">
-            <span class="username">김말선</span> 님 반가워요!
-            <img src="{% static 'img/welcome_boom.png' %}" alt="폭죽" class="boom">
-          </p>
-          <p class="desc">
-            <span>
-              이제 
-              <span class="highlight">우리 동네 손님들과 연결</span>
-              될 준비가 끝났어요.<br>
-            </span>
-            <span>
-              <span class="highlight" style="font-size:17px;">AI</span>
-              가 손님에게 가게 소식을 잘 전해드릴게요! 
-              <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
-            </span>
-          </p>
-        </div>
-
-        <div class="profile_section">
-          <div class="profile_img">
-            <img src="{% static 'img/logo_leaves.png' %}" alt="더미프로필" />
+    <!-- 상단 프로필 영역 -->
+  <div class="profile-section">
+    <div class="logo">
+      <img src="{% static 'img/background.png' %}" alt="" />
+      <img src="{% static 'img/background2.png' %}" alt="" />
+    </div>
+    <div class="welcome-box">
+      <div class="backgroundimg">
+        <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+      </div>
+      <div class="profile-info">
+        <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
+        <div class="profile-text">
+          <div class="textbox0">
+            <span class="nickname-highlight"
+              ><span class="nickname"> 김말선</span
+            ></span>
+            <span class="welcome-text">님 반가워요!</span>
+            <img src="{% static 'img/emo1.png' %}" alt="" />
           </div>
-          <p class="profile_name">김말선</p>
+
+          <div class="textbox1">
+            <div class="firstmsg">
+              오늘 뭐 먹을까? <img src="{% static 'img/emo2.png' %}" alt="" class="pic"/>
+            </div>
+            <div class="desc-text">
+              근처 <span class="green_small">노점</span>에서
+              <span class="green_small">신선하게</span> 장봐봐요!
+            </div>
+            <div class="lastmsg">
+              <span class="desc-text"
+                >지금 내 근처, 장보는 가장 따뜻한 방법 "</span
+              ><span class="farmfarm">팜팜</span>"
+              <img src="{% static 'img/emo3.png' %}" alt=""  class="pic"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-box">
+        <img src="{% static 'img/Union.png' %}" alt="" class="profile_hugger"/>
+        <div class="profile-edit">
+          <img
+            id="profileImage"
+            src="{% static 'img/dummy_egg.png' %}"
+            alt="프로필"
+          />
+        </div>
+        <div class="level-box">
+          <p class="nickname">
+            김말선
+            <img
+              id="editProfileBtn"
+              src="{% static 'img/edit.png' %}"
+              alt="수정"
+              style="cursor: pointer"
+            />
+          </p>
+          <p class="level">
+            LV.3
+            <img src="{% static 'img/level.png' %}" alt="" />
+          </p>
         </div>
       </div>
     </div>
+  </div>
+  <!-- 모달 -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+      
+      <div class="modal-actions">
+        <button id="closeModalBtn">×</button>
+      </div>
+      <div class="nickname-row">
+        <input type="text" id="nicknameInput" value="김말선" />
+        <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
+      </div>
+
+      <div class="image-row">
+        <div class="image-preview">
+          <img src="{% static 'img/dummy_egg.png' %}" alt="프로필 미리보기" class="preview_img">
+          <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정">
+        </div>
+      </div>
+
+    </div>
+  </div>
 
     <div class="line_"></div>
 
@@ -89,7 +146,7 @@
 
         <!-- 거절 사유 모달 -->
         <div id="rejectModal" class="modal">
-          <div class="modal-content">
+          <div class="modal-content0">
             <div class="modal_title">거절 사유</div>
             <button class="reason-btn">재고소진</button>
             <button class="reason-btn">판매 시간 종료</button>
