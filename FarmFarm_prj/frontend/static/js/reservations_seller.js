@@ -3,8 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const rejectBtns = document.querySelectorAll(".reject-btn");
   const modals = document.querySelectorAll(".modal");
 
-  // 여러 개 모달 쓰는 경우, 모달 관련 버튼들 class로 바꿔야 함.
-  // 여기서는 모달이 1개라고 가정.
 
   const modal = document.querySelector(".modal");
   const closeModal = modal.querySelector(".close-btn");
