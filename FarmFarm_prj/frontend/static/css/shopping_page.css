@@ -13,217 +13,217 @@ body {
 }
 
   .container {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
   }
   
   .greeting_section {
-    top:0;
-    position: absolute;
-    width: 100%;
+  top:0;
+  position: absolute;
+  width: 100%;
   }
   
   .clover_bg {
-    width: 80%;
-    display: block;
+  width: 80%;
+  display: block;
   }
   
   .logo{
-    width:40px;
-    position:absolute;
-    top:8px;
-    right:8px;
+  width:40px;
+  position:absolute;
+  top:8px;
+  right:8px;
   }
 
   .greeting_card {
-    position: absolute;
-    top: 90px;
-    left: 12px;
-    right: 12px;
-    background: #5278107a;
-    border:1px solid white;
-    border-radius: 30px;
-    padding: 10px;
-    padding-bottom: 0px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  position: absolute;
+  top: 90px;
+  left: 12px;
+  right: 12px;
+  background: #5278107a;
+  border:1px solid white;
+  border-radius: 30px;
+  padding: 10px;
+  padding-bottom: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   }
   
   .greeting_text {
-    max-width: 60%;
-    color: white;
+  max-width: 60%;
+  color: white;
   }
   .username {
-    display:flex;
-    color: #C1FF52;
-    font-weight: 800;
-    font-size: 20px;
-    margin-left: 20px;
-    max-width: 100px;
-    overflow: hidden;
-    
+  display:flex;
+  color: #C1FF52;
+  font-weight: 800;
+  font-size: 20px;
+  margin-left: 20px;
+  max-width: 100px;
+  overflow: hidden;
+  
   }
   
   .desc {
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    margin: 5px 0;
-    width:250px;
-    height:50px;
-    border:1px solid white;
-    border-radius: 20px;
-    padding:15px 5px;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  margin: 5px 0;
+  width:250px;
+  height:50px;
+  border:1px solid white;
+  border-radius: 20px;
+  padding:15px 5px;
   }
   
   .highlight {
-    color: #C1FF52;
-    font-weight: bold;
-    margin-right: -3px;
+  color: #C1FF52;
+  font-weight: bold;
+  margin-right: -3px;
   }
   
   .profile_section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #2a2a2a;
-    border-radius: 14px;
-    padding: 8px;
-    box-shadow: 0 0 6px rgba(193, 255, 82, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #2a2a2a;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 0 6px rgba(193, 255, 82, 0.4);
   }
   
   .profile_img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid #C1FF52;
-    margin-bottom: 5px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #C1FF52;
+  margin-bottom: 5px;
   }
   
   .profile_img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   }
   
   .profile_name {
-    font-size: 13px;
-    color: white;
+  font-size: 13px;
+  color: white;
   }
 
   .bottom_nav {
-    position: fixed;
-    height: 74px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 401px;
-    margin: auto;
-    background: inherit;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.664);
-    box-shadow:
-      0 0 30px rgba(255, 255, 255, 0.6),
-      0 0 8px rgba(255, 255, 255, 0.8),
-      inset 0 0 3px rgba(255, 255, 255, 0.9);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 7px 0;
-    z-index: 1000;
+  position: fixed;
+  height: 74px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 401px;
+  margin: auto;
+  background: inherit;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.664);
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.6),
+    0 0 8px rgba(255, 255, 255, 0.8),
+    inset 0 0 3px rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 7px 0;
+  z-index: 1000;
   }
   
   .bottom_nav a {
-    text-decoration: none;
-    color: #888;
-    font-size: 14px;
-    font-weight: 500;
+  text-decoration: none;
+  color: #888;
+  font-size: 14px;
+  font-weight: 500;
   }
   
   .btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
   }
   
   .map_page {
-    width: 16px;
+  width: 16px;
   }
   
   .home_page {
-    width: 24px;
+  width: 24px;
   }
   
   .shopping_page {
-    font-size: 20px;
-    font-weight: 600;
-    color: black;
+  font-size: 20px;
+  font-weight: 600;
+  color: black;
   }
   
   .selected_nav {
-    background-color: #C1FF52;
-    border: 1px solid black;
-    border-radius: 11px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: black;
+  background-color: #C1FF52;
+  border: 1px solid black;
+  border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
   }
   
   .selected_nav a {
-    color: black;
+  color: black;
   }
   
   .nav_box {
-    position: relative;
+  position: relative;
   }
   
   .now_page {
-    width: 10.7px;
-    position: absolute;
-    bottom: 72px;
-    left: 330px;
+  width: 10.7px;
+  position: absolute;
+  bottom: 72px;
+  left: 330px;
   }
   
   .side_deco {
-    width: 207.4px;
-    height: auto;
-    display: block;
+  width: 207.4px;
+  height: auto;
+  display: block;
   }
   
   .decoration_right {
-    position: absolute;
-    right: 10px;
-    top: 270px;
-    z-index: 10;
+  position: absolute;
+  right: 10px;
+  top: 270px;
+  z-index: 10;
   }
   .twinkle{
-    width:20px;
-    margin-bottom:-5px;
+  width:20px;
+  margin-bottom:-5px;
   }
 
   .boom{
-    width:40px;
-    margin-left:10px;
+  width:40px;
+  margin-left:10px;
   }
   .hello{
-    width:300px;
-    margin:0;
-    display:flex;
-    align-items: flex-end;
+  width:300px;
+  margin:0;
+  display:flex;
+  align-items: flex-end;
   } 
 
 
@@ -289,59 +289,59 @@ body {
 }
 
 .example_foods{
-    display:flex;
-    align-items: center;
+  display:flex;
+  align-items: center;
 }
 .per_foods{
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    width:106px;
-    height:32px;
-    border:1px solid white;
-    border-radius: 26px;
-    background-color: #e7ffbb84;
-    margin:10px;
-    color:white;
-    font-size: 13px;
-    opacity: 70%;
-    cursor: pointer;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  width:106px;
+  height:32px;
+  border:1px solid white;
+  border-radius: 26px;
+  background-color: #e7ffbb84;
+  margin:10px;
+  color:white;
+  font-size: 13px;
+  opacity: 70%;
+  cursor: pointer;
 }
 .foods_hugger{
-    position:absolute;
-    top:55px;
-    right:0;
+  position:absolute;
+  top:55px;
+  right:0;
 }
 
 
   .toggle_box {
-    position: relative;
-    width: 152px;
-    height: 62px;
-    background-color: #425323;
-    border: 3px solid #425323;
-    border-radius: 46px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  position: relative;
+  width: 152px;
+  height: 62px;
+  background-color: #425323;
+  border: 3px solid #425323;
+  border-radius: 46px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   }
   .toggle_box.active {
-    background-color: #C1FF52; /* 활성화 색상 예시 */
+  background-color: #C1FF52; /* 활성화 색상 예시 */
   }
   .toggle_button {
-    position: absolute;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background-color: #C1FF52;
-    top: 8px;
-    left: 10px;
-    transition: left 0.3s ease;
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #C1FF52;
+  top: 8px;
+  left: 10px;
+  transition: left 0.3s ease;
   }
   .toggle_button.active{
-    background-color: #425323;
+  background-color: #425323;
   }
   .toggle_box.active .toggle_button {
-    left: calc(100% - 56px); /* 오른쪽 끝으로 이동 */
+  left: calc(100% - 56px); /* 오른쪽 끝으로 이동 */
   }
 
 .custom-overlay-box {
@@ -418,7 +418,7 @@ body {
 }
 
 .sheet_content_v2::-webkit-scrollbar {
-  display: none;        
+  display: none;    
 }
 
 .modal_product_img {
@@ -510,21 +510,21 @@ body {
   margin-bottom:130px;
 }
 .perimg{
-    width:78px;
-    height:93px;
-    border-radius: 17px;
-    object-fit: cover;
-    margin-top: -7px;
-    margin-left:-7px;
+  width:78px;
+  height:93px;
+  border-radius: 17px;
+  object-fit: cover;
+  margin-top: -7px;
+  margin-left:-7px;
 }
 
 
 .reserve_controls {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin:10px 0;
-    gap: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin:10px 0;
+  gap: 10px;
 }
 
 .quantity_box {
@@ -542,12 +542,12 @@ body {
 }
 
 .qty_btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    padding: 0 10px;
-    cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 0 10px;
+  cursor: pointer;
 }
 
 .time_box {
@@ -589,14 +589,14 @@ body {
 
 
 .reserve_btn {
-    background-color: #C1FF52;
-    border: none;
-    border-radius: 26px;
-    padding: 12px 20px;
-    font-weight: bold;
-    font-size: 16px;
-    width: 150px;
-    cursor: pointer;
+  background-color: #C1FF52;
+  border: none;
+  border-radius: 26px;
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 16px;
+  width: 150px;
+  cursor: pointer;
 }
 .resbuttonhugger{
   display:flex;
@@ -606,7 +606,7 @@ body {
 
 
 .brocoli{
-    width: 242px;
+  width: 242px;
 }
 
 
@@ -620,21 +620,21 @@ body {
   
 }
   .toggle_hugger {
-    position: relative;
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 80px;
+  position: relative;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 80px;
   }
 
   
 .firstsight{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position:absolute;
-    top:430px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position:absolute;
+  top:430px;
 }
 
 .many_items_store{

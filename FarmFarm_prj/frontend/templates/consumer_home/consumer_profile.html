@@ -23,59 +23,53 @@
         <div class="profile-text">
           <div class="textbox">
             <span class="nickname-highlight"
-              ><span class="nickname">바그바그</span></span
+              ><span class="nickname"> 바그바그</span></span
             >
             <span class="welcome-text">님 반가워요!</span>
             <img src="{% static 'img/emo1.png' %}" alt="" />
           </div>
 
           <div class="textbox1">
-            <div>
-              오늘 뭐 먹을까? <img src="{% static 'img/emo2.png' %}" alt="" />
+            <div class="firstmsg">
+              오늘 뭐 먹을까?
+              <img src="{% static 'img/emo2.png' %}" alt="" class="pic" />
             </div>
-            <span class="desc-text"
-              >근처 <span class="green_small">노점</span>에서
-              <span class="green_small">신선하게</span> 장봐봐요!</span
-            >
-            <br /><span class="desc-text"
-              >지금 내 근처, 장보는 가장 따뜻한 방법 "</span
-            ><span class="farmfarm">팜팜</span>"
-            <img src="{% static 'img/emo3.png' %}" alt="" />
+            <div class="desc-text">
+              근처 <span class="green_small">노점</span>에서
+              <span class="green_small">신선하게</span> 장봐봐요!
+            </div>
+            <div class="lastmsg">
+              <span class="desc-text"
+                >지금 내 근처, 장보는 가장 따뜻한 방법 "</span
+              ><span class="farmfarm">팜팜</span>"
+              <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
+            </div>
           </div>
         </div>
       </div>
-      {% comment %} <div class="profile-box">
-        <div class="profile_img">
-          <img src="{% static 'img/logo_leaves.png' %}" alt="더미프로필" />
-        </div>
-        <span class="nickname">바그바그</span>
-      </div> {% endcomment %}
-
-      <div class="line_"></div>
-
-      
-    </div>
-  </div>
-      {% comment %}
       <div class="profile-box">
-        <img src="{% static 'img/Union.png' %}" alt="" />
+        <img src="{% static 'img/Union.png' %}" alt="" class="profile_hugger" />
         <div class="profile-edit">
           <img
             id="profileImage"
-            src="{% static 'img/sample_profile.png' %}"
+            src="{% static 'img/dummy_egg.png' %}"
             alt="프로필"
           />
         </div>
         <div class="level-box">
-          <p class="nickname"></p>
-          <img
-            id="editProfileBtn"
-            src="{% static 'img/edit.png' %}"
-            alt="수정"
-            style="cursor: pointer"
-          />
-          <p class="level">LV.3</p>
-          <img src="{% static 'img/level.png' %}" alt="" />
+          <p class="nickname">
+            바그바그
+            <img
+              id="editProfileBtn"
+              src="{% static 'img/edit.png' %}"
+              alt="수정"
+              style="cursor: pointer"
+            />
+          </p>
+          <p class="level">
+            LV.3
+            <img src="{% static 'img/level.png' %}" alt="" />
+          </p>
         </div>
       </div>
     </div>
@@ -83,13 +77,34 @@
   <!-- 모달 -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
-      <input type="text" id="nicknameInput" placeholder="닉네임 입력" />
-      <input type="file" id="profileImageInput" accept="image/*" />
-      <div class="modal-btns">
-        <button id="saveProfileBtn">저장</button>
-        <button id="closeModalBtn">취소</button>
+      <div class="modal-actions">
+        <button id="closeModalBtn">×</button>
+      </div>
+      <div class="nickname-row">
+        <input type="text" id="nicknameInput" value="바그바그" />
+        <img
+          class="nickname-edit-btn"
+          src="{% static 'img/edit.png' %}"
+          alt="닉네임 수정"
+        />
+      </div>
+
+      <div class="image-row">
+        <div class="image-preview">
+          <img
+            src="{% static 'img/dummy_egg.png' %}"
+            alt="프로필 미리보기"
+            class="preview_img"
+          />
+          <img
+            class="image-edit-btn"
+            src="{% static 'img/edit.png' %}"
+            alt="이미지 수정"
+          />
+        </div>
       </div>
     </div>
   </div>
-  {% endcomment %} {% endblock body %}
+
+  {% endblock body %}
 </div>

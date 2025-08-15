@@ -5,42 +5,36 @@ body {
     justify-content: center;
 }
 
-/* 전체 앱 화면 컨테이너 */
 .big_hugger {
     margin: 0 auto;
-    width: 402px; /* 앱 화면 너비 고정 */
-    min-height: 100vh; /* 전체 높이 화면 기준 */
+    width: 402px;
+    min-height: 100vh;
     background-color: black;
     color: white;
 }
 
-/* 상단 프로필 영역 */
 .profile-section {
     height: auto;
     background-color: black;
 }
-.logo{
-    position: relative; 
+
+.logo {
+    position: relative;
 }
 
 .logo img:last-child {
     position: absolute;
-    top: 10px;   /* 상단 여백 */
-    right: 10px; /* 오른쪽 여백 */
+    top: 10px;
+    right: 10px;
 }
+
 .welcome-box {
     position: relative;
     width: 381.444px;
     height: 134.276px;
-    border: 1px solid rgba(231, 255, 187, 0.80);
+    border: 1px solid rgba(231, 255, 187, 0.8);
     border-radius: 26px;
     margin: 0 10px 10px 10px;
-    /* overflow: hidden; */
-
-    
-}
-.profile-text{
-    margin: 10px;
 }
 
 .backgroundimg {
@@ -48,6 +42,7 @@ body {
     inset: 0;
     z-index: 0;
 }
+
 .backgroundimg img {
     width: 100%;
     height: 100%;
@@ -56,109 +51,86 @@ body {
 
 .profile-info {
     position: relative;
-    z-index: 1; /* 배경보다 위로 */
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 10px;
-    height: 100%;
+    height: 134px;
 }
 
-/* 폰트와 색상 스타일 */
-.nickname-highlight {
+.profile-text {
+    margin: 10px;
+}
+
+.textbox, .textbox1 {
+    padding: 5px 10px;
+}
+
+.textbox1 {
+    width: 212.975px;
+    height: 55.318px;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 25px;
+    filter: drop-shadow(2px 4px 2px rgba(0, 0, 0, 0.25));
+    background-color: #000;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.nickname-highlight, .green_small, .farmfarm {
     color: #C1FF52;
     font-family: Pretendard;
-    font-size: 20px;
     font-weight: 700;
 }
+
+.nickname-highlight {
+    font-size: 20px;
+    display: inline-block; /* ellipsis 적용을 위해 inline-block 필요 */
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: bottom; /* 텍스트 위치 맞춤 */
+}
+
 .welcome-text {
     color: #FFF;
     font-family: Pretendard;
     font-size: 15px;
     font-weight: 700;
 }
-.textbox1 div{
+
+.firstmsg{
     color: #FFF;
     font-family: Pretendard;
     font-size: 12px;
     font-weight: 700;
 }
-.textbox1 p{
+
+.textbox1 p {
     color: #FFF;
     font-family: Pretendard;
     font-size: 9px;
     font-weight: 700;
+    margin: 0;
 }
-.green_small {
-    color: #C1FF52;
-    font-family: Pretendard;
-    font-size: 9px;
-    font-weight: 700;
-}
+
 .desc-text {
     color: #FFF;
     font-family: Pretendard;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
+}
+.lastmsg{
+    font-size: 8px;
 }
 .farmfarm {
-    color: #C1FF52;
-    font-family: Pretendard;
     font-size: 15px;
-    font-weight: 700;
-}
-.textbox {
-    margin: 5px;
-}
-.textbox1 {
-    width: 232.975px;
-    height: 55.318px;
-    border: 1px solid #fff;
-    border-radius: 25px;
-    filter: drop-shadow(2px 4px 2px rgba(0, 0, 0, 0.25));
-    padding: 10px;
-    background-color: #000;
 }
 
-.profile-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #2a2a2a;
-    border-radius: 14px;
-    padding: 8px;
-    box-shadow: 0 0 6px rgba(193, 255, 82, 0.4);
-  }
-  
-  .profile_img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid #C1FF52;
-    margin-bottom: 5px;
-  }
-  
-  .profile_img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .profile_name {
-    font-size: 13px;
-    color: white;
-  }
-.line_{
-    position: absolute;
-    top:250px;
-    width:100%;
-    height:8px;
-    border-top: 4px solid #C1FF52;
-    border-bottom: 1px solid #C1FF52;
-  }
-
-
-/* 마이 캐릭터 */
 .section-title {
     background-color: #C1FF52;
     border: none;
@@ -168,6 +140,7 @@ body {
     font-size: 14px;
     margin: 15px 0;
 }
+
 .character-card {
     border-radius: 15px;
     background: #1b1b1b;
@@ -176,22 +149,27 @@ body {
     gap: 15px;
     align-items: center;
 }
+
 .character-img {
     width: 100px;
     height: auto;
 }
+
 .character-info {
     flex: 1;
 }
+
 .character-name {
     font-size: 14px;
     margin-bottom: 10px;
 }
+
 .progress-container {
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .progress-bar {
     flex: 1;
     height: 8px;
@@ -199,18 +177,20 @@ body {
     border-radius: 5px;
     overflow: hidden;
 }
+
 .progress-fill {
     height: 100%;
     background-color: #C1FF52;
 }
+
 .progress-percent {
     font-size: 12px;
 }
 
-/* 리워드 버튼 */
 .reward-section {
     margin: 20px 0;
 }
+
 .reward-button {
     width: 100%;
     background-color: #C1FF52;
@@ -220,63 +200,166 @@ body {
     font-weight: 700;
     font-size: 14px;
 }
-/* 모달 배경 */
-  .modal-overlay {
-    display: none;
+
+
+#editProfileBtn {
+    position: relative; /* 이미 absolute 안이면 relative도 가능 */
+    z-index: 20;        /* 충분히 큰 값 */
+    cursor: pointer;
+}
+
+
+.modal-overlay {
+    display: none; /* 기본 상태 */
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;       /* 좌상단 기준으로 전체 화면 덮기 */
+    width: 100%;
+    height: 100%;
     z-index: 1000;
     justify-content: center;
     align-items: center;
-  }
+}
 
-  /* 모달창 스타일 */
-  .modal-content {
-    width: 105.528px;
-    height: 84.622px;
-    flex-shrink: 0;
+
+.modal-content {
+    width: 85px;
+    height: 65px;
     border-radius: 16px;
     border: 0.6px solid rgba(255, 255, 255, 0.35);
     background: rgba(255, 255, 255, 0.07);
     background-blend-mode: plus-lighter;
     box-shadow:
-      -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
-      -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
-      1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
-      0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
-    backdrop-filter: blur(2.72px);
-    padding: 15px;
+        -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
+        -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
+        1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
+        0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
+    backdrop-filter: blur(3px);
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    align-items: center;
-  }
+    align-items: stretch;
+    position: absolute;
+    top:180px;
+    right:50px;
+}
 
-  .modal-content input[type="text"] {
-    padding: 4px;
-    width: 90%;
-    border-radius: 8px;
+.modal-content .nickname-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 4px;
+    margin-left:5px;
+}
+
+.modal-content .nickname-row input {
+    width: 60px;      /* 고정 너비 */
+    flex: none;       /* flex-grow 막기 */
+    background: transparent;
     border: none;
     outline: none;
-    text-align: center;
-  }
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+}
 
-  .modal-content input[type="file"] {
-    font-size: 0.8rem;
-  }
 
-  .modal-btns {
-    display: flex;
-    gap: 6px;
-  }
-
-  .modal-btns button {
-    padding: 3px 6px;
-    font-size: 0.8rem;
-    border: none;
-    border-radius: 6px;
+.modal-content .nickname-row img,
+.modal-content .image-edit-btn {
     cursor: pointer;
-  }
+}
 
+.modal-content .image-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-content .image-preview {
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.modal-content .image-preview .preview_img {
+    width: 67px;
+    height:25px;
+    border-radius: 8px;
+    border:0.7px solid white;
+}
+
+.profile_edit {
+    position: absolute;
+}
+
+#profileImage {
+    width: 95px;
+    height: 95px;
+    border: 0.7px solid white;
+    border-radius: 50%;
+    position: absolute;
+    top: -29px;
+    right: 27.3px;
+    object-fit: cover;
+    z-index: 10;
+}
+
+.profile_hugger {
+    position: absolute;
+    top: -40px;
+    right: 15px;
+}
+
+.level-box {
+    width: 75px;
+    height: 67px;
+    border-radius: 16px;
+    border: 0.5px solid white;
+    background-color: #141610c8;
+    position: absolute;
+    top: 10px;
+    right: 27.5px;
+    padding-top: 50px;
+    padding: 50px 10px 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.level-box p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.level-box img {
+    width: 15px;
+    margin: 0 0 -2px -2px;
+}
+
+#closeModalBtn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.nickname-edit-btn{
+    width:14px;
+    position:absolute;
+    right:10px;
+}
+.image-edit-btn{
+    width:14px;
+    position:absolute;
+    top:55px;
+    right:10px;
+}
+.pic{
+    margin-bottom:-2px;
+    margin-left:-3px;
+}

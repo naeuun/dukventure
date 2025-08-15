@@ -1,22 +1,22 @@
 body {
-    margin: 0;
+  margin: 0;
   }
   
   .big_hugger {
-    margin: 0 auto;
-    width: 402px;
-    height:100vh;
-    background-color: black;
-    color: #C1FF52;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position:relative;
+  margin: 0 auto;
+  width: 402px;
+  height:100vh;
+  background-color: black;
+  color: #C1FF52;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position:relative;
   }
   .container{
-    height:90vh;
-    padding-top: 10vh;
+  height:90vh;
+  padding-top: 10vh;
   }
 
 .deco{
@@ -94,37 +94,37 @@ body {
 
 /* 파일명 + 삭제 버튼 영역 */
 .file_info_wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 8px; /* 라벨 아이콘과 간격 */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px; /* 라벨 아이콘과 간격 */
   }
   
   /* 파일명 스타일 */
   .file_name {
-    font-size: 12px;
-    color: #EDEDED;
-    max-width: 90px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-size: 12px;
+  color: #EDEDED;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   }
   
   /* 삭제 버튼 */
   .delete_file_btn {
-    background: transparent;
-    border: 1px solid #C1FF52;
-    color: #C1FF52;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 11px;
-    cursor: pointer;
+  background: transparent;
+  border: 1px solid #C1FF52;
+  color: #C1FF52;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 11px;
+  cursor: pointer;
   }
   
   .delete_file_btn:hover {
-    background: #C1FF52;
-    color: black;
+  background: #C1FF52;
+  color: black;
   }
   
 .text-input {
@@ -224,93 +224,92 @@ body {
 
 /* 모달 전체 */
 .voice_modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   }
   
-  /* 숨김 클래스 */
-  .hidden {
-    display: none;
-  }
+/* 숨김 클래스 */
+.hidden {
+  display: none;
+}
   
-  /* 배경 오버레이 */
-  .voice_modal_overlay {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
+/* 배경 오버레이 */
+.voice_modal_overlay {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
   
-  /* 모달 내부 콘텐츠 */
-  .voice_modal_content {
-    position: absolute;
-    border: 1px solid white; 
-    box-shadow:
-    24px 24px 24px rgba(42, 42, 42, 0.3),
-    18px 18px 18px rgba(109, 109, 109, 0.12),
-    inset 0 0 8px rgba(255, 255, 255, 0.35);
-    border-radius: 20px;
-    width: 339px;
-    height: 161px;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #C1FF52;
-    transition: transform .18s ease, opacity .18s ease;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    bottom:10vh;
-  }
-  
-  
-  
-  /* 안내 텍스트 */
-  .voice_modal_text {
-    width:161px;
-  }
-  
-  /* 닫기 버튼 */
-  .voice_modal_close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 24px;
-    font-weight: 900;
-    cursor: pointer;
-  }
-  .voice_recognizing_btn{
-    width:47px;
-    height:47px;
-    border:2px solid #C1FF52;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    transition: background-color 0.2s;
-  }
-  /* 마이크 아이콘 */
-  .voice_modal_mic {
-    width: 21px;
-  }
+/* 모달 내부 콘텐츠 */
+.voice_modal_content {
+  position: absolute;
+  border: 1px solid white; 
+  box-shadow:
+  24px 24px 24px rgba(42, 42, 42, 0.3),
+  18px 18px 18px rgba(109, 109, 109, 0.12),
+  inset 0 0 8px rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  width: 339px;
+  height: 161px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #C1FF52;
+  transition: transform .18s ease, opacity .18s ease;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  bottom:10vh;
+}
+
+
+
+/* 안내 텍스트 */
+.voice_modal_text {
+  width:161px;
+}
+
+/* 닫기 버튼 */
+.voice_modal_close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.voice_recognizing_btn{
+  width:47px;
+  height:47px;
+  border:2px solid #C1FF52;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  transition: background-color 0.2s;
+}
+/* 마이크 아이콘 */
+.voice_modal_mic {
+  width: 21px;
+}
 
 .voice_recognizing_btn.recording {
-    background-color: #C1FF52; 
-  }
-  
+  background-color: #C1FF52; 
+}
 
 
 /*완료시 모달*/
@@ -433,4 +432,26 @@ body {
   left:30px;
   top:55px;
   width:8px;
+}
+
+
+
+
+
+.keyword-option {
+  padding: 8px 14px;
+  border: 1px solid #C1FF52;
+  border-radius: 50px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+/* 체크박스 선택 시 스타일 */
+.keyword-option input[type="checkbox"]:checked + span,
+.keyword-option:has(input[type="checkbox"]:checked) {
+  background-color: #C1FF52;
+  color: black;
 }
