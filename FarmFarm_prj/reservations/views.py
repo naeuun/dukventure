@@ -5,6 +5,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -14,8 +15,9 @@ from django.db.models import Q
 from .models import Reservation, ReservationItem, ReservationStatus
 from .forms import ReservationForm, ReservationItemForm, SellerReservationUpdateForm
 from users.models import UserType
-from stores.models import Store
+from stores.models import Store, StoreItem
 from items.models import Item   
+from reviews.forms import ReviewForm
 
 # ... _require_buyer, _require_seller 등 헬퍼 함수 ...
 
@@ -108,8 +110,10 @@ def reservation_list(request):
         .prefetch_related('items')
         .order_by('-created_at'))
     
+    review_form = ReviewForm()
     return render(request, 'reservations/reservation_list.html', {
         'reservations': reservation_list,
+        'review_form': review_form,
         'now': timezone.now(),
     })
 
@@ -237,24 +241,20 @@ def seller_reservation_list(request):
 def reservation_create_from_form(request):
     """임시: 가게 상세 페이지의 폼으로부터 예약을 생성하는 뷰 (디버깅 코드 추가)"""
     if request.method != 'POST':
-        return redirect('stores:list')
+        return redirect('stores:store-list')
 
     buyer, jump = _require_buyer(request)
     if jump: return jump
 
     try:
-        item_id = request.POST.get('item_id')
+        store_item_id = request.POST.get('item_id')
         store_id = request.POST.get('store_id')
         quantity = int(request.POST.get('quantity', 1))
         pickup_time_str = request.POST.get('pickup_time')
-        
-        item = get_object_or_404(Item, pk=item_id)
+
+        store_item = get_object_or_404(StoreItem, pk=store_item_id)
         store = get_object_or_404(Store, pk=store_id)
 
-        if not item.stores.filter(pk=store.id).exists():
-            messages.error(request, "잘못된 접근입니다.")
-            return redirect('stores:list')
-        
         hh, mm = map(int, pickup_time_str.split(':'))
         today = timezone.localdate()
         requested_pickup_at = timezone.make_aware(datetime(today.year, today.month, today.day, hh, mm))
@@ -268,20 +268,58 @@ def reservation_create_from_form(request):
             buyer=buyer,
             requested_pickup_at=requested_pickup_at,
         )
-        
+
         ReservationItem.objects.create(
             reservation=reservation,
-            item_name=item.name,
-            unit_price=item.price,
+            item_name=store_item.item.name,
+            unit_price=store_item.price,
             quantity=quantity,
-            unit=item.unit,
-            original_item=item,
+            unit=store_item.unit,
+            original_item=store_item.item,
+            image=store_item.photo,  # 여기서 이미지 복사!
         )
-        
-        # [디버깅 메시지]
+
         messages.success(request, f"[Debug] '{buyer.user.username}'님이 '{store.name}' 가게에 예약을 생성했습니다 (Buyer ID: {buyer.id}, Store ID: {store.id})")
         return redirect('reservations:list')
 
     except Exception as e:
         messages.error(request, f"예약 중 오류가 발생했습니다: {e}")
-        return redirect('stores:list')
+        return redirect('stores:store-list')
+
+
+# 구매 내역 상세 보기 리스트
+@login_required
+def purchase_list(request):
+    buyer, jump = _require_buyer(request)
+    if jump: return jump
+
+    past_reservations = (
+        Reservation.objects
+        .filter(buyer=buyer, status=ReservationStatus.PICKED_UP)
+        .select_related('store', 'store__seller')
+        .prefetch_related('items')
+        .order_by('-created_at')
+    )
+
+    return render(request, 'reservations/purchase_list.html', {
+        'past_reservations': past_reservations,
+    })
+
+@require_POST
+@login_required
+def pickup_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, pk=reservation_id, buyer=request.user.buyer)
+    if reservation.status != ReservationStatus.ACCEPTED:
+        return JsonResponse({'status': 'error', 'message': '예약이 수락된 상태에서만 픽업 완료가 가능합니다.'})
+    reservation.update_status(ReservationStatus.PICKED_UP)
+    return JsonResponse({'status': 'success'})
+
+@require_POST
+@login_required
+def pickup_ready_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, pk=reservation_id, buyer=request.user.buyer)
+    if reservation.status != ReservationStatus.ACCEPTED:
+        return JsonResponse({'status': 'error', 'message': '예약이 수락된 상태에서만 픽업 준비가 가능합니다.'})
+    reservation.is_pickup_ready = True
+    reservation.save()
+    return JsonResponse({'status': 'success'})

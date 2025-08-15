@@ -12,6 +12,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=10, unique=True)
     usertype = models.CharField(max_length=10, choices=UserType.choices)
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)  # 전화번호 필드 추가
 
     def __str__(self):
         return f'{self.usertype} - {self.username}'

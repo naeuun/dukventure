@@ -45,8 +45,9 @@ class StoreItem(models.Model):
     store = models.ForeignKey('Store', on_delete=models.CASCADE, related_name='store_items')
     item = models.ForeignKey('items.Item', on_delete=models.CASCADE, related_name='store_items')
     price = models.PositiveIntegerField()
-    photo = models.ImageField(upload_to='item_photos/', blank=True, null=True)  # 아이템 사진 추가
-    description = models.TextField(blank=True, null=True)  # 아이템 설명 추가
+    photo = models.ImageField(upload_to='item_photos/', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    unit = models.CharField(max_length=20, blank=True, null=True)  # ← 추가
 
     def __str__(self):
         return f'{self.store.name} - {self.item.name} ({self.price}원)'

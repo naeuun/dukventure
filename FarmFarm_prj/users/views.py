@@ -191,12 +191,17 @@ def buyer_home(request):
             r.remaining_minutes = time_diff.total_seconds() // 60
             active_reservations.append(r)
 
-    past_reservations = [r for r in all_reservations if r.status not in active_statuses]
 
     # 내가 쓴 리뷰 목록
     my_reviews = Review.objects.filter(
         author=buyer
     ).select_related('store', 'author__user').order_by('-created_at')[:5]
+
+    # 픽업 완료된 예약 내역만 추출 = 구매 내역 
+    past_reservations = Reservation.objects.filter(
+        buyer=request.user.buyer,
+        status='PICKED_UP'
+    ).order_by('-created_at')
 
     context = {
         'active_reservations': active_reservations,

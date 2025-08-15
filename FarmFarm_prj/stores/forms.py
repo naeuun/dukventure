@@ -18,10 +18,11 @@ class StoreForm(forms.ModelForm):
 class StoreItemForm(forms.ModelForm):
     class Meta:
         model = StoreItem
-        fields = ['item', 'price', 'photo', 'description']
+        fields = ['item', 'price', 'photo', 'description', 'unit']
         labels = {
             'item': '품목명',
             'price': '가격',
             'photo': '사진',
             'description': '설명',
+            'unit': '단위'
         }

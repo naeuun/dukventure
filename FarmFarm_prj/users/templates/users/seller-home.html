@@ -27,11 +27,12 @@
             <p><b>품목명:</b> {{ store_item.item.name }}</p>
             <p><b>위치:</b> {{ store.address }}</p>
             <p><b>판매 시간:</b> {{ store.sale_hours }}</p>
-            <p><b>가격:</b> {{ store_item.price }}원</p>
+            <p><b>가격:</b> {{ store_item.unit }} / {{ store_item.price }}원</p>
             <span>{{ store_item.description }}</span>
             <button type="button" class="edit-item-btn"
                 data-id="{{ store_item.id }}"
                 data-name="{{ store_item.item.name }}"
+                data-unit="{{ store_item.unit }}"
                 data-price="{{ store_item.price }}"
                 data-desc="{{ store_item.description }}"
                 data-photo-name="{% if store_item.photo %}{{ store_item.photo.name }}{% else %}{% endif %}">
@@ -55,6 +56,8 @@
         <input type="hidden" name="item_id" id="modal_item_id">
         <label>품목명</label>
         <input type="text" name="item_name" id="modal_item_name"><br>
+        <label>단위</label>
+        <input type="text" name="item_unit" id="modal_item_unit"><br>
         <label>가격</label>
         <input type="number" name="item_price" id="modal_item_price"><br>
         <label>설명</label>
@@ -72,9 +75,10 @@ document.querySelectorAll('.edit-item-btn').forEach(function(btn) {
         document.getElementById('editItemModal').style.display = 'block';
         document.getElementById('modal_item_id').value = btn.dataset.id;
         document.getElementById('modal_item_name').value = btn.dataset.name;
+        document.getElementById('modal_item_unit').value = btn.dataset.unit; // 단위 추가
         document.getElementById('modal_item_price').value = btn.dataset.price;
         document.getElementById('modal_item_desc').value = btn.dataset.desc;
-        document.getElementById('editItemForm').action = "/stores/edit_item/" + btn.dataset.id + "/"; // edit_item URL로 지정
+        document.getElementById('editItemForm').action = "/stores/edit_item/" + btn.dataset.id + "/";
         document.getElementById('modal_item_photo_name').textContent =
             btn.dataset.photoName ? btn.dataset.photoName : "";
     };

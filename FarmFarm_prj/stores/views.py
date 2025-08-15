@@ -12,7 +12,7 @@ def map_view(request):
     # context = {'stores': stores}
     return render(request, 'stores/map.html') # 올바른 템플릿 경로
 
-def store_list_view(request): ##임시
+def store_list(request): ##임시
     stores = Store.objects.all()
     return render(request, 'stores/store_list.html', {'stores': stores})
 
@@ -20,6 +20,7 @@ def store_detail_view(request, store_id): ##임시
     store = get_object_or_404(Store, pk=store_id)
     items = Item.objects.filter(stores=store) # 'stores' 필드 사용
     return render(request, 'stores/store_detail.html', {'store': store, 'items': items})
+
 def map(request):
     stores_qs = Store.objects.all()
     stores = []
@@ -58,19 +59,23 @@ def register(request):
                 price = request.POST.get(f'item_price_{idx}')
                 desc = request.POST.get(f'item_desc_{idx}')
                 photo = request.FILES.get(f'item_photo_{idx}')
+                unit = request.POST.get(f'item_unit_{idx}')  # 단위 값 받기
                 # 모든 값이 None이면 반복 종료
                 if name is None and price is None and desc is None and photo is None:
                     break
                 # name과 price가 있으면 저장
                 if name and price:
                     item_obj, _ = Item.objects.get_or_create(name=name)
-                    StoreItem.objects.create(
+                    # StoreItem 생성/수정 시 unit 필드에 값 저장
+                    store_item = StoreItem(
                         store=store,
                         item=item_obj,
+                        unit=unit,  # 단위 저장!
                         price=price,
                         description=desc,
                         photo=photo
                     )
+                    store_item.save()
                 idx += 1
             seller.has_store = True
             seller.save()
@@ -98,6 +103,7 @@ def edit_store(request, store_id):
                 price = request.POST.get(f'item_price_{idx}')
                 desc = request.POST.get(f'item_desc_{idx}')
                 photo = request.FILES.get(f'item_photo_{idx}')
+                unit = request.POST.get(f'item_unit_{idx}')  # 단위 값 받기
                 if not name and not price and not desc and not photo:
                     break
                 item_obj, _ = Item.objects.get_or_create(name=name)
@@ -107,6 +113,7 @@ def edit_store(request, store_id):
                     store_item.item = item_obj
                     store_item.price = price
                     store_item.description = desc
+                    store_item.unit = unit  # 단위 저장
                     if photo:
                         store_item.photo = photo
                     store_item.save()
@@ -115,6 +122,7 @@ def edit_store(request, store_id):
                     StoreItem.objects.create(
                         store=store,
                         item=item_obj,
+                        unit=unit,  # 단위 저장!
                         price=price,
                         description=desc,
                         photo=photo
@@ -138,10 +146,12 @@ def edit_item(request, item_id):
         price = request.POST.get('item_price')
         desc = request.POST.get('item_desc')
         photo = request.FILES.get('item_photo')
+        unit = request.POST.get('item_unit')  # 단위 값 받기
         item_obj, _ = Item.objects.get_or_create(name=name)
         store_item.item = item_obj
         store_item.price = price
         store_item.description = desc
+        store_item.unit = unit  # 단위 저장
         if photo:
             store_item.photo = photo
         store_item.save()

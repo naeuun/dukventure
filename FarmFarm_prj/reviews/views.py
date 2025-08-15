@@ -6,8 +6,9 @@ from django.http import JsonResponse
 from .models import Review
 from .forms import ReviewForm
 from reservations.models import Reservation, ReservationStatus
-from users.models import UserType, Seller
+from users.models import UserType
 from stores.models import Store
+
 @login_required
 def review_create(request, reservation_id):
     reservation = get_object_or_404(Reservation, pk=reservation_id)
@@ -21,35 +22,39 @@ def review_create(request, reservation_id):
         if is_ajax: return JsonResponse({'status': 'error', 'message': message}, status=403)
         messages.error(request, message)
         return redirect('users:buyer_home')
-    if hasattr(reservation, 'review'):
+    if Review.objects.filter(reservation=reservation).exists():
         message = "이미 리뷰를 작성한 예약입니다."
         if is_ajax: return JsonResponse({'status': 'error', 'message': message}, status=403)
         messages.error(request, message)
         return redirect('users:buyer_home')
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST, request.FILES)
-        if form.is_valid():
-            review = form.save(commit=False)
+        review_form = ReviewForm(request.POST, request.FILES)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
             review.reservation = reservation
             review.author = request.user.buyer
             review.store = reservation.store
             review.save()
-            
             if is_ajax:
                 return JsonResponse({'status': 'success', 'message': '소중한 리뷰가 등록되었습니다.'})
-            
             messages.success(request, "소중한 리뷰가 등록되었습니다.")
             return redirect('users:buyer_home')
         else:
             message = "입력 내용을 확인해주세요."
             if is_ajax:
-                return JsonResponse({'status': 'error', 'message': message, 'errors': form.errors}, status=400)
+                return JsonResponse({'status': 'error', 'message': message, 'errors': review_form.errors}, status=400)
             messages.error(request, message)
-            return redirect('users:buyer-home')
+            return redirect('users:buyer_home')
 
-    # GET 요청은 홈으로 리다이렉트 (모달 방식이므로 직접 접근할 이유 없음)
-    return redirect('users:buyer-home')
+    # GET 요청: AJAX면 폼 HTML 반환, 아니면 홈으로 리다이렉트
+    if is_ajax:
+        review_form = ReviewForm()
+        return render(request, 'reviews/review_form_modal.html', {
+            'review_form': review_form,
+            'reservation': reservation
+        })
+    return redirect('users:buyer_home')
 
 @login_required
 def my_review_list(request):

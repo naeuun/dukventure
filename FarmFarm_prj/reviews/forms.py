@@ -32,13 +32,13 @@ class ReviewForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        """
-        선택된 키워드 리스트를 "#키워드1#키워드2" 형태의 문자열로 변환하여 저장
-        """
         review = super().save(commit=False)
         selected_keywords = self.cleaned_data.get('keywords', [])
-        review.keywords = "".join(selected_keywords) # 리스트를 문자열로 합침
-        
+        # 키워드가 있으면 "#키워드1#키워드2" 형태로 저장
+        if selected_keywords:
+            review.keywords = "".join([f"#{kw}" for kw in selected_keywords])
+        else:
+            review.keywords = ""
         if commit:
             review.save()
         return review

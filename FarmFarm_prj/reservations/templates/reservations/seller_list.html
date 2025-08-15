@@ -1,9 +1,7 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "users/base_home.html" %}
+{% block role_content %}
 <style>
-    .wrap { max-width: 900px; margin: 24px auto; padding: 0 16px; }
-    .card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-    .card-content { display: flex; justify-content: space-between; align-items: center; }
+    .card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px; margin-bottom: 16px; } 
     .action-buttons { display: flex; gap: 8px; }
     .btn { border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: bold; }
     .btn-accept { background-color: #28a745; color: white; }
@@ -14,21 +12,40 @@
 </style>
 
 <div class="wrap">
-    <h2>예약 관리</h2>
-    <!-- ... 필터링 UI ... -->
-
+    <h2>예약 확인 🎇</h2>
     {% for r in page_obj %}
         <div class="card" id="res-card-seller-{{ r.pk }}">
             <div class="card-content">
-                <div>
-                    <span class="status">{{ r.get_status_display }}</span>
-                    <p><strong>예약코드:</strong> {{ r.reservation_code }}</p>
-                    <p>구매자: {{ r.buyer.user.username }} | 요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+                <!-- 구매자 정보 -->
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
+                    <img width="48" height="48" style="border-radius:50%; object-fit:cover; border:1px solid #eee;"
+                         src="{% if r.buyer.profile_image %}{{ r.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+                         alt="구매자 프로필">
+                    <div>
+                        <p style="margin:0;"><strong>{{ r.buyer.user.username }}</strong></p>
+                        <p style="margin:0; font-size:0.95em; color:#888;">전화번호: {{ r.buyer.user.phone }}</p>
+                    </div>
+                </div>
+                <p><strong>예약코드:</strong> {{ r.reservation_code }}</p>
+                <p>요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+                <!-- 예약 아이템 정보 -->
+                <div style="display: flex; gap: 12px; margin: 10px 0;">
+                    {% for item in r.items.all %}
+                        <div style="text-align:center;">
+                            {% if item.image %}
+                                <img width="60" height="60" style="object-fit:cover; border-radius:8px; border:1px solid #eee;" src="{{ item.image.url }}" alt="{{ item.item_name }}">
+                            {% else %}
+                                <img width="60" height="60" style="object-fit:cover; border-radius:8px; border:1px solid #eee;" src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
+                            {% endif %}
+                            <div style="font-size:0.95em;">{{ item.item_name }}</div>
+                            <div style="font-size:0.9em; color:#555;">수량: {{ item.quantity }}</div>
+                        </div>
+                    {% endfor %}
                 </div>
                 <div class="action-buttons">
                     {% if r.status == 'PENDING' %}
                         <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
-                        <button type="button" class="btn btn-reject" onclick="openRejectModal({{ r.pk }})">거절</button>
+                        <button type="button" class="btn btn-reject" onclick="openRejectModal('{{ r.pk }}')">거절</button>
                     {% elif r.status == 'ACCEPTED' %}
                         <span>수락 완료</span>
                     {% elif r.status == 'PICKED_UP' %}

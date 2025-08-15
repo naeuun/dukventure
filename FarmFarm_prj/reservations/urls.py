@@ -19,5 +19,11 @@ urlpatterns = [
 
     # 임시 예약 생성을 위한 URL
     path('create-from-form/', views.reservation_create_from_form, name='create_from_form'),
+    
+    # 구매 내역 전체 보기 리스트
+    path('purchase-list/', views.purchase_list, name='purchase-list'),
+    
+    # 픽업 처리
+    path('<int:reservation_id>/pickup/', views.pickup_reservation, name='pickup_reservation'),
 ]
 

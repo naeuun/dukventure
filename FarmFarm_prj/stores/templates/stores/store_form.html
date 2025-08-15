@@ -39,6 +39,7 @@
                 <div>
                     <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
                     <input type="text" name="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
+                    <input type="text" name="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위">
                     <input type="number" name="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
                     <input type="text" name="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
                     <input type="file" name="item_photo_{{ forloop.counter0 }}" accept="image/*">
@@ -48,6 +49,7 @@
         {% else %}
             <div>
                 <input type="text" name="item_name_0" placeholder="품목명">
+                <input type="text" name="item_unit_0" placeholder="단위">
                 <input type="number" name="item_price_0" placeholder="가격">
                 <input type="text" name="item_desc_0" placeholder="설명">
                 <input type="file" name="item_photo_0" accept="image/*">
@@ -102,6 +104,7 @@ document.getElementById('addItemBtn').onclick = function() {
     const div = document.createElement('div');
     div.innerHTML = `
         <input type="text" name="item_name_${itemIdx}" placeholder="품목명">
+        <input type="text" name="item_unit_${itemIdx}" placeholder="단위">
         <input type="number" name="item_price_${itemIdx}" placeholder="가격">
         <input type="text" name="item_desc_${itemIdx}" placeholder="설명">
         <input type="file" name="item_photo_${itemIdx}" accept="image/*">
