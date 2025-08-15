@@ -22,112 +22,14 @@ body {
     padding: 0;
   }
   
-  .greeting_section {
-    top:0;
-    position: absolute;
-    width: 100%;
-  }
-  
-  .clover_bg {
-    width: 80%;
-    display: block;
-  }
-  
-  .logo{
-    width:40px;
-    position:absolute;
-    top:8px;
-    right:8px;
-  }
-
-  .greeting_card {
-    position: absolute;
-    top: 90px;
-    left: 12px;
-    right: 12px;
-    background: #5278107a;
-    border:1px solid white;
-    border-radius: 30px;
-    padding: 10px;
-    padding-bottom: 0px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  }
-  
-  .greeting_text {
-    max-width: 60%;
-    color: white;
-  }
-  .username {
-    display:flex;
-    color: #C1FF52;
-    font-weight: 800;
-    font-size: 20px;
-    margin-left: 20px;
-    max-width: 100px;
-    overflow: hidden;
-    
-  }
-  
-  .desc {
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    margin: 5px 0;
-    width:250px;
-    height:50px;
-    border:1px solid white;
-    border-radius: 20px;
-    padding:15px 5px;
-  }
-  
-  .highlight {
-    color: #C1FF52;
-    font-weight: bold;
-    margin-right: -3px;
-  }
-  
-  .profile_section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #2a2a2a;
-    border-radius: 14px;
-    padding: 8px;
-    box-shadow: 0 0 6px rgba(193, 255, 82, 0.4);
-  }
-  
-  .profile_img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid #C1FF52;
-    margin-bottom: 5px;
-  }
-  
-  .profile_img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .profile_name {
-    font-size: 13px;
-    color: white;
-  }
-  
   .line_{
     position: absolute;
-    top:250px;
+    top:265px;
     width:100%;
-    height:8px;
-    border-top: 4px solid #C1FF52;
-    border-bottom: 1px solid #C1FF52;
+    height:3px;
+    border-top: 0.5px solid black;
+    background-color: #C1FF52;
+    border-bottom: 1px solid black;
   }
 
   .res_section {
@@ -236,6 +138,7 @@ body {
   }
   
   .side_deco {
+    margin-top:5px;
     transform: rotate(-90deg);
     width: 19.65px;
     height: auto;
@@ -348,9 +251,8 @@ body {
 }
 .textbox{
     width:183.7px;
-    margin-bottom: 5px;
     position:absolute;
-    left:-100px;
+    left:-110px;
     bottom:-40px;
 }
 .texts{
@@ -359,7 +261,7 @@ body {
   font-weight:700;
   color: black;
   white-space: nowrap;
-  bottom:-28px;
+  bottom:-27px;
   left:-90px;
 }
 .text_box_hugger{
@@ -543,7 +445,7 @@ body {
 /*리뷰내역요소*/
 .review_hugger{
   position:relative;
-  top:870px;
+  top:740px;
   width:366.6px;
   height:606px;
   background: linear-gradient(black, #0b2401);
@@ -609,6 +511,7 @@ body {
   font-size: 10px;
   font-weight: 700;
   padding:0 20px;
+  color:#0b2401;
 }
 .date{
   position: absolute;
@@ -617,4 +520,45 @@ body {
   font-size: 7px;
   font-weight: 700;
   color: #828282;
+}
+
+
+.profile-section{
+  position:absolute;
+  top:0;
+  padding-bottom:7px;
+  border-bottom:4px solid #C1FF52;
+}
+.textbox0{
+  position:absolute;
+  top:10px;
+  left:30px;
+}
+.textbox0 img{
+  position:absolute;
+  top:-7px;
+}
+.textbox1{
+  width:215px;
+  position:absolute;
+  bottom:0;
+}
+.green_highlight{
+  color:#C1FF52;
+  margin-right:-3px;
+}
+.bigger_green_highlight{
+  color:#C1FF52;
+  margin-right:-3px;
+  font-size: 15.3px;;
+}
+.smaller-text{
+  font-size: 10.3px;
+  font-weight:700;
+}
+.modal-overlay{
+  position:absolute;
+}
+.modal-content{
+  top:177px;
 }

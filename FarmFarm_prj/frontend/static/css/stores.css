@@ -166,19 +166,6 @@ body {
   left: 62px;
 }
 
-#add_store {
-  bottom: 100px;
-  right: 20px;
-  width: 46.4px;
-  height: 46.4px;
-  font-size: 35px;
-  background-color: #C1FF52;
-  border: 1px solid black;
-  border-radius: 50%;
-  position: fixed;
-  z-index: 10;
-}
-
 #test {
   position: absolute;
   bottom: 60px;
@@ -216,7 +203,7 @@ body {
 
 
 .bottom_sheet.hidden {
-  bottom: -550px;
+  bottom: -580px;
 }
 
 .bottom_sheet.show {
@@ -345,25 +332,58 @@ body {
   opacity: 0;
   }
 }
-.textbox{
-  position: fixed;
+
+.add_store_msg {
+  position: absolute; /* 화면 기준 위치 */
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   z-index: 10;
-  bottom:110px;
-  right:70px;
-  width:144px;
+  bottom:0;
+}
+
+.textbox {
+  position: absolute;
+  bottom:10px;
+  right:50px;
+  width: 144px;
   transform: rotate(180deg);
   animation: fadeOut 1s ease forwards 2s;
 }
-.text{
-  position: fixed;
-  z-index: 10;
-  font-size:13px;
+
+.text {
+  position: absolute;
+  bottom:15px;
+  right:70px;
+  font-size: 13px;
   font-weight: 700;
-  bottom:115px;
-  right:90px;
+  color: black;
   animation: fadeOut 1s ease forwards 2s;
+  white-space: nowrap;
 }
 
+
+#add_store {
+  width: 46.4px;
+  height: 46.4px;
+  font-size: 35px;
+  background-color: #C1FF52;
+  border: 1px solid black;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 10;
+  bottom:0;
+  right:20px;
+  cursor: pointer;
+}
+.adding_zone{
+  position:absolute;
+  width:200px;
+  height:70px;
+  bottom:70px;
+  right:0;
+}
 
 
 /* 기존 스타일 유지 + 추가 */
