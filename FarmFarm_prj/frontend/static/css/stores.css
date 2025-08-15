@@ -102,9 +102,9 @@ body {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.664);
   box-shadow:
-    0 0 30px rgba(255, 255, 255, 0.6),
-    0 0 8px rgba(255, 255, 255, 0.8),
-    inset 0 0 3px rgba(255, 255, 255, 0.9);
+  0 0 30px rgba(255, 255, 255, 0.6),
+  0 0 8px rgba(255, 255, 255, 0.8),
+  inset 0 0 3px rgba(255, 255, 255, 0.9);
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -241,7 +241,7 @@ body {
 }
 
 .sheet_content_v2::-webkit-scrollbar {
-  display: none;        
+  display: none;    
 }
 
 .modal_product_img {
@@ -342,7 +342,7 @@ body {
 
 @keyframes fadeOut {
   to {
-    opacity: 0;
+  opacity: 0;
   }
 }
 .textbox{
@@ -368,11 +368,11 @@ body {
 
 /* 기존 스타일 유지 + 추가 */
 .reserve_controls {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin:10px 0;
-    gap: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin:10px 0;
+  gap: 10px;
 }
 
 .quantity_box {
@@ -390,12 +390,12 @@ body {
 }
 
 .qty_btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    padding: 0 10px;
-    cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 0 10px;
+  cursor: pointer;
 }
 
 .time_box {
@@ -437,14 +437,14 @@ body {
 
 
 .reserve_btn {
-    background-color: #C1FF52;
-    border: none;
-    border-radius: 26px;
-    padding: 12px 20px;
-    font-weight: bold;
-    font-size: 16px;
-    width: 150px;
-    cursor: pointer;
+  background-color: #C1FF52;
+  border: none;
+  border-radius: 26px;
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 16px;
+  width: 150px;
+  cursor: pointer;
 }
 .resbuttonhugger{
   display:flex;

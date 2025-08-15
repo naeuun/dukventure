@@ -12,33 +12,31 @@
 {% block body %}
 <div class="big_hugger">
   <div class="container onboarding">
+
+    <!-- 인사 섹션 -->
     <div class="greeting_section">
       <img src="{% static 'img/home_deco.png' %}" alt="클로버 배경" class="clover_bg" />
-      <img src="{% static 'img/logo.png' %}" alt="로고" class="logo" />
+      <img src="{% static 'img/farmfarm_logo.png' %}" alt="로고" class="logo" />
       <div class="greeting_card">
         <div class="greeting_text">
           <p class="hello">
-            <span class="username">김말선</span>
-            님 반가워요!
+            <span class="username">김말선</span> 님 반가워요!
             <img src="{% static 'img/welcome_boom.png' %}" alt="폭죽" class="boom">
-        </p>
+          </p>
           <p class="desc">
             <span>
-                이제 
-                <span class="highlight">
-                    우리 동네 손님들과 연결
-                </span>
-                될 준비가 끝났어요.<br>
+              이제 
+              <span class="highlight">우리 동네 손님들과 연결</span>
+              될 준비가 끝났어요.<br>
             </span>
             <span>
-                <span class="highlight" style="font-size:17px;">
-                    AI
-                </span>
-                가 손님에게 가게 소식을 잘 전해드릴게요! 
-                <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
+              <span class="highlight" style="font-size:17px;">AI</span>
+              가 손님에게 가게 소식을 잘 전해드릴게요! 
+              <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
             </span>
-        </p>
+          </p>
         </div>
+
         <div class="profile_section">
           <div class="profile_img">
             <img src="{% static 'img/logo_leaves.png' %}" alt="더미프로필" />
@@ -50,6 +48,7 @@
 
     <div class="line_"></div>
 
+    <!-- 예약 확인 섹션 -->
     <div class="res_section">
       <div class="reservation_">
         예약확인
@@ -60,8 +59,11 @@
     <div class="decoration_right">
       <img src="{% static 'img/res_deco.png' %}" alt="장식" class="side_deco" />
     </div>
-    
+
+    <!-- 예약 카드 영역 -->
     <div class="reservation_zone">
+
+      <!-- 예약 카드 1 -->
       <div class="per_res">
         <div class="reservation-card">
           <div class="product-img-wrap">
@@ -71,7 +73,7 @@
             </div>
             <div class="profile-hugger-circle"></div>
           </div>
-          
+
           <div class="product-info">
             <p>이름: 김지은</p>
             <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
@@ -84,17 +86,17 @@
           <button class="accept-btn">수락</button>
           <button class="reject-btn">거절</button>
         </div>
-      
+
         <!-- 거절 사유 모달 -->
         <div id="rejectModal" class="modal">
           <div class="modal-content">
             <div class="modal_title">거절 사유</div>
-              <button class="reason-btn">재고소진</button>
-              <button class="reason-btn">판매 시간 종료</button>
-              <button class="reason-btn">예약 시간 불가</button>
-              <button class="reason-btn">임시적 휴무</button>
-              <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
-              <button class="reason-btn">기타 사유</button>
+            <button class="reason-btn">재고소진</button>
+            <button class="reason-btn">판매 시간 종료</button>
+            <button class="reason-btn">예약 시간 불가</button>
+            <button class="reason-btn">임시적 휴무</button>
+            <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
+            <button class="reason-btn">기타 사유</button>
             <div class="modal-actions">
               <button class="confirm-btn">확인</button>
               <button class="close-btn">×</button>
@@ -102,6 +104,8 @@
           </div>
         </div>
       </div>
+
+      <!-- 예약 카드 2 -->
       <div class="per_res">
         <div class="reservation-card">
           <div class="product-img-wrap">
@@ -111,7 +115,7 @@
             </div>
             <div class="profile-hugger-circle"></div>
           </div>
-          
+
           <div class="product-info">
             <p>이름: 김지은</p>
             <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
@@ -124,17 +128,17 @@
           <button class="accept-btn">수락</button>
           <button class="reject-btn">거절</button>
         </div>
-      
+
         <!-- 거절 사유 모달 -->
         <div id="rejectModal" class="modal">
           <div class="modal-content">
             <div class="modal_title">거절 사유</div>
-              <button class="reason-btn">재고소진</button>
-              <button class="reason-btn">판매 시간 종료</button>
-              <button class="reason-btn">예약 시간 불가</button>
-              <button class="reason-btn">임시적 휴무</button>
-              <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
-              <button class="reason-btn">기타 사유</button>
+            <button class="reason-btn">재고소진</button>
+            <button class="reason-btn">판매 시간 종료</button>
+            <button class="reason-btn">예약 시간 불가</button>
+            <button class="reason-btn">임시적 휴무</button>
+            <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
+            <button class="reason-btn">기타 사유</button>
             <div class="modal-actions">
               <button class="confirm-btn">확인</button>
               <button id="closeModal" class="close-btn">×</button>
@@ -142,25 +146,32 @@
           </div>
         </div>
       </div>
-    </div>
-    
 
-  </div>
+    </div> <!-- reservation_zone 끝 -->
 
+  </div> <!-- container 끝 -->
+
+  <!-- 네비게이션 바 -->
   <div class="nav_box">
     <nav class="bottom_nav">
-        <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
-        <div class="btn"><a href="/storesseller">
+      <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
+      <div class="btn">
+        <a href="/storesseller">
           <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
-        </a></div>
-        <div class="btn"><a href="/sellerhomepage">
+        </a>
+      </div>
+      <div class="btn">
+        <a href="/sellerhomepage">
           <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
-        </a></div>
-        <div class="btn selected_nav"><a href="/reservationsseller">
+        </a>
+      </div>
+      <div class="btn selected_nav">
+        <a href="/reservationsseller">
           <span class="shopping_page">예약</span>
-        </a></div>
-        </div>
-      </nav>
+        </a>
+      </div>
+    </nav>
   </div>
+
 </div>
 {% endblock body %}
