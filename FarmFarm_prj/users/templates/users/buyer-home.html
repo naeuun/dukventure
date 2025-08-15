@@ -6,11 +6,28 @@
     <div class="my-section">
         <h3>마이 캐릭터 🧸</h3>
         <!-- 캐릭터 정보 들어갈 자리 -->
+         <div class="character-display">
+            <img id="character-image" src="https://placehold.co/120x120/3e3e3e/e0e0e0?text=Lv.1" alt="캐릭터" width="120" height="120">
+        </div>
+         <div class="growth-progress">
+            <div id="growth-progress-bar" class="progress-bar-inner"></div>
+        </div>
+        <p id="growth-progress-text" style="text-align:center; margin-top:5px; font-weight:bold;">성장률: 0%</p>
     </div>
 
     <div class="reward-section">
         <h3>리워드 현황 🧩</h3>
         <!-- 리워드 정보 들어갈 자리 -->
+         <div class="reward-status">
+            <div class="medals">
+                <div id="medal-gold">Gold Medal</div>
+                <div id="medal-silver">Silver Medal</div>
+                <div id="medal-bronze">Bronze Medal</div>
+            </div>
+            <div class="stamps">
+                <!-- JS가 스탬프 개수를 채웁니다 -->
+            </div>
+        </div>
     </div>
 
     <div class="reservation-section">
@@ -168,27 +185,147 @@
     </div>
 
 </div>
+
+<!-- 리뷰 폼을 담을 모달 (팝업창) -->
+<div id="review-modal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.5);">
+  <div class="modal-content" style="background-color:#fff; color: #000; margin:10% auto; padding:20px; border:1px solid #888; width:80%; max-width:500px; border-radius:10px; position:relative;">
+    <span class="close-modal" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+    <div id="review-modal-content">
+      <!-- 리뷰 폼이 여기에 동적으로 로드됩니다 -->
+    </div>
+  </div>
+</div>
 <script>
-document.body.addEventListener('click', function(e) {
-    if (e.target.classList.contains('pickup-complete-btn')) {
-        const reservationId = e.target.dataset.pk;
-        fetch(`/reservations/${reservationId}/pickup/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json'
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- 1. 리워드 정보 로딩 및 UI 업데이트 로직 (기존과 동일) ---
+    const characterImages = {
+        1: 'https://placehold.co/120x120/4caf50/ffffff?text=Lv.1',
+        2: 'https://placehold.co/120x120/ff9800/ffffff?text=Lv.2',
+        3: 'https://placehold.co/120x120/f44336/ffffff?text=Lv.3',
+    };
+
+    async function fetchRewardStatus() {
+        try {
+            const response = await fetch('/rewards/status/');
+            if (!response.ok) throw new Error('리워드 정보 로딩 실패');
+            const data = await response.json();
+            updateRewardUI(data);
+        } catch (error) {
+            console.error('리워드 정보 로딩 오류:', error);
+        }
+    }
+
+function updateRewardUI(data) {
+        // 캐릭터 이미지 업데이트
+        const characterImage = document.getElementById('character-image');
+        if (characterImage) characterImage.src = characterImages[data.character_level] || characterImages[1];
+
+        // [수정된 부분] 메달 등급에 따른 성장률 프로그레스 바 업데이트
+        const medalToPercentage = {
+            'NONE': 25,
+            'BRONZE': 50,
+            'SILVER': 75,
+            'GOLD': 100
+        };
+        const growthPercentage = medalToPercentage[data.medal_tier] || 25; // 기본값 25%
+
+        const progressBar = document.getElementById('growth-progress-bar');
+        const progressText = document.getElementById('growth-progress-text');
+
+        if (progressBar && progressText) {
+            progressBar.style.width = growthPercentage + '%';
+            progressText.textContent = `성장률: ${growthPercentage}%`;
+        }
+
+        // 메달 상태 업데이트
+        const goldMedal = document.getElementById('medal-gold');
+        const silverMedal = document.getElementById('medal-silver');
+        const bronzeMedal = document.getElementById('medal-bronze');
+        if (goldMedal) {
+            goldMedal.textContent = '금메달'; silverMedal.textContent = '은메달'; bronzeMedal.textContent = '동메달';
+            goldMedal.style.fontWeight = 'normal'; silverMedal.style.fontWeight = 'normal'; bronzeMedal.style.fontWeight = 'normal';
+            if (data.medal_tier === 'GOLD') goldMedal.style.fontWeight = 'bold';
+            if (data.medal_tier === 'SILVER') silverMedal.style.fontWeight = 'bold';
+            if (data.medal_tier === 'BRONZE') bronzeMedal.style.fontWeight = 'bold';
+        }
+
+        // 스탬프 상태 업데이트
+        const stampsContainer = document.querySelector('.stamps');
+        if (stampsContainer) {
+            let stampsHTML = '스탬프: ';
+            for (let i = 0; i < 4; i++) {
+                stampsHTML += (i < data.stamp_count) ? '●' : '○';
             }
-        })
-        .then(res => res.json())
-        .then(data => {
+            stampsContainer.textContent = stampsHTML;
+        }
+    }
+    fetchRewardStatus(); // 페이지 로드 시 실행
+
+    // --- 2. 모든 클릭 이벤트를 한 곳에서 처리 ---
+    const modal = document.getElementById('review-modal');
+    const modalContent = document.getElementById('review-modal-content');
+    const closeModalBtn = document.querySelector('.close-modal');
+
+    document.body.addEventListener('click', async function(e) {
+        // '픽업 완료' 버튼 클릭
+        if (e.target.classList.contains('pickup-complete-btn')) {
+            const reservationId = e.target.dataset.pk;
+            if (!confirm('픽업을 완료하시겠습니까?')) return;
+
+            const response = await fetch(`/reservations/${reservationId}/pickup/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
             if (data.status === 'success') {
-                window.location.href = "{% url 'users:buyer_home' %}";
+                window.location.reload();
             } else {
                 alert(data.message || '상태 변경 실패');
             }
-        });
-    }
+        }
+
+        // '리뷰쓰기' 버튼 클릭
+        if (e.target.classList.contains('write-review-btn')) {
+            const reservationId = e.target.dataset.pk;
+            // 서버에서 리뷰 폼 HTML을 가져옴
+            const response = await fetch(`/reviews/create/${reservationId}/`);
+            const formHtml = await response.text();
+            modalContent.innerHTML = formHtml;
+            modal.style.display = 'block';
+        }
+
+        // 모달 닫기 버튼
+        if (e.target === closeModalBtn || e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // --- 3. 리뷰 폼 제출 이벤트 처리 ---
+    modal.addEventListener('submit', async function(e) {
+        // 리뷰 폼이 제출되었을 때만 작동
+        if (e.target.tagName === 'FORM') {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value }
+            });
+            
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                alert(data.message);
+                // [핵심!] 리뷰 작성이 성공하면 페이지를 새로고침합니다.
+                window.location.reload();
+            } else {
+                alert(data.message || '리뷰 등록에 실패했습니다.');
+            }
+        }
+    });
 });
 </script>
 {% endblock %}
-

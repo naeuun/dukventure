@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'reservations',
     'shopping',
     'reviews',
+    'rewards',
 ]
 
 
