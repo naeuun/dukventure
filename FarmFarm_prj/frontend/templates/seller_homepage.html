@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block style %}
-<link rel="stylesheet" href="{% static 'css/seller_home_page.css' %}" />
 <link rel="stylesheet" href="{% static 'css/consumer_home/consumer_profile.css' %}" />
+<link rel="stylesheet" href="{% static 'css/seller_home_page.css' %}" />
 {% endblock style %}
 
 {% block script %}
@@ -40,19 +40,20 @@
           </div>
 
           <div class="textbox1">
-            <div class="firstmsg">
-              오늘 뭐 먹을까? <img src="{% static 'img/emo2.png' %}" alt="" class="pic"/>
-            </div>
-            <div class="desc-text">
-              근처 <span class="green_small">노점</span>에서
-              <span class="green_small">신선하게</span> 장봐봐요!
-            </div>
-            <div class="lastmsg">
-              <span class="desc-text"
-                >지금 내 근처, 장보는 가장 따뜻한 방법 "</span
-              ><span class="farmfarm">팜팜</span>"
-              <img src="{% static 'img/emo3.png' %}" alt=""  class="pic"/>
-            </div>
+              <div class="smaller-text">
+                이제 
+                <span class="green_highlight">
+                  우리 동네 손님들과 연결
+                </span>
+                될 준비가 끝났어요.
+              </div>
+              <div class="smaller-text">
+                <span class="bigger_green_highlight">
+                  AI
+                </span>
+                가 손님에게 가게 소식을 잘 전해드릴게요!
+                <img src="{% static 'img/emo3.png' %}" alt=""  class="pic"/>
+              </div>
           </div>
         </div>
       </div>

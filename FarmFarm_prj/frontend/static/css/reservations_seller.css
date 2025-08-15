@@ -420,7 +420,22 @@ body {
   position:absolute;
   top:-7px;
 }
+
 .textbox1{
+  width:215px;
   position:absolute;
   bottom:0;
+}
+.green_highlight{
+  color:#C1FF52;
+  margin-right:-3px;
+}
+.bigger_green_highlight{
+  color:#C1FF52;
+  margin-right:-3px;
+  font-size: 15.3px;;
+}
+.smaller-text{
+  font-size: 10.3px;
+  font-weight:700;
 }
