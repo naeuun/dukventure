@@ -60,6 +60,23 @@ var mapOption = {
 };
 var map = new kakao.maps.Map(mapContainer, mapOption);
 
+{% if request.user.is_authenticated and request.user.usertype == 'SELLER' and request.user.store %}
+    // 판매자: 자신의 가게 좌표로 중심 이동
+    var sellerLat = "{{ request.user.store.latitude|default:'37.6509' }}";
+    var sellerLng = "{{ request.user.store.longitude|default:'127.0164' }}";
+    map.setCenter(new kakao.maps.LatLng(Number(sellerLat), Number(sellerLng)));
+{% elif request.user.is_authenticated and request.user.usertype == 'BUYER' %}
+    // 구매자: 현재 위치로 중심 이동
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            map.setCenter(new kakao.maps.LatLng(lat, lng));
+        });
+    }
+{% endif %}
+
+
 var stores = JSON.parse(document.getElementById('store-data').textContent);
 var markers = [];
 

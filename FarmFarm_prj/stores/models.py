@@ -13,7 +13,7 @@ class Store(models.Model):  # 판매자가 등록하는 가게 모델
     photo = models.ImageField(upload_to='store_photos/', blank=True, null=True)  # 가게 사진
     description = models.TextField(blank=True, null=True)  # 특이 사항 또는 판매 메시지
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="위도") #AI 가게 거리계산
-    longitude = models.DecimalField(max_digits=9, decimal_places=7, null=True, blank=True, verbose_name="경도") #AI 가게 거리계산
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="경도") #AI 가게 거리계산
 
     def __str__(self):
         return f'Store: {self.name} ({self.seller.user.username})'
