@@ -1,5 +1,5 @@
 from django import forms
-from .models import Store, StoreItem
+from .models import Store, StoreItem, StoreReport
 
 class StoreForm(forms.ModelForm):
     class Meta:
@@ -25,4 +25,17 @@ class StoreItemForm(forms.ModelForm):
             'photo': '사진',
             'description': '설명',
             'unit': '단위'
+        }
+        
+class StoreReportForm(forms.ModelForm):
+    class Meta:
+        model = StoreReport
+        fields = ['store_name','image', 'report_items','address', 'time', 'keywords']
+        labels = {
+            'store_name' : '가게 별명',
+            'image': '이미지',
+            'address': '주소',
+            'time' :'시간',
+            'keywords': '키워드',
+            'report_items': '품목'
         }

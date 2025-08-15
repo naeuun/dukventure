@@ -1,13 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Store, StoreItem
+from .models import Store, StoreItem, StoreReport
 from items.models import Item
-from .forms import StoreForm, StoreItemForm
+from .forms import StoreForm, StoreItemForm, StoreReportForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
-
 @login_required
 def map_view(request):
+    # 기존 판매자 가게
     stores_qs = Store.objects.prefetch_related('store_items', 'seller')
     stores = []
     for store in stores_qs:
@@ -19,17 +19,45 @@ def map_view(request):
                 'price': store_item.price,
                 'unit': store_item.unit,
                 'description': store_item.description,
-                'image': store_item.photo.url if store_item.photo else '',
+                'photo_url': store_item.photo.url if store_item.photo else ''
             })
         stores.append({
             'id': store.id,
             'name': store.name,
             'address': store.address,
             'seller': store.seller.user.username if store.seller else '',
-            'items': items,
+            'items': items
         })
 
-    # 판매자일 경우 가게 좌표를 context에 추가
+    # 제보된 가게
+    reports_qs = StoreReport.objects.prefetch_related('keywords', 'reporter')
+    reports = []
+    for report in reports_qs:
+        items = []
+        if report.report_items:
+            for item_name in report.report_items.split(','):
+                items.append({
+                    'id': None,
+                    'name': item_name.strip(),
+                    'price': None,
+                    'unit': None,
+                    'description': None,
+                    'photo_url': ''
+                })
+        keywords = [k.keyword for k in report.keywords.all()]
+        reports.append({
+            'id': report.id,
+            'store_name': report.store_name,
+            'address': report.address,
+            'reporter': report.reporter.user.username,
+            'items': items,
+            'image': report.image.url if report.image else None,
+            'keywords': keywords,
+            'latitude': float(report.latitude) if report.latitude else None,
+            'longitude': float(report.longitude) if report.longitude else None
+        })
+
+    # 판매자 좌표
     seller_lat = None
     seller_lng = None
     if request.user.is_authenticated and getattr(request.user, 'usertype', None) == 'SELLER':
@@ -40,11 +68,44 @@ def map_view(request):
 
     context = {
         'stores': stores,
+        'reports': reports,  # JS에서 바로 배열로 사용 가능
         'seller_lat': seller_lat,
-        'seller_lng': seller_lng,
+        'seller_lng': seller_lng
     }
+
     return render(request, 'stores/map.html', context)
 
+@login_required
+def store_report(request):
+    if request.method == 'POST':
+        form = StoreReportForm(request.POST, request.FILES)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.reporter = request.user.buyer  # 신고자 연결
+
+            # 위도/경도 안전하게 Decimal로 변환
+            lat = request.POST.get('latitude')
+            lng = request.POST.get('longitude')
+            try:
+                report.latitude = Decimal(lat) if lat else None
+            except InvalidOperation:
+                report.latitude = None
+            try:
+                report.longitude = Decimal(lng) if lng else None
+            except InvalidOperation:
+                report.longitude = None
+
+            report.save()
+            form.save_m2m()  # ManyToMany 필드(키워드) 저장
+
+            return redirect('stores:map')  
+    else:
+        form = StoreReportForm()
+
+    return render(request, 'stores/store_report.html', {
+        'form': form
+    })
+    
 def store_list(request): ##임시
     stores = Store.objects.all()
     return render(request, 'stores/store_list.html', {'stores': stores})
