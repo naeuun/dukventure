@@ -1,0 +1,116 @@
+{% extends "../base.html" %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/consumer_home/character_home.css' %}"
+/>
+{% endblock style %} {% block body %}
+<div class="big_hugger">
+  <div class="character-home">
+    <div class="top-section">
+      <!-- 상단 캐릭터 메인 -->
+      <a href="{% url 'consumermain' %}">
+        <img
+          src="{% static 'img/cha_exit.png' %}"
+          alt="캐릭터 상세화면 나가기"
+          class="cha_exit"
+        />
+      </a>
+      <img
+        src="{% static 'img/cha_gra2.png' %}"
+        alt="캐릭터 상세화면 상단 데코"
+        class="cha_gra"
+      />
+      <img
+        src="{% static 'img/cha_gra22.png' %}"
+        alt="캐릭터 상세화면 상단 데코2"
+        class="cha_gra2"
+      />
+      <div class="character-main">
+        <div class="character-image">
+          <img src="{% static 'img/cha1.png' %}" alt="마이캐릭터 메인" />
+        </div>
+        <!-- 오른쪽 정보 -->
+        <div class="information_detail">
+          <img
+            src="{% static 'img/edit.png' %}"
+            alt="캐릭터 상세화면 상단 나가기"
+            class="edit"
+          />
+          <h3 class="cha_name">
+            이름: <br /><span class="cha_nic">브로브로브로콜리</span>
+          </h3>
+
+          <h3 class="cha_growth">성장 퍼센트:</h3>
+          <div class="growth_chart">
+            <svg width="80" height="80">
+              <circle
+                cx="40"
+                cy="40"
+                r="35"
+                stroke="#C1FF52"
+                stroke-width="8"
+                fill="none"
+              />
+              <circle
+                cx="40"
+                cy="40"
+                r="35"
+                stroke="#37A446"
+                stroke-width="8"
+                fill="none"
+                stroke-dasharray="220"
+                stroke-dashoffset="77"
+              />
+            </svg>
+            <span class="growth_percent">65%</span>
+          </div>
+        </div>
+      </div>
+      <div class="line"></div>
+    </div>
+
+    <div class="bottom-section">
+      <!--3등 리워드-->
+      <div class="cha_3th">
+        <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
+        <img src="{% static 'img/Asterisk.png' %}" alt="3th_1" class="3th_1" />
+        <img src="{% static 'img/Party.png' %}" alt="3th_2" class="3th_2" />
+        <img src="{% static 'img/Soft Star.png' %}" alt="3th_3" class="3th_3" />
+        <img src="{% static 'img/Asterisk.png' %}" alt="3th_4" class="3th_4" />
+
+        <div class="checkbox">
+          <img
+            src="{% static 'img/check.png' %}"
+            alt="체크박스"
+            class="check"
+          />
+        </div>
+      </div>
+      <!--2등 리워드-->
+      <div class="cha_2th">
+        <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
+        <img src="{% static 'img/Soft Star.png' %}" alt="2th_1" class="2th_1" />
+        <img src="{% static 'img/Asterisk.png' %}" alt="2th_2" class="2th_2" />
+        <img src="{% static 'img/Party.png' %}" alt="2th_3" class="2th_3" />
+        <img src="{% static 'img/Soft Star.png' %}" alt="2th_4" class="2th_4" />
+        <div class="checkbox">
+          <img
+            src="{% static 'img/check.png' %}"
+            alt="체크박스"
+            class="check"
+          />
+        </div>
+      </div>
+      <!--1등 리워드-->
+      <div class="cha_1th">
+        <img src="{% static 'img/1th.png' %}" alt="캐릭터 1등" class="th" />
+        <img src="{% static 'img/Soft Star.png' %}" alt="1th_1" class="1th_1" />
+        <img src="{% static 'img/Asterisk.png' %}" alt="1th_2" class="1th_2" />
+        <img src="{% static 'img/Party.png' %}" alt="1th_3" class="1th_3" />
+        <img src="{% static 'img/Soft Star.png' %}" alt="1th_4" class="1th_4" />
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

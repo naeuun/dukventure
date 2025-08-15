@@ -28,4 +28,6 @@ urlpatterns = [
 
     path("consumerprofile", consumerprofile, name="consumerprofile"),
     path("consumermain", consumermain, name="consumermain"),
+    path("characterhome", characterhome, name="characterhome"),
+    
 ]

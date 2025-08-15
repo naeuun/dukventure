@@ -1,166 +1,248 @@
-{% extends "../base.html" %}
-{% load static %}
+{% extends "../base.html" %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/consumer_home/consumer_main.css' %}"
+/>
 
-{% block style %}
-<link rel="stylesheet" href="{% static 'css/reservations_seller.css' %}" />
-{% endblock style %}
-
-{% block script %}
-<script src="{% static 'js/reservations_seller.js' %}"></script>
-{% endblock script %}
-
-{% block body %}
+{% endblock style %} {% block script %}
+<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
+{% endblock script %} {% block body %}
 <div class="big_hugger">
-  <div class="container onboarding">
-    <div class="greeting_section">
-      <img src="{% static 'img/background.png' %}" alt="클로버 배경" class="clover_bg" />
-      <img src="{% static 'img/background2.png' %}" alt="로고" class="logo" />
-      <div class="greeting_card">
-        <div class="greeting_text">
-          <p class="hello">
-            <span class="username">김말선</span>
-            님 반가워요!
-            <img src="{% static 'img/welcome_boom.png' %}" alt="폭죽" class="boom">
-        </p>
-          <p class="desc">
-            <span>
-                이제 
-                <span class="highlight">
-                    우리 동네 손님들과 연결
-                </span>
-                될 준비가 끝났어요.<br>
-            </span>
-            <span>
-                <span class="highlight" style="font-size:17px;">
-                    AI
-                </span>
-                가 손님에게 가게 소식을 잘 전해드릴게요! 
-                <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
-            </span>
-        </p>
-        </div>
-        <div class="profile_section">
-          <div class="profile_img">
-            <img src="{% static 'img/logo_leaves.png' %}" alt="더미프로필" />
-          </div>
-          <p class="profile_name">김말선</p>
-        </div>
+  <div class="top-section">
+    <!-- 상단 프로필 영역 -->
+    <div class="profile-section">
+      <div class="logo">
+        <img src="{% static 'img/background.png' %}" alt="" />
+        <img src="{% static 'img/background2.png' %}" alt="" />
       </div>
-    </div>
-
-    <div class="line_"></div>
-
-    <div class="res_section">
-      <div class="reservation_">
-        예약확인
-        <img src="{% static 'img/reservation_icon.png' %}" alt="예약확인 아이콘" class="res_check" />
-      </div>
-    </div>
-
-    <div class="decoration_right">
-      <img src="{% static 'img/res_deco.png' %}" alt="장식" class="side_deco" />
-    </div>
-    
-    <div class="reservation_zone">
-      <div class="per_res">
-        <div class="reservation-card">
-          <div class="product-img-wrap">
-            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="product-img">
-            <div class="profile-circle">
-              <img src="{% static 'img/logo_leaves.png' %}" alt="프로필 이미지">
+      <div class="welcome-box">
+        <div class="backgroundimg">
+          <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+        </div>
+        <div class="profile-info">
+          <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
+          <div class="profile-text">
+            <div class="textbox">
+              <span class="nickname-highlight"
+                ><span class="nickname"> 바그바그</span></span
+              >
+              <span class="welcome-text">님 반가워요!</span>
+              <img src="{% static 'img/emo1.png' %}" alt="" />
             </div>
-            <div class="profile-hugger-circle"></div>
-          </div>
-          
-          <div class="product-info">
-            <p>이름: 김지은</p>
-            <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
-            <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
-            <p>연락처: 010-1234-5678</p>
-          </div>
-        </div>
 
-        <div class="button-group">
-          <button class="accept-btn">수락</button>
-          <button class="reject-btn">거절</button>
-        </div>
-      
-        <!-- 거절 사유 모달 -->
-        <div id="rejectModal" class="modal">
-          <div class="modal-content">
-            <div class="modal_title">거절 사유</div>
-              <button class="reason-btn">재고소진</button>
-              <button class="reason-btn">판매 시간 종료</button>
-              <button class="reason-btn">예약 시간 불가</button>
-              <button class="reason-btn">임시적 휴무</button>
-              <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
-              <button class="reason-btn">기타 사유</button>
-            <div class="modal-actions">
-              <button class="confirm-btn">확인</button>
-              <button class="close-btn">×</button>
+            <div class="textbox1">
+              <div class="firstmsg">
+                오늘 뭐 먹을까?
+                <img src="{% static 'img/emo2.png' %}" alt="" class="pic" />
+              </div>
+              <div class="desc-text">
+                근처 <span class="green_small">노점</span>에서
+                <span class="green_small">신선하게</span> 장봐봐요!
+              </div>
+              <div class="lastmsg">
+                <span class="desc-text"
+                  >지금 내 근처, 장보는 가장 따뜻한 방법 "</span
+                ><span class="farmfarm">팜팜</span>"
+                <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="per_res">
-        <div class="reservation-card">
-          <div class="product-img-wrap">
-            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="product-img">
-            <div class="profile-circle">
-              <img src="{% static 'img/logo_leaves.png' %}" alt="프로필 이미지">
-            </div>
-            <div class="profile-hugger-circle"></div>
+        <div class="profile-box">
+          <img
+            src="{% static 'img/Union.png' %}"
+            alt=""
+            class="profile_hugger"
+          />
+          <div class="profile-edit">
+            <img
+              id="profileImage"
+              src="{% static 'img/dummy_egg.png' %}"
+              alt="프로필"
+            />
           </div>
-          
-          <div class="product-info">
-            <p>이름: 김지은</p>
-            <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
-            <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
-            <p>연락처: 010-1234-5678</p>
-          </div>
-        </div>
-
-        <div class="button-group">
-          <button class="accept-btn">수락</button>
-          <button class="reject-btn">거절</button>
-        </div>
-      
-        <!-- 거절 사유 모달 -->
-        <div id="rejectModal" class="modal">
-          <div class="modal-content">
-            <div class="modal_title">거절 사유</div>
-              <button class="reason-btn">재고소진</button>
-              <button class="reason-btn">판매 시간 종료</button>
-              <button class="reason-btn">예약 시간 불가</button>
-              <button class="reason-btn">임시적 휴무</button>
-              <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
-              <button class="reason-btn">기타 사유</button>
-            <div class="modal-actions">
-              <button class="confirm-btn">확인</button>
-              <button id="closeModal" class="close-btn">×</button>
-            </div>
+          <div class="level-box">
+            <p class="nickname">
+              바그바그
+              <img
+                id="editProfileBtn"
+                src="{% static 'img/edit.png' %}"
+                alt="수정"
+                style="cursor: pointer"
+              />
+            </p>
+            <p class="level">
+              LV.3
+              <img src="{% static 'img/level.png' %}" alt="" />
+            </p>
           </div>
         </div>
       </div>
     </div>
-    
+    <!-- 모달 -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal-content">
+        <div class="modal-actions">
+          <button id="closeModalBtn">×</button>
+        </div>
+        <div class="nickname-row">
+          <input type="text" id="nicknameInput" value="바그바그" />
+          <img
+            class="nickname-edit-btn"
+            src="{% static 'img/edit.png' %}"
+            alt="닉네임 수정"
+          />
+        </div>
 
+        <div class="image-row">
+          <div class="image-preview">
+            <img
+              src="{% static 'img/dummy_egg.png' %}"
+              alt="프로필 미리보기"
+              class="preview_img"
+            />
+            <img
+              class="image-edit-btn"
+              src="{% static 'img/edit.png' %}"
+              alt="이미지 수정"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="line"></div>
   </div>
 
-  <div class="nav_box">
-    <nav class="bottom_nav">
-        <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
-        <div class="btn"><a href="/storesseller">
-          <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
-        </a></div>
-        <div class="btn"><a href="/sellerhomepage">
-          <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
-        </a></div>
-        <div class="btn selected_nav"><a href="/reservationsseller">
-          <span class="shopping_page">예약</span>
-        </a></div>
+  <div class="bottom-section">
+    <section class="content_home">
+      <!--마이캐릭터 정보-->
+      <div class="cha_section">
+        <div class="character">
+          마이 캐릭터
+          <img
+            src="{% static 'img/character_icon.png' %}"
+            alt="마이캐릭터 아이콘"
+            class="cha_check"
+          />
         </div>
-      </nav>
+      </div>
+
+      <!--마이캐릭터 상세 내용-->
+      <div class="information_zone">
+        <div class="cha_res">
+          <div class="information-card">
+            <!-- 캐릭터 + 정보 영역 -->
+            <div class="info-wrapper">
+              <!-- 왼쪽 캐릭터 -->
+              <div class="information_cha">
+                <!-- 화살표 -->
+                <img
+                  src="{% static 'img/tra.png' %}"
+                  alt="마이캐릭터 화살표"
+                  class="cha_tra"
+                />
+                <!-- 상단 썸네일 -->
+                <div class="thumbnail-row">
+                  <img
+                    src="{% static 'img/1cha.png' %}"
+                    alt="마이캐릭터 뒷모습"
+                  />
+
+                  <img
+                    src="{% static 'img/3cha.png' %}"
+                    alt="마이캐릭터 앞모습"
+                  />
+                  <img
+                    src="{% static 'img/2cha.png' %}"
+                    alt="마이캐릭터 가운데"
+                  />
+                </div>
+                <div class="main-image-container">
+                  <!-- 메인 캐릭터 -->
+                  <img
+                    src="{% static 'img/cha1.png' %}"
+                    alt="마이캐릭터 메인"
+                    class="main-character"
+                  />
+                </div>
+              </div>
+
+              <!-- 오른쪽 정보 -->
+              <div class="information_detail">
+                <h3 class="cha_name">
+                  이름: <br /><span class="cha_nic">브로브로브로콜리</span>
+                </h3>
+                <h3 class="cha_growth">성장 퍼센트:</h3>
+                <div class="growth_chart">
+                  <svg width="80" height="80">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      stroke="#C1FF52"
+                      stroke-width="8"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      stroke="#37A446"
+                      stroke-width="8"
+                      fill="none"
+                      stroke-dasharray="220"
+                      stroke-dashoffset="77"
+                    />
+                  </svg>
+                  <span class="growth_percent">65%</span>
+                </div>
+              </div>
+              <a href="{% url 'characterhome' %}">
+                <img
+                  src="{% static 'img/more.png' %}"
+                  alt="마이캐릭터 더보기"
+                  class="cha_more"
+                />
+              </a>
+
+              <img
+                src="{% static 'img/cha_gra.png' %}"
+                alt="마이캐릭터 장식"
+                class="cha_gra"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--리워드현황 정보-->
+      <div class="rew_section">
+        <div class="character">
+          리워드 현황
+          <img
+            src="{% static 'img/reward_icon.png' %}"
+            alt="리워드 현황 아이콘"
+            class="cha_check"
+          />
+        </div>
+      </div>
+      <!--리워드 현황 상세 내용-->
+      <div class="information_zone">
+        <div class="rew_res">
+          <div class="information2-card">
+            <img
+              src="{% static 'img/reward_total.png' %}"
+              alt="리워드 현황 아이콘"
+              class="rew_total"
+            />
+            <img
+              src="{% static 'img/rew_gra.png' %}"
+              alt="리워드 현황 아이콘"
+              class="rew_gra"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 {% endblock body %}

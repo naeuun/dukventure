@@ -50,3 +50,6 @@ def consumerprofile(request):
 
 def consumermain(request):
     return render(request, "consumer_home/consumer_main.html")
+
+def characterhome(request):
+    return render(request, "consumer_home/character_home.html")
