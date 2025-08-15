@@ -1,0 +1,22 @@
+<div class="modal-content">
+    <form method="post" action="{% url 'reviews:create' reservation.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>{{ reservation.store.name }} 어떠셨나요?</h3>
+        
+        <!-- 별점 입력 (JS 라이브러리 사용 권장) -->
+        <div>{{ form.rating }}</div>
+        
+        <!-- 사진 업로드 -->
+        <div>{{ form.photo.label_tag }} {{ form.photo }}</div>
+        
+        <!-- 키워드 선택 -->
+        <div class="keywords">
+            {{ form.keywords }}
+        </div>
+
+        <!-- 상세 내용 -->
+        <div>{{ form.content }}</div>
+
+        <button type="submit">리뷰 등록</button>
+    </form>
+</div>

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>사업자등록번호 인증</h2>
+
+<form id="businessForm" method="post">
+    {% csrf_token %}
+    <label for="business_number">사업자등록번호:</label>
+    <input type="text" name="business_number" id="business_number" placeholder="1234567890" required>
+    <button type="submit" id="submit-btn">인증하기</button>
+</form>
+
+<!-- 인증 결과 메시지 -->
+<div id="result-message" style="margin-top: 10px; font-weight: bold;"></div>
+<div id="welcome-message" style="display:none; margin-top:20px;">
+    <h3>{{ request.user.username }}님 반가워요! 회원가입이 완료되었습니다.</h3>
+    <p>이제 우리 동네 손님들과 연결될 준비가 끝났어요.<br>
+    AI가 손님에게 가게 소식을 잘 전달해드릴게요!</p>
+    <h3>가게등록을 하러 가볼까요?</h3>
+    <a href="{% url 'users:seller_home' %}" class="btn btn-primary">홈으로</a>
+</div>
+
+<a href="{% url 'users:seller_step1' %}">이전으로</a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#businessForm").on("submit", function(e) {
+        e.preventDefault(); // 폼 기본 제출 방지
+
+        var businessNumber = $("#business_number").val();
+
+        $.ajax({
+            url: "{% url 'users:seller_business_verify' %}",
+            type: "POST",
+            data: {
+                'business_number': businessNumber,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.is_valid) {
+                    $("#result-message").css("color", "green").text("✅ 인증 성공: 영업 중인 사업자입니다.");
+                    $("#submit-btn").text("인증완료").prop("disabled", false);
+                    $("#submit-btn").off("click").on("click", function() {
+                        $("#businessForm").hide();
+                        $("#result-message").hide();
+                        $("#welcome-message").show();
+                    });
+                } else {
+                    $("#result-message").css("color", "red").text("❌ 인증 실패: 등록되지 않았거나 영업 중이 아닙니다.");
+                }
+            },
+            error: function() {
+                $("#result-message").css("color", "red").text("⚠️ 서버 오류가 발생했습니다.");
+            }
+        });
+    });
+</script>
+{% endblock %}
+

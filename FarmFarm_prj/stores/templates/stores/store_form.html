@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</h2>
+<hr>
+<form method="post" enctype="multipart/form-data" id="storeForm">
+    {% csrf_token %}
+    <input type="hidden" id="latitudeInput" name="latitude" value="{{ form.latitude.value|default_if_none:'' }}">
+    <input type="hidden" id="longitudeInput" name="longitude" value="{{ form.longitude.value|default_if_none:'' }}">
+    <div>
+        1. <label>가게 이름</label>
+        {{ form.name }}
+    </div>
+    <div>
+        2. <label>사업자 등록 번호</label>
+        <input type="text" value="{{ request.user.seller.business_number }}" readonly>
+    </div>
+    <div>
+        3. <label>가게 위치 등록</label>
+        <button type="button" id="mapBtn">지도에서 위치 선택</button>
+        <span style="font-size:0.9em;color:#888;">(지도에서 마커를 찍어 위치를 등록하세요)</span>
+        <br>
+        <input type="text" id="addressSearch" placeholder="장소, 상호, 주소 등으로 검색">
+        <button type="button" id="searchBtn">검색</button>
+        <div id="searchModal" style="display:none; position:fixed; top:20%; left:30%; width:40%; background:#fff; z-index:2000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+            <div style="text-align:right; padding:5px;">
+                <button id="closeSearchModal">닫기</button>
+            </div>
+            <ul id="searchResult" style="list-style:none; padding:10px; margin:0; max-height:250px; overflow-y:auto;"></ul>
+        </div>
+        <br>
+        <input type="text" id="addressInput" name="address"
+               value="{{ form.address.value|default_if_none:'' }}"
+               placeholder="주소를 직접 입력하거나, 지도에서 선택하세요">
+        <span style="font-size:0.9em;color:#888;">(주소 검색은 카카오 지도에서 가능합니다)</span>
+    </div>
+    <div id="itemList">
+        <p>4. 판매 품목 및 가격/사진/설명</p>
+        {% if store and store.store_items.all %}
+            {% for store_item in store.store_items.all %}
+                <div>
+                    <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
+                    <input type="text" name="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
+                    <input type="text" name="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위">
+                    <input type="number" name="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
+                    <input type="text" name="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
+                    <input type="file" name="item_photo_{{ forloop.counter0 }}" accept="image/*">
+                    <button type="button" onclick="removeItem(this)">제거</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div>
+                <input type="text" name="item_name_0" placeholder="품목명">
+                <input type="text" name="item_unit_0" placeholder="단위">
+                <input type="number" name="item_price_0" placeholder="가격">
+                <input type="text" name="item_desc_0" placeholder="설명">
+                <input type="file" name="item_photo_0" accept="image/*">
+                <button type="button" onclick="removeItem(this)">제거</button>
+            </div>
+        {% endif %}
+    </div>
+    <button type="button" id="addItemBtn">추가</button>
+
+    <div>
+        5. <label>판매 요일</label>
+        {{ form.sale_days }}
+    </div>
+    <div>
+        6. <label>판매 시간대</label>
+        {{ form.sale_hours }}
+    </div>
+    <div>
+        7. <label>결제 수단</label>
+        {{ form.payment_methods }}
+    </div>
+    <div>
+        8. <label>연락처</label>
+        {{ form.contact }}
+    </div>
+    <div>
+        9. <label>가게 사진</label>
+        {{ form.photo }}
+    </div>
+    <div>
+        10. <label>특이 사항/판매 메시지</label>
+        <textarea name="description" rows="2" cols="40" placeholder="간단한 메시지를 입력하세요">{{ form.description.value|default_if_none:'' }}</textarea>
+    </div>
+    <hr>
+    <button type="submit">{% if mode == 'edit' %}수정 완료{% else %}등록하기{% endif %}</button>
+</form>
+<a href="{% url 'users:seller_home' %}">판매자 홈으로 돌아가기</a>
+
+<div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
+    <div style="text-align:right; padding:5px;">
+        <button id="closeModal">닫기</button>
+    </div>
+    <div id="mapContainer" style="width:100%; height:90%;"></div>
+</div>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
+<script>
+const addressInput = document.getElementById('addressInput');
+const latitudeInput = document.getElementById('latitudeInput');
+const longitudeInput = document.getElementById('longitudeInput');
+const geocoder = new kakao.maps.services.Geocoder();
+const addressSearch = document.getElementById('addressSearch');
+const searchResult = document.getElementById('searchResult');
+const searchModal = document.getElementById('searchModal');
+const closeSearchModal = document.getElementById('closeSearchModal');
+const ps = new kakao.maps.services.Places();
+
+let map, marker;
+
+// 좌표 업데이트 함수
+function updateCoordsFromAddress() {
+    const address = addressInput.value.trim();
+    if (!address) return;
+    geocoder.addressSearch(address, function(result, status) {
+        if (status === kakao.maps.services.Status.OK && result.length > 0) {
+            const lat = result[0].y;
+            const lng = result[0].x;
+            latitudeInput.value = lat;
+            longitudeInput.value = lng;
+            setMarkerAndCenter(lat, lng);
+        } else {
+            latitudeInput.value = "";
+            longitudeInput.value = "";
+            alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
+        }
+    });
+}
+
+// 지도 초기화 및 마커 세팅
+function initMap(lat, lng) {
+    const center = new kakao.maps.LatLng(lat, lng);
+    if (!map) {
+        map = new kakao.maps.Map(document.getElementById('mapContainer'), {
+            center: center,
+            level: 3
+        });
+    } else {
+        map.setCenter(center);
+    }
+    if (!marker) {
+        marker = new kakao.maps.Marker({ position: center });
+        marker.setMap(map);
+    } else {
+        marker.setPosition(center);
+    }
+
+    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        const latlng = mouseEvent.latLng;
+        latitudeInput.value = latlng.getLat();
+        longitudeInput.value = latlng.getLng();
+        geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+            if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
+                addressInput.value = result[0].address.address_name;
+            } else {
+                addressInput.value = "";
+            }
+            setMarkerAndCenter(latlng.getLat(), latlng.getLng());
+        });
+    });
+}
+
+// 마커와 지도 center 이동
+function setMarkerAndCenter(lat, lng) {
+    const loc = new kakao.maps.LatLng(lat, lng);
+    if (!map) initMap(lat, lng);
+    if (!marker) {
+        marker = new kakao.maps.Marker({ position: loc, map: map });
+    } else {
+        marker.setPosition(loc);
+    }
+    map.setCenter(loc);
+}
+
+// 이벤트 바인딩
+addressInput.addEventListener('blur', updateCoordsFromAddress);
+addressInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); updateCoordsFromAddress(); }
+});
+
+// 지도 모달 열기
+document.getElementById('mapBtn').onclick = function() {
+    document.getElementById('mapModal').style.display = 'block';
+    let lat = parseFloat(latitudeInput.value) || 37.6509;
+    let lng = parseFloat(longitudeInput.value) || 127.0164;
+    setTimeout(()=>{ initMap(lat, lng); }, 100);
+};
+
+// 지도 모달 닫기
+document.getElementById('closeModal').onclick = function() {
+    document.getElementById('mapModal').style.display = 'none';
+};
+
+// 장소 검색
+document.getElementById('searchBtn').onclick = function() {
+    const query = addressSearch.value.trim();
+    if (!query) return;
+    ps.keywordSearch(query, function(data, status) {
+        searchResult.innerHTML = '';
+        if (status === kakao.maps.services.Status.OK) {
+            data.forEach(place => {
+                const li = document.createElement('li');
+                li.textContent = place.place_name + ' (' + place.address_name + ')';
+                li.style.cursor = 'pointer';
+                li.style.padding = '5px 0';
+                li.onclick = function() {
+                    latitudeInput.value = place.y;
+                    longitudeInput.value = place.x;
+                    addressInput.value = place.address_name;
+                    setMarkerAndCenter(place.y, place.x);
+                    searchModal.style.display = 'none';
+                };
+                searchResult.appendChild(li);
+            });
+        } else {
+            searchResult.innerHTML = '<li>검색 결과가 없습니다.</li>';
+        }
+        searchModal.style.display = 'block';
+    });
+};
+
+// 장소 검색 모달 닫기
+closeSearchModal.onclick = function() { searchModal.style.display = 'none'; };
+</script>
+{% endblock %}

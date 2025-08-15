@@ -1,0 +1,12 @@
+<!-- reservation_form.html -->
+<form method="post">
+    {% csrf_token %}
+    
+    <h2>가게 및 예약 정보</h2>
+    {{ reservation_form.as_p }}  <!-- ReservationForm 필드를 p 태그로 렌더링 -->
+
+    <h2>예약 상품 정보</h2>
+    {{ item_form.as_p }} <!-- ReservationItemForm 필드를 p 태그로 렌더링 -->
+
+    <button type="submit">예약하기</button>
+</form>
