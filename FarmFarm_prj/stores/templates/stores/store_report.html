@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>가게 제보하기</h2>
+<hr>
+
+<form method="post" enctype="multipart/form-data" id="reportForm">
+    {% csrf_token %}
+    
+    <!-- 1. 이미지 -->
+    <div>
+        <label>이미지</label>
+        {{ form.image }}
+    </div>
+    
+    <!-- 2. 제보 품목 -->
+    <div>
+        <label>품목</label>
+        {{ form.report_items }}
+    </div>
+    
+    <!-- 3. 신고 시간 -->
+    <div>
+        <label>시간</label>
+        {{ form.time }}
+    </div>
+
+    <!-- 4. 키워드 체크박스 -->
+    <div>
+        <p>키워드 선택</p>
+        {% for keyword in form.keywords.field.queryset %}
+            <label>
+                <input type="checkbox" name="keywords" value="{{ keyword.id }}"
+                {% if keyword in form.keywords.value %}checked{% endif %}>
+                {{ keyword.keyword }}
+            </label>
+        {% endfor %}
+    </div>
+
+    <!-- 5. 주소 + 지도 -->
+    <div>
+        <label>주소</label>
+        <input type="hidden" id="latitudeInput" name="latitude" value="">
+        <input type="hidden" id="longitudeInput" name="longitude" value="">
+        <input type="text" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
+        <button type="button" id="mapBtn">지도에서 위치 선택</button>
+    </div>
+
+    <button type="submit">제보하기</button>
+</form>
+
+<!-- 지도 모달 -->
+<div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
+    <div style="text-align:right; padding:5px;">
+        <button id="closeModal">닫기</button>
+    </div>
+    <div id="mapContainer" style="width:100%; height:90%;"></div>
+</div>
+
+<!-- 카카오 지도 SDK -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
+<script>
+const addressInput = document.getElementById('addressInput');
+const latitudeInput = document.getElementById('latitudeInput');
+const longitudeInput = document.getElementById('longitudeInput');
+const geocoder = new kakao.maps.services.Geocoder();
+
+let map, marker;
+
+// 지도 모달 열기
+document.getElementById('mapBtn').onclick = function() {
+    document.getElementById('mapModal').style.display = 'block';
+    setTimeout(function() {
+        let initLat = parseFloat(latitudeInput.value) || 37.6509;
+        let initLng = parseFloat(longitudeInput.value) || 127.0164;
+        const initPos = new kakao.maps.LatLng(initLat, initLng);
+        mapInit(initPos);
+    }, 100);
+};
+
+// 지도 모달 닫기
+document.getElementById('closeModal').onclick = function() {
+    document.getElementById('mapModal').style.display = 'none';
+};
+
+// 지도 초기화
+function mapInit(center) {
+    if (!map) {
+        map = new kakao.maps.Map(document.getElementById('mapContainer'), {
+            center: center,
+            level: 3
+        });
+    } else {
+        map.setCenter(center);
+    }
+
+    if (!marker) {
+        marker = new kakao.maps.Marker({ position: center, map: map });
+    } else {
+        marker.setPosition(center);
+    }
+
+    // 지도 클릭 시 주소/좌표 반영
+    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        const latlng = mouseEvent.latLng;
+        marker.setPosition(latlng);
+
+        geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+            if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
+                addressInput.value = result[0].address.address_name;
+                latitudeInput.value = latlng.getLat();
+                longitudeInput.value = latlng.getLng();
+            } else {
+                alert("주소 변환 실패. 한글 주소를 입력해주세요.");
+                latitudeInput.value = latlng.getLat();
+                longitudeInput.value = latlng.getLng();
+            }
+        });
+    });
+}
+</script>
+
+{% endblock %}

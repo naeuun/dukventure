@@ -31,11 +31,13 @@ class StoreReport(models.Model):
     store_name = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
     image = models.ImageField(upload_to='store_reports/', blank=True, null=True)
-    food_type = models.CharField(max_length=100, blank=True, null=True)
     time = models.CharField(max_length=50, blank=True, null=True)
     keywords = models.ManyToManyField(Keyword, related_name='reports', blank=True)  # 키워드 모델 연결
     description = models.TextField(blank=True, null=True)
-    items = models.ManyToManyField('items.Item', related_name='reports', blank=True)
+    report_items = models.CharField(max_length=255, blank=True) 
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="위도") #AI 가게 거리계산
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="경도") #AI 가게 거리계산
+
 
     def __str__(self):
         return f'Report by {self.reporter.user.username} on {self.store_name}'

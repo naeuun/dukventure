@@ -14,4 +14,5 @@ urlpatterns = [
     path('edit_item/<int:item_id>/', edit_item, name='edit_item'),
     path('list/', store_list, name='store-list'), # 가게 목록 페이지
     path('<int:store_id>/', store_detail_view, name='detail'), # 가게 상세 페이지
+    path('report/', store_report, name='store_report'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
