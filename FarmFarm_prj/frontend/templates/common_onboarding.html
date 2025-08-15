@@ -1,26 +1,33 @@
-{% extends "./base.html" %}
-
-{% load static %}
-{% block style %}
-<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
-{% endblock style %}
-
-{% block script %}
-{% endblock script %}
-
-{% block body %}
+{% extends "./base.html" %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}"
+/>
+{% endblock style %} {% block script %} {% endblock script %} {% block body %}
 <div class="big_hugger">
-
-    <div class="container">
-        <div class="progress_bar">
-        </div>
-        <div class="content">
-            <p class="bigger_content">당신은 무엇인가요?</p>
-            <div class="buttons">
-                <button type="button" value="판매자" onclick="location.href='signuppage'" class="button_">판매자</button>
-                <button type="button" value="구매자" onclick="location.href=''" class="button_">구매자</button>
-            </div>
-        </div>
+  <div class="container">
+    <div class="progress_bar"></div>
+    <div class="content">
+      <p class="bigger_content">당신은 무엇인가요?</p>
+      <div class="buttons">
+        <button
+          type="button"
+          value="판매자"
+          onclick="location.href='signuppage'"
+          class="button_"
+        >
+          판매자
+        </button>
+        <button
+          type="button"
+          value="구매자"
+          onclick="location.href='consumermain'"
+          class="button_"
+        >
+          구매자
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock body %}
