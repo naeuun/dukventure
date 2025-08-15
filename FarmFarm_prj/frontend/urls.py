@@ -27,4 +27,5 @@ urlpatterns = [
     path("shoppingpage", shoppingpage, name="shoppingpage"),
 
     path("consumerprofile", consumerprofile, name="consumerprofile"),
+    path("consumermain", consumermain, name="consumermain"),
 ]

@@ -47,3 +47,6 @@ def shoppingpage(request):
 
 def consumerprofile(request):
     return render(request, "consumer_home/consumer_profile.html")
+
+def consumermain(request):
+    return render(request, "consumer_home/consumer_main.html")
