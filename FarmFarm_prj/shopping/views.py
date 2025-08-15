@@ -62,7 +62,7 @@ class AiShoppingView(View):
         # --- 2. 분석된 재료를 판매하는 가게 검색 ---
         # 사용자 위치 (데모용 - 서울 시청 기준)
         # 실제 서비스에서는 로그인한 유저의 주소나 GPS 정보를 사용해야 합니다.
-        user_location = (37.5665, 126.9780)
+        user_location = (37.6501, 127.0193)
         
         # `defaultdict`를 사용하여 가게별로 상품을 편리하게 그룹화합니다.
         # stores_data = { store_id: {'info': store_object, 'products': [product1, product2], 'distance': 1.2}, ... }
