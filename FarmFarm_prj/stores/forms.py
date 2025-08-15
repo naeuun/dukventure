@@ -30,8 +30,9 @@ class StoreItemForm(forms.ModelForm):
 class StoreReportForm(forms.ModelForm):
     class Meta:
         model = StoreReport
-        fields = ['image', 'report_items','address', 'time', 'keywords']
+        fields = ['store_name','image', 'report_items','address', 'time', 'keywords']
         labels = {
+            'store_name' : '가게 별명',
             'image': '이미지',
             'address': '주소',
             'time' :'시간',

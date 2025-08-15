@@ -6,26 +6,27 @@
 
 <form method="post" enctype="multipart/form-data" id="reportForm">
     {% csrf_token %}
-    
-    <!-- 1. 이미지 -->
+    <div>
+        <label>가게 별명</label>
+        {{ form.store_name }}
+    </div>
+
+
     <div>
         <label>이미지</label>
         {{ form.image }}
     </div>
     
-    <!-- 2. 제보 품목 -->
     <div>
         <label>품목</label>
         {{ form.report_items }}
     </div>
     
-    <!-- 3. 신고 시간 -->
     <div>
         <label>시간</label>
         {{ form.time }}
     </div>
 
-    <!-- 4. 키워드 체크박스 -->
     <div>
         <p>키워드 선택</p>
         {% for keyword in form.keywords.field.queryset %}
@@ -37,7 +38,6 @@
         {% endfor %}
     </div>
 
-    <!-- 5. 주소 + 지도 -->
     <div>
         <label>주소</label>
         <input type="hidden" id="latitudeInput" name="latitude" value="">

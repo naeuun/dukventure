@@ -51,6 +51,7 @@ def map_view(request):
             'address': report.address,
             'reporter': report.reporter.user.username,
             'items': items,
+            'image': report.image.url if report.image else None,
             'keywords': keywords,
             'latitude': float(report.latitude) if report.latitude else None,
             'longitude': float(report.longitude) if report.longitude else None
