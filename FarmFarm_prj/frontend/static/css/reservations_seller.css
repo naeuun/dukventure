@@ -439,3 +439,10 @@ body {
   font-size: 10.3px;
   font-weight:700;
 }
+
+.modal-overlay{
+  position:absolute;
+}
+.modal-content{
+  top:177px;
+}
