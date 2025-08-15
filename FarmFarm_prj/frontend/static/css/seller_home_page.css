@@ -445,7 +445,7 @@ body {
 /*리뷰내역요소*/
 .review_hugger{
   position:relative;
-  top:620px;
+  top:650px;
   width:366.6px;
   height:606px;
   background: linear-gradient(black, #0b2401);
@@ -524,7 +524,8 @@ body {
 
 
 .profile-section{
-  position:relative;
+  position:absolute;
+  top:0;
   padding-bottom:7px;
   border-bottom:4px solid #C1FF52;
 }
