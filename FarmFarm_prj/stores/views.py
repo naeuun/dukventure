@@ -5,12 +5,29 @@ from .forms import StoreForm, StoreItemForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
-
+@login_required
 def map_view(request):
-    # 나중에 지도에 표시할 가게 데이터를 여기서 전달할 수 있습니다.
-    # stores = Store.objects.all()
-    # context = {'stores': stores}
-    return render(request, 'stores/map.html') # 올바른 템플릿 경로
+    stores_qs = Store.objects.prefetch_related('store_items', 'seller')
+    stores = []
+    for store in stores_qs:
+        items = []
+        for store_item in store.store_items.all():  # ← store_items 사용
+            items.append({
+                'id': store_item.id,
+                'name': store_item.item.name,
+                'price': store_item.price,
+                'unit': store_item.unit,
+                'description': store_item.description,
+                'image': store_item.photo.url if store_item.photo else '',
+            })
+        stores.append({
+            'id': store.id,
+            'name': store.name,
+            'address': store.address,
+            'seller': store.seller.user.username if store.seller else '',
+            'items': items,
+        })
+    return render(request, 'stores/map.html', {'stores': stores})
 
 def store_list(request): ##임시
     stores = Store.objects.all()
@@ -21,17 +38,6 @@ def store_detail_view(request, store_id): ##임시
     items = Item.objects.filter(stores=store) # 'stores' 필드 사용
     return render(request, 'stores/store_detail.html', {'store': store, 'items': items})
 
-def map(request):
-    stores_qs = Store.objects.all()
-    stores = []
-    for store in stores_qs:
-        if store.address:
-            stores.append({
-                'name': store.name,
-                'address': store.address,
-                'seller': getattr(store.seller, 'name', getattr(store.seller.user, 'username', ''))
-            })
-    return render(request, 'stores/map.html', {'stores': stores})    
 
 @login_required
 def register_success(request):

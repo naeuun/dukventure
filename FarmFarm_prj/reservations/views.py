@@ -25,18 +25,20 @@ from reviews.forms import ReviewForm
 
 @require_http_methods(["GET"])
 def get_store_items_api(request, store_id):
-    """API: 특정 가게의 판매 상품 목록을 JSON으로 반환 (필드명 수정)"""
+    """API: 특정 가게의 판매 상품 목록을 JSON으로 반환 (StoreItem 기준, 가게 정보 포함)"""
     store = get_object_or_404(Store, pk=store_id)
-    # Item 모델의 ForeignKey 필드 이름을 'stores'로 수정
-    items = Item.objects.filter(stores=store)
+    store_items = store.store_items.select_related('item').all()
     
     items_data = [{
-        'id': item.id,
-        'name': item.name,
-        'price': item.price,
-        'unit': item.unit,
-        'photo_url': item.photo.url if item.photo else 'https://placehold.co/200x150?text=No+Image'
-    } for item in items]
+        'id': store_item.id,
+        'name': store_item.item.name,
+        'price': store_item.price,
+        'unit': store_item.unit,
+        'description': store_item.description,
+        'photo_url': store_item.photo.url if store_item.photo else 'https://placehold.co/200x150?text=No+Image',
+        'sale_hours': store.sale_hours,
+        'address': store.address,
+    } for store_item in store_items]
     
     return JsonResponse({'items': items_data})
 
