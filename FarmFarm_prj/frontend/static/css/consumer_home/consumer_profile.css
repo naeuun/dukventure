@@ -211,7 +211,7 @@ body {
 
 .modal-overlay {
     display: none; /* 기본 상태 */
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;       /* 좌상단 기준으로 전체 화면 덮기 */
     width: 100%;
@@ -219,6 +219,7 @@ body {
     z-index: 1000;
     justify-content: center;
     align-items: center;
+
 }
 
 
@@ -241,7 +242,7 @@ body {
     gap: 8px;
     align-items: stretch;
     position: absolute;
-    top:180px;
+    top:-70px;
     right:50px;
 }
 
