@@ -259,11 +259,14 @@
         <div class="res_res">
           <div class="information3-card">
             <div class="more">
-              <img
-                src="{% static 'img/res_more.png' %}"
-                alt="예약 현황 더보기"
-                class="res_more"
-              />
+              <a href="{% url 'reservationhome' %}">
+                <img
+                  src="{% static 'img/res_more.png' %}"
+                  alt="예약 현황 더보기"
+                  class="res_more"
+                />
+              </a>
+
             </div>
             <div class="back_detial">
               <div class="details_img">
@@ -432,15 +435,21 @@
         <div class="information_zone">
           <div class="res_res">
             <div class="information4-card">
-              {% comment %}
               <div class="more">
-                <img
-                  src="{% static 'img/res_more.png' %}"
-                  alt="예약 현황 더보기"
-                  class="res_more"
-                />
+                <a href="{% url 'historyhome' %}">
+                  <img
+                    src="{% static 'img/res_more.png' %}"
+                    alt="구매 내역 더보기"
+                    class="res_more"
+                  />
+                    <img
+                    src="{% static 'img/rew_gra.png' %}"
+                    alt="리워드 현황 아이콘"
+                    class="rew_gra"
+                  />
+                </a>
+
               </div>
-              {% endcomment %}
               <div class="history_container">
 
                 <!-- 카드 1 -->
@@ -497,11 +506,7 @@
                     </ul>
                   </div>
                 </div>
-                <img
-                  src="{% static 'img/rew_gra.png' %}"
-                  alt="리워드 현황 아이콘"
-                  class="rew_gra"
-                />
+                
 
 
             </div>

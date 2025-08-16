@@ -624,13 +624,17 @@ body {
   perspective: 1000px;
   padding: 5px;
 }
-.more{
-  position: relative;
+.more {
+  position: absolute;  /* 카드 안에서 고정 */
+  top: 10px;           /* 카드 위쪽 여백 */
+  right: 10px;         /* 카드 오른쪽 여백 */
+  z-index: 10;         /* 다른 요소보다 위 */
 }
-.res_more{
-  position: absolute;
+
+.res_more {
   width: auto;
   height: 24px;
+  display: block;
 }
 .res_detial{
   width: 200px;
