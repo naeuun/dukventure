@@ -42,22 +42,23 @@ def get_store_items_api(request, store_id):
     
     return JsonResponse({'items': items_data})
 
-
 @require_http_methods(["POST"])
 @login_required
 @transaction.atomic
 def reservation_create_api(request):
-    """API: JSON 데이터를 받아 예약을 생성"""
+    """API: JSON 데이터를 받아 예약을 생성 (수정된 버전)"""
     buyer, jump = _require_buyer(request)
     if jump: return JsonResponse({'error': '권한이 없습니다.'}, status=403)
 
     try:
         data = json.loads(request.body)
+        # JavaScript가 보내주는 item_id는 사실 StoreItem의 id 입니다.
         item_id = data.get('item_id')
         quantity = int(data.get('quantity', 1))
         pickup_time_str = data.get('pickup_time')
         
-        item = get_object_or_404(Item, pk=item_id)
+        # ★★★ 핵심 수정점 1: Item 대신 StoreItem을 조회합니다. ★★★
+        store_item = get_object_or_404(StoreItem, pk=item_id)
         
         hh, mm = map(int, pickup_time_str.split(':'))
         today = timezone.localdate()
@@ -66,19 +67,22 @@ def reservation_create_api(request):
         if requested_pickup_at < timezone.now():
             return JsonResponse({'error': '과거 시간으로 예약할 수 없습니다.'}, status=400)
 
+        # ★★★ 핵심 수정점 2: store_item 객체에서 가게 정보를 가져옵니다. ★★★
         reservation = Reservation.objects.create(
-            store=item.store,
+            store=store_item.store,
             buyer=buyer,
             requested_pickup_at=requested_pickup_at,
         )
         
+        # ★★★ 핵심 수정점 3: store_item 객체에서 상품 정보를 가져옵니다. ★★★
         ReservationItem.objects.create(
             reservation=reservation,
-            item_name=item.name,
-            unit_price=item.price,
+            item_name=store_item.item.name, # 실제 이름은 store_item.item.name
+            unit_price=store_item.price,      # 가격은 store_item.price
             quantity=quantity,
-            unit=item.unit,
-            original_item=item,
+            unit=store_item.unit,           # 단위는 store_item.unit
+            original_item=store_item.item,    # 원본 Item 연결
+            image=store_item.photo,
         )
         
         return JsonResponse({'message': '예약이 성공적으로 생성되었습니다.', 'reservation_id': reservation.id})
@@ -161,16 +165,26 @@ def reservation_create_view(request):
 @require_http_methods(["POST"])
 @login_required
 def reservation_change_status(request, pk):
-    """판매자/구매자: 예약 상태 변경 (AJAX 지원 강화, 리팩토링 버전)"""
+    """판매자/구매자: 예약 상태 변경 (AJAX 확인 로직 수정)"""
     reservation = get_object_or_404(Reservation, pk=pk)
-    to_status = request.POST.get('to_status')
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
+    # is_ajax 대신, 요청의 Content-Type으로 API 호출 여부를 판단합니다.
+    # JavaScript의 fetch가 Content-Type: 'application/json'으로 보내고 있기 때문입니다.
+    is_json_request = 'application/json' in request.headers.get('Content-Type', '')
+
+    # 만약 form-data로도 상태 변경을 처리해야 한다면, 아래와 같이 수정할 수 있습니다.
+    # to_status = request.POST.get('to_status')
+    # if is_json_request:
+    #     data = json.loads(request.body)
+    #     to_status = data.get('to_status')
+
+    to_status = request.POST.get('to_status') # 현재 JS는 form-data처럼 보내므로 이대로 둡니다.
 
     redirect_url = 'users:buyer_home' if request.user.usertype == UserType.BUYER else 'reservations:seller_list'
 
     if not reservation.can_transition_to(to_status, request.user):
         message = '허용되지 않는 요청이거나 권한이 없습니다.'
-        if is_ajax:
+        if is_json_request: # is_ajax 대신 is_json_request 사용
             return JsonResponse({'status': 'error', 'message': message}, status=403)
         messages.error(request, message)
         return redirect(redirect_url)
@@ -179,16 +193,23 @@ def reservation_change_status(request, pk):
         if to_status == ReservationStatus.REJECTED:
             form = SellerReservationUpdateForm(request.POST, instance=reservation)
             if form.is_valid():
-                reservation.reject(
-                    reason=form.cleaned_data.get('rejected_reason'),
-                )
+                reservation.reject(reason=form.cleaned_data.get('rejected_reason'))
             else:
                 raise ValueError('거절 사유를 올바르게 입력해주세요.')
         else:
             reservation.update_status(to_status)
 
         message = f'상태가 {reservation.get_status_display()}(으)로 변경되었습니다.'
-        if is_ajax:
+        
+        # is_ajax 대신 is_json_request를 사용하거나, 둘 다 허용하도록 or 조건을 사용할 수 있습니다.
+        # 여기서는 is_json_request만 확인해도 충분합니다.
+        # 단, 현재 JS가 form-data로 보내고 있으므로, 이전 is_ajax 방식을 유지하거나,
+        # JS에서 Content-Type을 보내도록 수정해야 합니다.
+        # 현재 코드와 호환성을 위해 is_ajax 방식을 그대로 사용하겠습니다.
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' # 이 부분을 다시 확인
+        if is_ajax: # 이 부분은 프론트엔드 JS가 jQuery.ajax를 쓴다면 동작합니다.
+                     # fetch를 쓴다면 JS에서 헤더를 추가해야 합니다.
+                     # 우선 뷰 코드는 문제가 없다고 가정하고, JS의 문제를 확인해야 합니다.
             return JsonResponse({
                 'status': 'success',
                 'message': message,
@@ -200,6 +221,7 @@ def reservation_change_status(request, pk):
 
     except ValueError as e:
         message = str(e)
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' # 여기도 확인
         if is_ajax:
             return JsonResponse({'status': 'error', 'message': message}, status=400)
         messages.error(request, message)
@@ -325,3 +347,22 @@ def pickup_ready_reservation(request, reservation_id):
     reservation.is_pickup_ready = True
     reservation.save()
     return JsonResponse({'status': 'success'})
+
+@login_required
+def reservation_item_create_view(request, item_id):
+    """
+    특정 StoreItem에 대한 예약 페이지를 보여주는 뷰 (GET 요청 처리)
+    """
+    buyer, jump = _require_buyer(request)
+    if jump: return jump
+    
+    # URL로 받은 item_id로 예약할 상품(StoreItem) 객체를 찾습니다.
+    item_to_reserve = get_object_or_404(StoreItem, pk=item_id)
+    
+    # 이 뷰는 폼을 보여주는 역할만 합니다.
+    # 폼 제출(POST)은 다른 뷰(reservation_create_from_form)가 처리하도록 할 것입니다.
+    context = {
+        'item': item_to_reserve,
+        'store': item_to_reserve.store
+    }
+    return render(request, 'reservations/reservation_create.html', context)

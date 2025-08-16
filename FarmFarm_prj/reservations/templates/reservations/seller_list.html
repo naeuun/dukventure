@@ -28,6 +28,8 @@
                 </div>
                 <p><strong>예약코드:</strong> {{ r.reservation_code }}</p>
                 <p>요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+                <p><strong>상태:</strong> <span class="status">{{ r.get_status_display }}</span></p>
+
                 <!-- 예약 아이템 정보 -->
                 <div style="display: flex; gap: 12px; margin: 10px 0;">
                     {% for item in r.items.all %}
@@ -105,9 +107,11 @@ document.querySelectorAll('.accept-btn').forEach(button => {
                 body: formData
             });
             const result = await response.json();
-            if (response.ok) {
+             if (response.ok) {
                 const card = document.getElementById(`res-card-seller-${reservationId}`);
+                // 이제 .status 요소가 존재하므로 정상적으로 텍스트를 바꿀 수 있습니다.
                 card.querySelector('.status').textContent = result.new_status;
+                // action-buttons 영역 전체를 바꾸면 '수락 완료' 텍스트만 남습니다.
                 card.querySelector('.action-buttons').innerHTML = '<span>수락 완료</span>';
             } else {
                 alert('오류: ' + result.message);

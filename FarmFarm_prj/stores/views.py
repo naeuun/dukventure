@@ -26,7 +26,9 @@ def map_view(request):
             'name': store.name,
             'address': store.address,
             'seller': store.seller.user.username if store.seller else '',
-            'items': items
+            'items': items,
+            'latitude': float(store.latitude) if store.latitude else None,    # 위도 추가
+            'longitude': float(store.longitude) if store.longitude else None, # 경도 추가
         })
 
     # 제보된 가게

@@ -25,7 +25,7 @@
             <a href="{% url 'stores:map' %}">지도</a>
             {% if user.usertype == 'BUYER' %}
                 <a href="{% url 'users:buyer_home' %}">홈</a>
-                <a href="#">AI</a>
+                <a href="{% url 'shopping:ai_shopping' %}">AI</a>
             {% elif user.usertype == 'SELLER' %}
                 <a href="{% url 'users:seller_home' %}">홈</a>
                 <a href="{% url 'reservations:seller_list' %}">예약관리</a>
