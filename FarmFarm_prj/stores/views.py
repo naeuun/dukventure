@@ -5,6 +5,8 @@ from .forms import StoreForm, StoreItemForm, StoreReportForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
+
+
 @login_required
 def map_view(request):
     # 기존 판매자 가게
@@ -105,6 +107,7 @@ def store_report(request):
     return render(request, 'stores/store_report.html', {
         'form': form
     })
+    
     
 def store_list(request): ##임시
     stores = Store.objects.all()
