@@ -9,7 +9,7 @@ urlpatterns = [
 
     # API: 예약 생성
     path('api/create/', views.reservation_create_api, name='api_create'),
-
+    path('create/item/<int:item_id>/', views.reservation_item_create_view, name='create_for_item'),
     # 페이지: 구매자/판매자 예약 목록
     path('my-list/', views.reservation_list, name='list'),
     path('seller-list/', views.seller_reservation_list, name='seller_list'),

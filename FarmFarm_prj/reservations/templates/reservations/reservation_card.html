@@ -1,0 +1,35 @@
+<div class="res-card" id="res-card-{{ reservation.pk }}">
+    {% with item=reservation.items.first %}
+    <div class="res-card-image">
+        {% if item.image %}
+            <img width="120px" src="{{ item.image.url }}" alt="{{ item.item_name }}">
+        {% else %}
+            <img width="120px" src="https://placehold.co/120x80/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
+        {% endif %}
+    </div>
+    <div class="res-card-info">
+        <h4>{{ reservation.store.name }}</h4>
+        <p><strong>예약 코드:</strong> {{ reservation.reservation_code }}</p>
+        <p><strong>요청 픽업 시간:</strong> {{ reservation.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+        <p><strong>상품명:</strong> {{ item.item_name }} ({{ item.quantity }} {{ item.unit }})</p>
+        <p><strong>총 금액:</strong> {{ reservation.total_price }}원</p>
+        <div class="res-card-actions">
+            <p style="margin-bottom: 8px;"><strong>상태:</strong> <span class="status">{{ reservation.get_status_display }}</span></p>
+            {% if reservation.status == 'ACCEPTED' %}
+                <button type="button" class="btn btn-success pickup-complete-btn" data-pk="{{ reservation.pk }}">픽업 완료</button>
+            {% elif reservation.status == 'PICKED_UP' %}
+                <span style="color: green; font-weight: bold;">픽업 완료</span>
+                {% if not reservation.review %}
+                    <button type="button" class="btn btn-light write-review-btn" data-pk="{{ reservation.pk }}" data-store-name="{{ reservation.store.name }}">리뷰쓰기</button>
+                {% else %}
+                    <span class="btn btn-light" style="cursor: not-allowed; background-color: #e9ecef;">리뷰 작성 완료</span>
+                {% endif %}
+            {% elif reservation.status == 'PENDING' %}
+                 <span style="color: #6c757d;">수락 대기중</span>
+            {% elif reservation.status == 'REJECTED' %}
+                 <span style="color: #dc3545;">거절됨</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endwith %}
+</div>

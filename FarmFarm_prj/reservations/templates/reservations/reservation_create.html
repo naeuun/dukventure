@@ -18,30 +18,17 @@
   <div class="wrap">
     <h2>예약하기</h2>
 
-    <form id="reserveForm" method="post" action="{% url 'reservations:create' %}">
+    <form id="reserveForm" method="post" action="{% url 'reservations:create_from_form' %}">
       {% csrf_token %}
+      
+      <input type="hidden" name="store_id" value="{{ store.id }}">
+      <p><strong>가게:</strong> {{ store.name }}</p>
 
-      {# ① store 가 컨텍스트에 있으면 hidden으로 전달 #}
-      {% if store %}
-        <input type="hidden" name="store_id" value="{{ store.id }}">
-        <p><strong>가게:</strong> {{ store }}</p>
-      {% else %}
-      {# ② 없으면 드롭다운으로 선택하게 함 (views에서 stores 넘겨줌) #}
-        <label>가게 선택</label>
-        <select name="store_id" required>
-          <option value="">-- 선택 --</option>
-          {% for s in stores %}
-            <option value="{{ s.id }}">{{ s }}</option>
-          {% endfor %}
-        </select>
-      {% endif %}
+      {# 상품 정보를 view에서 받은 item 객체로 동적 표시 #}
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      <input type="hidden" name="unit_price" value="{{ item.price }}">
 
-      {# 상품 정보는 고정: 숨김필드 #}
-      <input type="hidden" name="item_name" value="달걀 10개">
-      <input type="hidden" name="unit_price" value="3000">
-      <input type="hidden" name="unit" value="판">
-
-      <p style="margin-top:8px"><strong>상품:</strong> 달걀 10개 (3,000원/판)</p>
+      <p style="margin-top:8px"><strong>상품:</strong> {{ item.item.name }} ({{ item.price|floatformat:"0," }}원 / {{ item.unit }})</p>
 
       <label>수량</label>
       <div class="qty-box">
@@ -49,7 +36,6 @@
         <input class="qty-input" type="number" name="quantity" id="qty" min="1" value="1" required>
         <button class="qty-btn" type="button" id="plus">+</button>
       </div>
-
       <div style="height:12px"></div>
 
       <label>도착 시간</label>
