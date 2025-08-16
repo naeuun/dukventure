@@ -56,7 +56,7 @@ def voice_input(request):
         elif form_type == "report":
             prompt = f"""아래 문장을 가게 신고 폼 기준으로 JSON으로 만들어줘.
 폼 필드:
-{{'store_name':'', 'address':'', 'report_items':'', 'description':'', 'time':''}}
+{{'store_name':'', 'address':'', 'report_items':'', 'description':'', 'time':'', 'keywords':[]}}
 문장: {transcript}"""
         else:
             prompt = f"아래 문장을 일반 폼 JSON으로 만들어줘: {transcript}"

@@ -8,23 +8,22 @@
     {% csrf_token %}
     <div>
         <label>가게 별명</label>
-        {{ form.store_name }}
+        <input type="text" name="store_name" id="id_store_name" value="{{ form.store_name.value|default_if_none:'' }}">
     </div>
-
 
     <div>
         <label>이미지</label>
-        {{ form.image }}
+        <input type="file" name="image" id="id_image">
     </div>
     
     <div>
         <label>품목</label>
-        {{ form.report_items }}
+        <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}">
     </div>
     
     <div>
         <label>시간</label>
-        {{ form.time }}
+        <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}">
     </div>
 
     <div>
@@ -81,7 +80,7 @@ document.getElementById('mapBtn').onclick = function() {
         let initLng = parseFloat(longitudeInput.value) || 127.0164;
         const initPos = new kakao.maps.LatLng(initLat, initLng);
         mapInit(initPos);
-    }, 100);
+    }, 100); // 모달이 열린 뒤에 지도 초기화
 };
 
 // 지도 모달 닫기
@@ -124,74 +123,148 @@ function mapInit(center) {
         });
     });
 }
+// 제보 폼 음성 인식 기능
+const reportVoiceBtn = document.getElementById('voiceBtn');
+const reportVoiceStatus = document.getElementById('voiceStatus');
+let mediaRecorderReport = null;
+let audioChunksReport = [];
+let currentStreamReport = null;
 
-//여기부터 음성인식 
-const voiceBtn = document.getElementById('voiceBtn');
-const voiceStatus = document.getElementById('voiceStatus');
-
-voiceBtn.onclick = async () => {
+reportVoiceBtn.addEventListener('click', async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         alert("브라우저가 음성 입력을 지원하지 않습니다.");
         return;
     }
 
-    voiceStatus.textContent = "🎤 녹음 중...";
+    // 녹음 중이면 중지
+    if (mediaRecorderReport && mediaRecorderReport.state === "recording") {
+        mediaRecorderReport.stop();
+        if (currentStreamReport) {
+            currentStreamReport.getTracks().forEach(track => track.stop());
+            currentStreamReport = null;
+        }
+        return;
+    }
+
+    // 녹음 시작
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream);
-        const audioChunks = [];
+        currentStreamReport = stream; 
+        mediaRecorderReport = new MediaRecorder(stream);
+        audioChunksReport = [];
 
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.start();
+        mediaRecorderReport.ondataavailable = e => audioChunksReport.push(e.data);
 
-        voiceBtn.textContent = "⏹️ 녹음 중지";
-        voiceBtn.onclick = () => mediaRecorder.stop();
+        mediaRecorderReport.onstart = () => {
+            reportVoiceStatus.textContent = "🎤 녹음 중...";
+            reportVoiceBtn.textContent = "⏹️ 녹음 중지";
+        };
 
-        mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        mediaRecorderReport.onstop = async () => {
+            if (currentStreamReport) {
+                currentStreamReport.getTracks().forEach(track => track.stop());
+                currentStreamReport = null;
+            }
+            const audioBlob = new Blob(audioChunksReport);
             const reader = new FileReader();
             reader.readAsDataURL(audioBlob);
+
             reader.onloadend = async () => {
                 const base64Audio = reader.result;
-                voiceStatus.textContent = "⏳ 서버 처리 중...";
+                reportVoiceStatus.textContent = "⏳ 서버 처리 중...";
+                reportVoiceBtn.textContent = "🎤 음성 인식";
 
                 try {
                     const response = await fetch("{% url 'stores:voice_input' %}", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ audio: base64Audio, form_type: "report" })
+                        body: JSON.stringify({ audio: base64Audio, form_type: 'report' })
                     });
 
                     const data = await response.json();
                     if (!data.form_data) {
-                        voiceStatus.textContent = "⚠️ 음성 처리 실패";
+                        reportVoiceStatus.textContent = "⚠️ 음성 처리 실패";
                         return;
                     }
 
                     const formData = data.form_data;
 
-                    // report 폼 필드 채우기 (위도/경도는 제외)
-                    if (formData.store_name) document.querySelector('input[name="store_name"]').value = formData.store_name;
-                    if (formData.address) document.querySelector('input[name="address"]').value = formData.address;
-                    if (formData.report_items) document.querySelector('input[name="report_items"]').value = formData.report_items;
-                    if (formData.time) document.querySelector('input[name="time"]').value = formData.time;
+                    // store_name
+                    if (formData.store_name) {
+                        const storeNameInput = document.getElementById('id_store_name');
+                        if (storeNameInput) storeNameInput.value = formData.store_name;
+                    }
 
-                    voiceStatus.textContent = "✅ 음성 입력 완료";
+                    // report_items
+                    if (formData.report_items) {
+                        const reportItemsInput = document.getElementById('id_report_items');
+                        if (reportItemsInput) reportItemsInput.value = formData.report_items;
+                    }
+
+                    // time
+                    if (formData.time) {
+                        const timeInput = document.getElementById('id_time');
+                        if (timeInput) timeInput.value = formData.time;
+                    }
+
+                    // address
+                    if (formData.address) {
+                        const addressInput = document.getElementById('addressInput');
+                        if (addressInput) addressInput.value = formData.address;
+                    }
+
+
+                    // 위도/경도 자동 설정 (Gemini가 주소만 주면 geocoder로 변환 가능)
+                    if (formData.address) {
+                        const geocoder = new kakao.maps.services.Geocoder();
+                        geocoder.addressSearch(formData.address, function(result, status) {
+                            if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                                document.getElementById('latitudeInput').value = result[0].y;
+                                document.getElementById('longitudeInput').value = result[0].x;
+                            } else {
+                                alert("주소를 좌표로 변환할 수 없습니다. 지도에서 직접 선택해주세요.");
+                                document.getElementById('latitudeInput').value = "";
+                                document.getElementById('longitudeInput').value = "";
+                            }
+                        });
+                    }
+
+                    // 키워드 자동 체크 (formData.keywords가 배열 또는 쉼표로 구분된 문자열일 수 있음)
+                    if (formData.keywords) {
+                        let keywordsArr = Array.isArray(formData.keywords)
+                            ? formData.keywords
+                            : String(formData.keywords).split(',').map(s => s.trim());
+
+                        keywordsArr.forEach(keywordText => {
+                            document.querySelectorAll('input[name="keywords"]').forEach(checkbox => {
+                                const label = checkbox.parentElement;
+                                // 한글도 포함 여부 체크 가능!
+                                if (
+                                    label &&
+                                    label.textContent.replace(/\s/g, '').toLowerCase().includes(
+                                        keywordText.replace(/\s/g, '').toLowerCase()
+                                    )
+                                ) {
+                                    checkbox.checked = true;
+                                }
+                            });
+                        });
+                    }
+
+                    reportVoiceStatus.textContent = "✅ 음성 입력 완료";
                 } catch (err) {
                     console.error(err);
-                    voiceStatus.textContent = "❌ 서버 오류";
+                    reportVoiceStatus.textContent = "❌ 서버 오류";
                 }
-
-                voiceBtn.textContent = "🎤 음성 입력";
-                voiceBtn.onclick = voiceBtn.onclick; // 버튼 원래 기능 복원
             };
         };
+
+        mediaRecorderReport.start();
     } catch (err) {
         console.error(err);
-        voiceStatus.textContent = "❌ 마이크 접근 거부됨";
+        reportVoiceStatus.textContent = "❌ 마이크 접근 거부됨";
     }
-};
-
+});
 </script>
 
 {% endblock %}
