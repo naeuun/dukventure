@@ -49,6 +49,12 @@
     <button type="submit">제보하기</button>
 </form>
 
+<!-- 음성 인식 버튼 -->
+<div>
+    <button type="button" id="voiceBtn" data-form-type="report">🎤 음성 인식</button>
+    <span id="voiceStatus" style="margin-left:10px;color:#555;">(녹음 상태 표시)</span>
+</div>
+
 <!-- 지도 모달 -->
 <div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
     <div style="text-align:right; padding:5px;">
@@ -118,6 +124,74 @@ function mapInit(center) {
         });
     });
 }
+
+//여기부터 음성인식 
+const voiceBtn = document.getElementById('voiceBtn');
+const voiceStatus = document.getElementById('voiceStatus');
+
+voiceBtn.onclick = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("브라우저가 음성 입력을 지원하지 않습니다.");
+        return;
+    }
+
+    voiceStatus.textContent = "🎤 녹음 중...";
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        const audioChunks = [];
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.start();
+
+        voiceBtn.textContent = "⏹️ 녹음 중지";
+        voiceBtn.onclick = () => mediaRecorder.stop();
+
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+                const base64Audio = reader.result;
+                voiceStatus.textContent = "⏳ 서버 처리 중...";
+
+                try {
+                    const response = await fetch("{% url 'stores:voice_input' %}", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ audio: base64Audio, form_type: "report" })
+                    });
+
+                    const data = await response.json();
+                    if (!data.form_data) {
+                        voiceStatus.textContent = "⚠️ 음성 처리 실패";
+                        return;
+                    }
+
+                    const formData = data.form_data;
+
+                    // report 폼 필드 채우기 (위도/경도는 제외)
+                    if (formData.store_name) document.querySelector('input[name="store_name"]').value = formData.store_name;
+                    if (formData.address) document.querySelector('input[name="address"]').value = formData.address;
+                    if (formData.report_items) document.querySelector('input[name="report_items"]').value = formData.report_items;
+                    if (formData.time) document.querySelector('input[name="time"]').value = formData.time;
+
+                    voiceStatus.textContent = "✅ 음성 입력 완료";
+                } catch (err) {
+                    console.error(err);
+                    voiceStatus.textContent = "❌ 서버 오류";
+                }
+
+                voiceBtn.textContent = "🎤 음성 입력";
+                voiceBtn.onclick = voiceBtn.onclick; // 버튼 원래 기능 복원
+            };
+        };
+    } catch (err) {
+        console.error(err);
+        voiceStatus.textContent = "❌ 마이크 접근 거부됨";
+    }
+};
+
 </script>
 
 {% endblock %}

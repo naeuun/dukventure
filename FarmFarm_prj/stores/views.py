@@ -1,12 +1,130 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Store, StoreItem, StoreReport
 from items.models import Item
-from .forms import StoreForm, StoreItemForm, StoreReportForm
+from .forms import StoreForm, StoreReportForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
+import json
+from django.views.decorators.csrf import csrf_exempt
+from google.cloud import speech
+import base64
+import traceback
+import genai
+from django.conf import settings
+import google.generativeai as genai
+import re 
 
 
+# Gemini API 키 등록 및 모델 생성
+genai.configure(api_key=settings.GEMINI_API_KEY)
+gemini_model = genai.GenerativeModel("gemini-1.5-flash-latest")
+
+@csrf_exempt
+def voice_input(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    try:
+        data = json.loads(request.body)
+        audio_base64 = data.get("audio")
+        form_type = data.get("form_type")  # 'register' 또는 'report'
+
+        if not audio_base64:
+            return JsonResponse({"error": "No audio provided"}, status=400)
+
+        audio_bytes = base64.b64decode(audio_base64.split(",")[1])
+
+        # Google STT
+        stt_client = speech.SpeechClient()
+        audio = speech.RecognitionAudio(content=audio_bytes)
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,  # 또는 OGG_OPUS
+            language_code="ko-KR"
+        )
+        response = stt_client.recognize(config=config, audio=audio)
+        if not response.results:
+            print("Google STT 결과 없음: 오디오 형식 또는 데이터 문제")
+        transcript = " ".join([result.alternatives[0].transcript for result in response.results])
+
+        # Gemini 호출용 prompt 생성
+        if form_type == "register":
+            prompt = f"""아래 문장을 판매자 가게 등록 폼 기준으로 JSON으로 만들어줘.
+폼 필드:
+{{'name':'', 'address':'', 'contact':'', 'sale_days':'', 'sale_hours':'', 'payment_methods':'', 'description':'', 'items':[{{'name':'', 'unit':'', 'price':'', 'description':''}}]}}
+문장: {transcript}"""
+        elif form_type == "report":
+            prompt = f"""아래 문장을 가게 신고 폼 기준으로 JSON으로 만들어줘.
+폼 필드:
+{{'store_name':'', 'address':'', 'report_items':'', 'description':'', 'time':''}}
+문장: {transcript}"""
+        else:
+            prompt = f"아래 문장을 일반 폼 JSON으로 만들어줘: {transcript}"
+
+        # transcript 확인용 
+        print("=== Transcript ===")
+        print(transcript)
+
+        # Gemini 모델로 텍스트 생성 및 구조 안전하게 파싱
+        try:
+            gpt_response = gemini_model.generate_content(
+                prompt,
+                generation_config={"max_output_tokens": 1000}
+            )
+            print("=== Gemini RESPONSE ===")
+            print(gpt_response)  # 전체 구조 확인
+
+            # candidates 존재 여부 체크
+            if not hasattr(gpt_response, "candidates") or not gpt_response.candidates or len(gpt_response.candidates) == 0:
+                raise ValueError("Gemini 반환값에 candidates가 없습니다.")
+
+            candidate = gpt_response.candidates[0]
+
+            # content.parts 존재 여부 체크
+            if not hasattr(candidate, "content") or not hasattr(candidate.content, "parts") or not candidate.content.parts:
+                raise ValueError("Gemini 후보에 content.parts가 없습니다.")
+
+            parsed_json_text = candidate.content.parts[0].text if candidate.content.parts else None
+            if parsed_json_text:
+                parsed_json_text = parsed_json_text.replace("```json", "").replace("```", "").strip()
+                parsed_json_text = re.sub(r'//.*', '', parsed_json_text)
+                parsed_json = json.loads(parsed_json_text)
+            else:
+                parsed_json = {"error": "Gemini에서 데이터가 없습니다."}
+                
+            print("=== Gemini RAW OUTPUT ===")
+            print(parsed_json_text)
+
+        except Exception as e:
+            print("Gemini 호출/파싱 에러:", e)
+            parsed_json_text = None
+
+        try:
+            if parsed_json_text:  # None 체크 추가
+                sanitized_text = parsed_json_text.replace("'", '"').replace('\n', '').strip()
+                parsed_json = json.loads(sanitized_text)
+                print("=== Gemini PARSED OUTPUT ===")
+                print(parsed_json)
+            else:
+                parsed_json = {
+                    "error": "음성에서 필요한 정보를 추출할 수 없습니다.",
+                    "raw_text": transcript
+                }
+        except json.JSONDecodeError:
+            parsed_json = {
+                "error": "음성에서 필요한 정보를 추출할 수 없습니다.",
+                "raw_text": parsed_json_text
+            }
+
+        return JsonResponse({"form_data": parsed_json})
+
+    except Exception as e:
+        print("에러 발생:", e)
+        print(traceback.format_exc())
+        return JsonResponse({"error": str(e)}, status=500)
+    
+    
+    
 @login_required
 def map_view(request):
     # 기존 판매자 가게
@@ -108,11 +226,12 @@ def store_report(request):
         'form': form
     })
     
-    
+@login_required   
 def store_list(request): ##임시
     stores = Store.objects.all()
     return render(request, 'stores/store_list.html', {'stores': stores})
 
+@login_required
 def store_detail_view(request, store_id): ##임시
     store = get_object_or_404(Store, pk=store_id)
     items = Item.objects.filter(stores=store) # 'stores' 필드 사용
@@ -297,3 +416,5 @@ def edit_item(request, item_id):
     return render(request, 'stores/edit_item.html', {
         'store_item': store_item
     })
+
+

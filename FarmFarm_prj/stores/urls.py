@@ -17,3 +17,4 @@ urlpatterns = [
     path('report/', store_report, name='store_report'),
     path('voice-input/', voice_input, name='voice_input'), #음성 인식 기능 연결 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ 
