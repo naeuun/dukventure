@@ -71,7 +71,13 @@ def auto_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect('users:home')
+            role = request.user.usertype
+            if role == 'BUYER':
+                return redirect('users:buyer_home')
+            elif role == 'SELLER':
+                return redirect('users:seller_home')
+            else:
+                return redirect('users:onboarding')
     return redirect('users:onboarding')
 
 @login_required
