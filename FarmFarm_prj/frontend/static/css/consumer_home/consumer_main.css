@@ -388,7 +388,7 @@ body {
 
 /* 마이 캐릭터 버튼 */
 .cha_section {
-  margin-top: 20px;
+  margin-top: 40px;
   align-self: flex-start;
   margin-left: 20px;
 }
@@ -504,7 +504,7 @@ body {
 
 /* 오른쪽 정보 */
 .information_detail {
-  width: 100px;
+  width: 140px;
   height: 208px;
   background: rgba(55, 61, 45, 0.5);
   border: 0.5px solid #C1FF52;
@@ -534,7 +534,7 @@ body {
 .cha_growth {
   font-size: 14px;
   font-weight: 600;
-  margin-right: 20px;
+  margin-right: 15px;
 }
 .growth_chart {
   margin-top: 10px;
@@ -557,7 +557,7 @@ body {
 }
 .cha_more{
   width: auto;
-  height: 15px;
+  height: 24px;
   margin-bottom: 300px;
   margin-left: 10px;
 }
@@ -573,7 +573,7 @@ body {
   margin-right: 20px;  
   }
 .rew_section{
-  margin-top: 20px;
+  margin-top: 80px;
   align-self: flex-start;
   margin-left: 20px;
 }
@@ -602,3 +602,311 @@ body {
   height: 220px;
   margin-top: 100px;
 }
+
+.res_section{
+  margin-top: 80px;
+  align-self: flex-start;
+  margin-left: 20px;
+  
+}
+.information3-card {
+  background: #000;
+  border-radius: 35px;
+  overflow: hidden;
+  width: 373px;
+  height: 332px;
+  box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.25);
+  border: 3px solid #C1FF52;
+  display: flex;   
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  perspective: 1000px;
+  padding: 5px;
+}
+.more{
+  position: relative;
+}
+.res_more{
+  position: absolute;
+  width: auto;
+  height: 24px;
+}
+.res_detial{
+  width: 200px;
+  height: 260px;
+  border-radius: 23px;
+  border: 2px solid #C1FF52; /* 강조 색 */
+  background: linear-gradient(
+      180deg,
+      rgba(244, 245, 239, 0.4) 5.44%,
+      rgba(164, 255, 0, 0.4) 100%
+    ),
+    #f4f5ef;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  transform: scale(1.1);
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px;
+}
+
+.detail_img{
+  width: 177px;
+  height: 113px;
+  border-radius: 17px;
+  border: 1px solid #828282;
+  margin-bottom: 8px;
+}
+
+.detail_txt{
+  width: 100%;
+  flex: 1;
+  border-top: 1.5px solid #C1FF52; /* 위에만 선 */
+  color: #828282;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px;
+  text-align: center;
+}
+
+.back_detail{
+  width: 130px;
+  height: 170px;
+  border-radius: 23px;
+  border: 2px solid #C1FF52; /* 같은 강조 색 */
+  background: linear-gradient(
+      180deg,
+      rgba(244, 245, 239, 0.4) 5.44%,
+      rgba(164, 255, 0, 0.4) 100%
+    ),
+    #f4f5ef;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.5);
+  opacity: 0.4;
+  filter: blur(2px);
+  transform: scale(0.9);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  margin: 0 10px; /* 양 옆 여백 */
+}
+
+.egg,.pota{
+  width: 118.017px;
+  height: 74.992px;
+
+}
+.details_img{
+  width: 118px;
+  height: 75px;
+  border-radius: 17px;
+  border: 1px solid #828282;
+  margin-bottom: 5px;
+}
+
+.details_txt{
+  width: 100%;
+  flex: 1;
+  border-top: 1px solid #C1FF52; /* 위에만 선 */
+  color: #828282;
+  font-size: 6px;
+  font-weight: 600;
+  padding: 4px;
+}
+
+
+.rev_section{
+  margin-top: 80px;
+  align-self: flex-start;
+  margin-left: 5px;
+}
+.character1 {
+  background: #C1FF52;
+  width: 130px;
+  height: 46px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid black;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  margin-left: 20px;
+}
+.review_hugger{
+  position: relative;
+  margin-top: 20px; 
+  width: 373.852px;
+  height: 646.007px;
+  background: linear-gradient(black, #0b2401);
+  border: 1px solid #C1FF52;
+  border-radius: 35px;
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  
+}
+.review_deco{
+  position:absolute;
+  width:22.6px;
+  right:20px;
+  top:60px;
+}
+.per_review{
+  margin:10px;
+  width:302px;
+  height:90px;
+  background: linear-gradient(#ffffff, #daf6cf);
+  border:1px solid black;
+  border-radius: 23px;
+  position:relative;
+}
+.reviewer_profile{
+  width:46.5px;
+  height:46.5px;
+  border:2px solid #C1FF52;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top:-10px;
+  z-index: 10;
+}
+.r_profile_p{
+  width:46.5px;
+  height:46.5px;
+  border-radius: 50%;
+}
+.stars{
+  display:flex;
+  position: absolute;
+  left:55px;
+  top:8px;
+}
+.per_star{
+  width:15px;
+  margin:0 2.2px;
+}
+.review_content{
+  width:150px;
+  height:54px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  position:absolute;
+  top:28px;
+  left:10px;
+  background-color: #FFFFFF;
+  border:1px solid black;
+  opacity: 70%;
+  border-radius: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  padding:0 20px;
+  color:#0b2401;
+}
+.date{
+  position: absolute;
+  top:10px;
+  right:20px;
+  font-size: 7px;
+  font-weight: 700;
+  color: #828282;
+}
+
+
+.buy_section{
+  margin-top: 80px;
+  align-self: flex-start;
+}
+.information4-card {
+  background: #000;
+  border-radius: 35px;
+  overflow: hidden;
+  width: 373px;
+  height: 332px;
+  box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.25);
+  border: 3px solid #C1FF52;
+  display: flex;   
+  position: relative;
+  padding: 5px;
+}
+.history_card {
+  position: absolute;
+  width: 300px;
+  height: 189.12px;
+  background: white;
+  border-radius: 35px;
+  border: 1px solid #000;
+  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.40);
+  display: flex;
+  flex-direction: row;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.4s ease-in-out;
+}
+
+.history_card.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 10;
+}
+
+.card_img {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 17px;
+  border: 2px solid #000;
+  overflow: hidden;
+}
+
+.card_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card_text {
+  width: 260.955px;
+  height: 154.381px;
+  border-radius: 35px;
+  border: 2px solid #C1FF52;
+  background: rgba(0, 0, 0, 0.30);
+  flex: 2;
+  padding: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.card_text h3 {
+  font-size: 16px;
+  color: #8cff5a;
+  margin: 5px 0;
+}
+
+.card_text .date {
+  font-size: 12px;
+  float: right;
+  color: #555;
+}
+
+.card_text ul {
+  margin-top: 8px;
+  padding-left: 15px;
+}
+
+.card_text li {
+  margin-bottom: 5px;
+}
+
+

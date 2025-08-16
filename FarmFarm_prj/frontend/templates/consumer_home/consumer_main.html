@@ -242,6 +242,273 @@
           </div>
         </div>
       </div>
+
+      <!--예약현황 정보-->
+      <div class="res_section">
+        <div class="character">
+          예약 현황
+          <img
+            src="{% static 'img/res_icon.png' %}"
+            alt="예약 현황 아이콘"
+            class="res_check"
+          />
+        </div>
+      </div>
+      <!--예약 현황 상세 내용-->
+      <div class="information_zone">
+        <div class="res_res">
+          <div class="information3-card">
+            <div class="more">
+              <img
+                src="{% static 'img/res_more.png' %}"
+                alt="예약 현황 더보기"
+                class="res_more"
+              />
+            </div>
+            <div class="back_detial">
+              <div class="details_img">
+                <img
+                  src="{% static 'img/egg.png' %}"
+                  alt="예약 현황 "
+                  class="tomato"
+                />
+              </div>
+              <div class="details_txt">
+                <span>
+                판매자: 창동시장 달걀 할머니 위치: 덕성여대 후문 옆 판매 시간:
+                내일 오전 10시~12시 가격: 3,000원 상태: 예약 중 (픽업 알림 예정)
+                <span>
+              </div>
+            </div>
+            <div class="res_detial">
+              <div class="detail_img">
+                <img
+                  src="{% static 'img/tomato.png' %}"
+                  alt="예약 현황 "
+                  class="tomato"
+                />
+              </div>
+              <div class="detail_txt">
+                <span>
+                  판매자: 박미향 <br>
+                  위치: 수유역 4번 출구 앞 <br>
+                  판매 시간: 오늘 오후 4시~7시 <br>
+                  가격: 2,500원 <br>
+                  상태: 예약 완료<br>
+                   → [픽업 완료] 버튼 노출 예정
+              </div>
+            </div>
+            <div class="back_detial">
+              <div class="details_img">
+                <img
+                  src="{% static 'img/pota.png' %}"
+                  alt="예약 현황 "
+                  class="tomato"
+                />
+              </div>
+              <div class="details_txt">
+                판매자: 우이천 감자 아저씨 위치: 방학역 2번 출구 앞 판매 시간:
+                오늘 오후 2시~5시 가격: 1,000원 상태: 예약 완료 → 픽업 대기 중
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!--리뷰 정보-->
+      <div class="rev_section">
+        <div class="character1">
+          내가 쓴 리뷰
+          <img
+            src="{% static 'img/rev_icon.png' %}"
+            alt="리뷰 아이콘"
+            class="rev_icon"
+          />
+        </div>
+
+        <div class="review_hugger">
+          <img
+            src="{% static 'img/review_deco.png' %}"
+            alt="리뷰데코"
+            class="review_deco"
+          />
+
+          <div class="per_review">
+            <div class="reviewer_profile">
+              <img
+                src="{% static 'img/dummy_egg.png' %}"
+                alt="더미프로필"
+                class="r_profile_p"
+              />
+            </div>
+            <div class="stars">
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+            </div>
+            <div class="review_content">
+              여기 집 너무 신선해서 좋아요!! ^^ 저희 아이들도 잘 먹네요~
+            </div>
+            <div class="date">2025.01.06</div>
+          </div>
+
+          <div class="per_review">
+            <div class="reviewer_profile">
+              <img
+                src="{% static 'img/dummy_egg.png' %}"
+                alt="더미프로필"
+                class="r_profile_p"
+              />
+            </div>
+            <div class="stars">
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+            </div>
+            <div class="review_content">
+              여기 집 너무 신선해서 좋아요!! ^^ 저희 아이들도 잘 먹네요~
+            </div>
+            <div class="date">2025.01.06</div>
+          </div>
+        </div>
+      </div>
+
+      <!--구매 내역 정보-->
+      <div class="buy_section">
+        <div class="character1">
+          구매 내역
+          <img
+            src="{% static 'img/buy_icon.png' %}"
+            alt="구매 내역 아이콘"
+            class="buy_icon"
+          />
+        </div>
+        <!--구매 내역 상세 내용-->
+        <div class="information_zone">
+          <div class="res_res">
+            <div class="information4-card">
+              {% comment %}
+              <div class="more">
+                <img
+                  src="{% static 'img/res_more.png' %}"
+                  alt="예약 현황 더보기"
+                  class="res_more"
+                />
+              </div>
+              {% endcomment %}
+              <div class="history_container">
+
+                <!-- 카드 1 -->
+                <div class="history_card">
+                  <div class="card_img">
+                    <img
+                  src="{% static 'img/tomato2.png' %}"
+                  alt="토마토"
+                  class="tomato2"
+                />
+                  </div>
+                  <div class="card_text">
+                    <span class="date">2025.03.04</span>
+                    <h3>[도봉산 토마토 할아버지]</h3>
+                    <ul>
+                      <li>품목: 방울토마토 1팩</li>
+                      <li>위치: 도봉산역 1번 출구 인근</li>
+                      <li>판매 시간: 오전 11시 ~ 오후 2시</li>
+                      <li>가격: 2,000원</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- 카드 2 -->
+                <div class="history_card">
+                  <div class="card_img">
+                    <img src="potato.png" alt="감자">
+                  </div>
+                  <div class="card_text">
+                    <span class="date">2025.03.05</span>
+                    <h3>[우이천 감자 아저씨]</h3>
+                    <ul>
+                      <li>품목: 햇감자 1kg</li>
+                      <li>위치: 우이천 산책로 입구</li>
+                      <li>판매 시간: 오후 1시 ~ 4시</li>
+                      <li>가격: 2,500원</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- 카드 3 -->
+                <div class="history_card">
+                  <div class="card_img">
+                    <img src="egg.png" alt="달걀">
+                  </div>
+                  <div class="card_text">
+                    <span class="date">2025.03.06</span>
+                    <h3>[창동시장 달걀 할머니]</h3>
+                    <ul>
+                      <li>품목: 신선한 달걀 10구</li>
+                      <li>위치: 덕성여대 후문 옆</li>
+                      <li>판매 시간: 오전 10시 ~ 12시</li>
+                      <li>가격: 3,000원</li>
+                    </ul>
+                  </div>
+                </div>
+                <img
+                  src="{% static 'img/rew_gra.png' %}"
+                  alt="리워드 현황 아이콘"
+                  class="rew_gra"
+                />
+
+
+            </div>
+          </div>
+        </div>
+
+
     </section>
   </div>
 </div>

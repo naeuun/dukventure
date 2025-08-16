@@ -1,0 +1,108 @@
+{% extends "../base.html" %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/consumer_home/reservation_home.css' %}"
+/>
+{% endblock style %} {% block body %}
+<div class="big_hugger">
+  <div class="character-home">
+    <div class="top-section">
+      <!-- 상단 캐릭터 메인 -->
+      <a href="{% url 'consumermain' %}">
+        <img
+          src="{% static 'img/cha_exit.png' %}"
+          alt="캐릭터 상세화면 나가기"
+          class="cha_exit"
+        />
+      </a>
+      <img
+        src="{% static 'img/cha_gra2.png' %}"
+        alt="캐릭터 상세화면 상단 데코"
+        class="cha_gra"
+      />
+      <img
+        src="{% static 'img/cha_gra22.png' %}"
+        alt="캐릭터 상세화면 상단 데코2"
+        class="cha_gra2"
+      />
+    </div>
+    <div class="reservation_zone">
+
+      <!-- 예약 카드 1 -->
+      <div class="per_res">
+        <div class="reservation-card">
+          <div class="product-img-wrap">
+            <img src="{% static 'img/tomato3.png' %}" alt="상품 이미지" class="product-img">
+            <div class="profile-circle">
+              <img src="{% static 'img/logo_leaves.png' %}" alt="프로필 이미지">
+            </div>
+            <div class="profile-hugger-circle"></div>
+          </div>
+
+          <div class="product-info">
+            <p>판매자: 박미향</p>
+            <p>위치: 수유역 4번 출구 앞</p>
+            <p>판매 시간: 오늘 오후 4시~7시</p>
+            <p>가격: 2,500원</p>
+            <p>개수 : 1팩</p>
+            <p>상태: 예약 완료 </p>
+             → [픽업 완료] 버튼 노출 예정
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="accept-btn">픽업 완료</button>
+          <button class="reject-btn">리뷰쓰기</button>
+        </div>
+
+        <!-- 리뷰 작성 모달 -->
+        <div id="rejectModal" class="modal">
+          <div class="modal-content0">
+            <div class="modal_title">리뷰작성</div>
+            <button class="reason-btn">#키워드</button>
+            <button class="reason-btn">#신선해요</button>
+            <button class="reason-btn">#저렴해요</button>
+            <button class="reason-btn">#친절해요</button>
+            <button class="reason-btn">#국내산</button>
+            <button class="reason-btn">#한정판매</button>
+            <button class="reason-btn">#수확직송</button>
+            <div class="modal-actions">
+              <button class="confirm-btn">입력완료</button>
+              <button class="close-btn">×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 예약 카드 2 -->
+      <div class="per_res">
+        <div class="reservation-card">
+          <div class="product-img-wrap">
+            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="product-img">
+            <div class="profile-circle">
+              <img src="{% static 'img/logo_leaves.png' %}" alt="프로필 이미지">
+            </div>
+            <div class="profile-hugger-circle"></div>
+          </div>
+
+          <div class="product-info">
+            <p>이름: 김지은</p>
+            <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
+            <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
+            <p>연락처: 010-1234-5678</p>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="accept-btn">수락</button>
+          <button class="reject-btn">거절</button>
+        </div>
+      </div>
+
+    </div> 
+
+  </div>  
+  </div>
+</div>
+
+{% endblock body %}
