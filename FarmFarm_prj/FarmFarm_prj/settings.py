@@ -27,8 +27,6 @@ environ.Env.read_env()  # 프로젝트 루트의 .env 읽기
 # Google STT 환경 변수
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = env("GOOGLE_APPLICATION_CREDENTIALS")
 
-# OpenAI API 키
-OPENAI_API_KEY = env("OPENAI_API_KEY")
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
