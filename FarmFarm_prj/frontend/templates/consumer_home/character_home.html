@@ -31,14 +31,38 @@
         </div>
         <!-- 오른쪽 정보 -->
         <div class="information_detail">
-          <img
-            src="{% static 'img/edit.png' %}"
-            alt="캐릭터 상세화면 상단 나가기"
-            class="edit"
-          />
-          <h3 class="cha_name">
-            이름: <br /><span class="cha_nic">브로브로브로콜리</span>
-          </h3>
+          <img src="{% static 'img/edit.png' %}" alt="이름 수정" class="edit" />
+          <div class="name-box">
+            <h3 class="cha_name">
+              이름: <br /><span class="cha_nic">브로브로브로콜리</span>
+            </h3>
+          </div>
+
+          <!-- 이름 수정 팝업 -->
+          <div
+            class="name-edit-popover"
+            role="dialog"
+            aria-modal="true"
+            aria-hidden="true"
+          >
+            <button type="button" class="name-pop-close" aria-label="닫기">
+              ×
+            </button>
+            <input
+              id="nameInput"
+              class="name-input"
+              type="text"
+              value="브로브로브로콜리"
+              maxlength="20"
+            />
+            <button type="button" class="name-pop-save">
+              <img
+                src="{% static 'img/edit.png' %}"
+                alt="이름 수정"
+                class="edit"
+              />
+            </button>
+          </div>
 
           <h3 class="cha_growth">성장 퍼센트:</h3>
           <div class="growth_chart">
@@ -113,4 +137,6 @@
   </div>
 </div>
 
-{% endblock body %}
+{% endblock body %} {% block script %}
+<script src="{% static 'js/consumer_home/character_home.js' %}"></script>
+{% endblock script %}
