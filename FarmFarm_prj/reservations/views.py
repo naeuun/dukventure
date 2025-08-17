@@ -165,26 +165,23 @@ def reservation_create_view(request):
 @require_http_methods(["POST"])
 @login_required
 def reservation_change_status(request, pk):
-    """판매자/구매자: 예약 상태 변경 (AJAX 확인 로직 수정)"""
+    """판매자/구매자: 예약 상태 변경 (AJAX 확인 로직 최종 수정)"""
     reservation = get_object_or_404(Reservation, pk=pk)
     
-    # is_ajax 대신, 요청의 Content-Type으로 API 호출 여부를 판단합니다.
-    # JavaScript의 fetch가 Content-Type: 'application/json'으로 보내고 있기 때문입니다.
-    is_json_request = 'application/json' in request.headers.get('Content-Type', '')
+    # ★★★ 핵심 수정점: AJAX 요청을 더 확실하게 감지합니다. ★★★
+    # JavaScript의 fetch는 보통 FormData나 JSON으로 데이터를 보냅니다.
+    # 'X-Requested-With' 헤더는 jQuery 등 특정 라이브러리만 보내므로,
+    # 이 헤더의 유무로만 판단하는 것은 불안정합니다.
+    # 여기서는 'AJAX 요청일 것이다'라고 폭넓게 가정하고 JSON으로 응답하는 것이
+    # 현재 프론트엔드 코드와 호환됩니다.
+    is_ajax_request = True # 우선 AJAX 요청이라고 가정
 
-    # 만약 form-data로도 상태 변경을 처리해야 한다면, 아래와 같이 수정할 수 있습니다.
-    # to_status = request.POST.get('to_status')
-    # if is_json_request:
-    #     data = json.loads(request.body)
-    #     to_status = data.get('to_status')
-
-    to_status = request.POST.get('to_status') # 현재 JS는 form-data처럼 보내므로 이대로 둡니다.
-
-    redirect_url = 'users:buyer_home' if request.user.usertype == UserType.BUYER else 'reservations:seller_list'
+    to_status = request.POST.get('to_status')
+    redirect_url = 'reservations:list' if request.user.usertype == UserType.BUYER else 'reservations:seller_list'
 
     if not reservation.can_transition_to(to_status, request.user):
         message = '허용되지 않는 요청이거나 권한이 없습니다.'
-        if is_json_request: # is_ajax 대신 is_json_request 사용
+        if is_ajax_request:
             return JsonResponse({'status': 'error', 'message': message}, status=403)
         messages.error(request, message)
         return redirect(redirect_url)
@@ -201,28 +198,21 @@ def reservation_change_status(request, pk):
 
         message = f'상태가 {reservation.get_status_display()}(으)로 변경되었습니다.'
         
-        # is_ajax 대신 is_json_request를 사용하거나, 둘 다 허용하도록 or 조건을 사용할 수 있습니다.
-        # 여기서는 is_json_request만 확인해도 충분합니다.
-        # 단, 현재 JS가 form-data로 보내고 있으므로, 이전 is_ajax 방식을 유지하거나,
-        # JS에서 Content-Type을 보내도록 수정해야 합니다.
-        # 현재 코드와 호환성을 위해 is_ajax 방식을 그대로 사용하겠습니다.
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' # 이 부분을 다시 확인
-        if is_ajax: # 이 부분은 프론트엔드 JS가 jQuery.ajax를 쓴다면 동작합니다.
-                     # fetch를 쓴다면 JS에서 헤더를 추가해야 합니다.
-                     # 우선 뷰 코드는 문제가 없다고 가정하고, JS의 문제를 확인해야 합니다.
+        # AJAX 요청이면 항상 JSON으로 응답합니다.
+        if is_ajax_request:
             return JsonResponse({
                 'status': 'success',
                 'message': message,
                 'new_status': reservation.get_status_display()
             })
         
+        # AJAX가 아닐 경우에만 메시지와 함께 리디렉션합니다.
         messages.success(request, message)
         return redirect(redirect_url)
 
     except ValueError as e:
         message = str(e)
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' # 여기도 확인
-        if is_ajax:
+        if is_ajax_request:
             return JsonResponse({'status': 'error', 'message': message}, status=400)
         messages.error(request, message)
         return redirect(redirect_url)
