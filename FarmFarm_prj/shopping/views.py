@@ -38,6 +38,9 @@ class AiShoppingView(View):
             response = model.generate_content(prompt)
             ingredients_text = response.text
             ingredient_names = [name.strip() for name in ingredients_text.split(',') if name.strip()]
+            print("\n" + "="*50)
+            print(f"[AI 응답] 추천 재료: {ingredient_names}")
+            print("="*50)
         except Exception as e:
             print(f"AI API Error: {e}")
             return render(request, 'shopping/ai_error.html', {'error_message': 'AI 서버와 통신 중 오류가 발생했습니다.'})
@@ -54,6 +57,13 @@ class AiShoppingView(View):
             found_store_items = StoreItem.objects.filter(query).select_related('store', 'item')
         else:
             found_store_items = StoreItem.objects.none()
+        print("="*50)
+        print("[DB 조회 결과] 아래 가게/상품들을 찾았습니다:")
+        if not found_store_items:
+            print(" >> 찾은 상품 없음")
+        for item in found_store_items:
+            print(f" >> 가게: {item.store.name}, 상품: {item.item.name}")
+        print("="*50 + "\n")
 
         for store_item in found_store_items:
             store = store_item.store
