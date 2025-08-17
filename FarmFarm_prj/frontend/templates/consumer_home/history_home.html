@@ -1,0 +1,101 @@
+{% extends "../base.html" %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/consumer_home/history_home.css' %}"
+/>
+{% endblock style %} {% block body %}
+<div class="big_hugger">
+  <div class="historye-home">
+    <!-- 구매 내역 카드 스택 -->
+    <section class="information4-card">
+      <!-- 상단: 뒤로가기 + 데코 -->
+      <div class="top-section">
+        <a href="{% url 'consumermain' %}">
+          <img src="{% static 'img/exit.png' %}" alt="나가기" class="exit" />
+        </a>
+        <img
+          src="{% static 'img/cha_gra2.png' %}"
+          alt="상세화면 상단 데코"
+          class="cha_gra"
+        />
+        <img
+          src="{% static 'img/cha_gra22.png' %}"
+          alt="상세화면 상단 데코2"
+          class="cha_gra2"
+        />
+      </div>
+      <div class="history_container">
+        <!-- 카드 1 -->
+        <article class="history_card card--1">
+          <div class="card_img">
+            <img src="{% static 'img/his_to.png' %}" alt="토마토" />
+          </div>
+          <div class="text_box">
+            <span class="date">2025.03.04</span>
+            <h3>[도봉산 토마토 할아버지]</h3>
+            <ul>
+              <li>품목: 방울토마토 1팩</li>
+              <li>위치: 도봉산역 1번 출구 인근</li>
+              <li>판매 시간: 오전 11시 ~ 오후 2시</li>
+              <li>가격: 2,000원</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 카드 2 -->
+        <article class="history_card card--2">
+          <div class="card_img">
+            <img src="{% static 'img/his_po2.png' %}" alt="감자" />
+          </div>
+          <div class="text_box">
+            <span class="date">2025.03.05</span>
+            <h3>[우이천 감자 아저씨]</h3>
+            <ul>
+              <li>품목: 햇감자 1kg</li>
+              <li>위치: 우이천 산책로 입구</li>
+              <li>판매 시간: 오후 1시 ~ 4시</li>
+              <li>가격: 2,500원</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 카드 3 -->
+        <article class="history_card card--3">
+          <div class="card_img">
+            <img src="{% static 'img/his_egg2.png' %}" alt="달걀" />
+          </div>
+          <div class="text_box">
+            <span class="date">2025.03.06</span>
+            <h3>[창동시장 달걀 할머니]</h3>
+            <ul>
+              <li>품목: 신선한 달걀 10구</li>
+              <li>위치: 덕성여대 후문 옆</li>
+              <li>판매 시간: 오전 10시 ~ 12시</li>
+              <li>가격: 3,000원</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 카드 4 -->
+        <article class="history_card card--4">
+          <div class="card_img">
+            <img src="{% static 'img/his_to.png' %}" alt="토마토" />
+          </div>
+          <div class="text_box">
+            <span class="date">2025.03.07</span>
+            <h3>[도봉산 토마토 할아버지]</h3>
+            <ul>
+              <li>품목: 방울토마토 1팩</li>
+              <li>위치: 도봉산역 1번 출구 인근</li>
+              <li>판매 시간: 오전 11시 ~ 오후 2시</li>
+              <li>가격: 2,000원</li>
+            </ul>
+          </div>
+        </article>
+
+        <div class="card_reflection" aria-hidden="true"></div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock body %}

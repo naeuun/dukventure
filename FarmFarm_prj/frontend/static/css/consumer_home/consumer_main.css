@@ -998,12 +998,6 @@ body {
   filter: blur(.35px) saturate(.88);
 }
 
-
-
-
-
-
-
 /* 반사 효과 */
 .card_reflection{
   position:absolute; left:8%; right:18%; bottom:-56px; height:120px; border-radius:30px;
