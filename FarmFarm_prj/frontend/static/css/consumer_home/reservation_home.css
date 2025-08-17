@@ -1,230 +1,356 @@
+/* 위치 고정을 위한 변수 */
+:root {
+  --topbar-h: 205px;
+  --hero-offset: 125.71px;
+  --hero-overlap: calc(var(--topbar-h) - var(--hero-offset));
+}
+
+/* 페이지 래퍼 */
 body {
-  margin: 0;
-  background-color: transparent;
+  margin:0;
+  background:transparent;
 }
 
-.big_hugger {
-  margin: 0 auto;
-  max-width: 402px;
-  min-height: 100vh;
-  overflow-y: auto;
-}
-
-.top-section {
-  background: #000;
-  height: 205px;
-  border-bottom: 3px solid #C1FF52;
-}
-
-.character-home {
-  width: 100%;
-}
-
-.cha_exit {
-  margin-left: 10px;
-}
-
-.cha_gra {
-  margin-left: 30px;
-}
-/* 예약 카드 */
-  .reservation-card {
-  background: linear-gradient(#d6ffc4, #b0ff8f);
-  border-radius: 16px;
-  overflow: hidden;
-  width: 365px;
-  height: 281.6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  border: 1px solid #C1FF52;
-  display: flex;
-  flex-direction: column;
-  padding:1px 0;
-  align-items: center;
-  }
-  
-  .reservation_zone{
+.page {
+  margin:0 auto;
+  max-width:402px;
+  min-height:100vh;
   display:flex;
   flex-direction:column;
+  background:transparent;
+  position:relative;
+}
+
+/* 상단바 - 높이 205px 유지 (요청대로 z-index 없음) */
+.topbar {
+  position:sticky;
+  top:0;
+  height:var(--topbar-h);
+  background:#000;
+  border-bottom:3px solid #C1FF52;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+}
+
+/* 나가기 버튼 */
+.topbar .back-btn {
   position:absolute;
-  top:100px;
-  }
+  left:10px;
+  top:12px;
+  display:flex;
+  align-items:center;
+}
 
-  .product-img-wrap {
-  position: relative;
-  width: 331px;
-  
-  }
-  
-  .product-img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius:17px;
-  margin-top:5px;
-  }
-  .product-info {
-  margin-top: -40px; /* 프로필 겹치는 공간 확보 */
-  text-align: left;
-  font-size: 13px;
-  font-weight:700;
-  color:black;
-  width:291px;
-  height:102.6px;
-  border: 0.7px solid #828282;
+.topbar .back-btn img {
+  width:24px;
+  height:24px;
+}
+
+/* 클로버 줄 */
+.leaf-row {
+  position:absolute;
+  top:12px;
+  margin-left:80px;
+  display:flex;
+  align-items:center;
+}
+
+.leaf-row img {
+  height:23px;
+  width:auto;
+}
+
+/* 본문: 상단바와 겹치도록 전체를 위로 끌어올림(스크롤 정상) */
+.content {
+  margin-top: calc(var(--hero-overlap) * -1);
+  padding: calc(var(--hero-overlap) + 18px) 18px 36px;
+  background:transparent;
+  position:relative;
+}
+
+/* 카드 공통 */
+.card {
+  background:linear-gradient(#d6ffc4,#b0ff8f);
+  border:1px solid #C1FF52;
   border-radius:16px;
-  padding:40px 20px 0 20px;
-  background-color:rgba(255, 255, 255, 0.8);
-  }
-  
-  .product-info p{
-  margin:0;
-  }
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+  padding:10px 0 14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:18px;
+}
 
-  .highlight-text{
-  font-size:16px;
+/* 첫 카드(히어로) */
+.card--hero {
+  position:relative;
+  z-index:1;
+}
+
+/* 이미지 영역: 326.049 x 114.441 */
+.card__image {
+  position:relative;
+  width:326.049px;
+  height:114.441px;
+  flex-shrink:0;
+  border-radius:17px;
+  border:1px solid #828282;
+  background-color:lightgray;
+  background-position:50% 50%;
+  background-size:cover;
+  background-repeat:no-repeat;
+  overflow:hidden;
+}
+
+/* 중앙 텍스트(토마토/달걀) */
+.center-badge {
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  width:105.932px;
+  height:33.63px;
+  font-family:"Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-size:40px;
+  font-weight:800;
+  line-height:43px;
+  text-align:center;
+  color:rgba(255, 255, 255, 0.60);
+  white-space:nowrap;
+}
+
+/* 정보 박스 */
+.card__info {
+  width:291px;
+  min-height:102px;
+  margin-top:-24px;
+  background:rgba(255,255,255,.85);
+  border:0.7px solid #828282;
+  border-radius:16px;
+  padding:38px 18px 14px;
+  font-size:13px;
   font-weight:700;
-  color:#669F00;
-  }
-  
-  .button-group {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  z-index: 10;
-  margin-bottom:15px;
-  }
-  
+  color:#000;
+}
+.card__info ul { list-style:none; padding:0; margin:0; }
+.card__info li { line-height:1.35; }
+.card__info .note { color:#333; }
 
-  .accept-btn, .reject-btn {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 27px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 15px;
-  width:152.8px;
+/* 카드 하단 버튼 */
+.card-actions-row {
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  margin:12px 0 28px;
+  position:relative;
+}
+
+.btn {
+  width:152px;
   height:52px;
-  background: black;
-  border: 1px solid #C1FF52;
-  color: #C1FF52;
-  }
-  
-  .accept-btn:hover, .reject-btn:hover {
-  background: #C1FF52;
-  color: black;
-  }
-  
-  
-
-.completed{
-  background: #C1FF52;
-  color:black;
-  width:320px;
-  cursor: default;
+  border-radius:27px;
+  font-weight:800;
+  font-size:15px;
+  border:1px solid #C1FF52;
+  cursor:pointer;
+  transition:all .15s ease;
 }
-.per_res:last-child{
-  margin-bottom:84px;
-}
+.btn-black { background:#000; color:#C1FF52; }
+.btn-black:hover { background:#1a1a1a; }
+.btn-lime { background:#C1FF52; color:#000; }
+.btn-lime:hover { filter:brightness(0.95); }
 
-/* 모달 */
+/* =========================
+   모달 (리뷰 작성)
+   ========================= */
+
+/* 최상단 오버레이 + 스크롤 고정 대비 */
 .modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:rgba(0,0,0,.6);
+  justify-content:center;
+  align-items:center;
+}
+.modal.is-open { display:flex; }
+
+/* 패널: 318.62 x 563.96 + 유리/그림자 */
+.modal__panel {
+  width:318.62px;
+  height:563.96px;
+  border-radius:16px;
+  border:0.6px solid rgba(255, 255, 255, 0.35);
+  background:rgba(255, 255, 255, 0.07);
+  background-blend-mode:plus-lighter;
+  box-shadow:
+    -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
+    -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
+    1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
+    0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
+  backdrop-filter:blur(2.72px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:14px;
+  position:relative;
 }
 
-.modal-content {
-  background: #fff;
-  border-radius: 14px;
-  width: 320px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* 헤더: 가운데 타이틀 + 우측 액션(업로드/닫기) */
+.modal__head {
+  position:relative;
+  width:100%;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.modal__title {
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  padding:10px 18px;
+  border-radius:27px;
+  background:#C1FF52;
+  color:#000;
+  font-weight:800;
+  font-size:16px;
+  border:1px solid #000;
+  box-shadow:0 14px 28px rgba(0,0,0,.35), 0 2px 8px rgba(255,255,255,.15) inset;
+}
+.modal__head-actions {
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.modal__close {
+  border:none;
+  background:none;
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  line-height:1;
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
+/* 업로드 아이콘 */
+.change_photo_btn {
+  width:24px;
+  height:24px;
+  padding:0;
+  border:none;
+  background:transparent;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.change_photo {
+  width:24px;
+  height:24px;
+  object-fit:cover;
+  display:block;
 }
 
-.modal_title {
-  width: 97px;
-  line-height: 39px;
-  border: 1px solid black;
-  border-radius: 27px;
-  background-color: #C1FF52;
-  font-size: 17px;
-  font-weight: 800;
-  color: black;
-  text-align: center;
+/* 별점 */
+.modal__stars {
+  margin:8px 0 10px;
+  font-size:18px;
+  color:#C1FF52;
+  text-align:center;
+  text-shadow:0 2px 10px rgba(0,0,0,.35);
 }
 
-.close-btn {
-  border: none;
-  background: none;
-  color: black;
-  font-size: 28px;
-  cursor: pointer;
+/* 텍스트 박스(요청한 스타일) */
+.modal__textarea-wrap {
+  width:296.074px;
+  height:122.311px;
+  flex-shrink:0;
+  border-radius:20px;
+  border:1px solid #C1FF52;
+  opacity:0.8;
+  background:#000;
+  padding:10px;
+  margin-bottom:10px;
+  box-shadow:none;
+}
+.modal__input {
+  width:100%;
+  height:100%;
+  border:0;
+  background:transparent;
+  color:#fff;
+  outline:none;
+  resize:none;
 }
 
-.stars {
-  margin: 10px 0;
-  font-size: 20px;
-  color: #FFD700;
+/* #키워드 칩(검정 배경 + 라임 테두리/텍스트) */
+.modal__keyword-head {
+  width:100%;
+  display:flex;
+  justify-content:flex-start;
+  margin:6px 0 8px;
+}
+.chip-title {
+  display:inline-block;
+  padding:10px 16px;
+  border-radius:27px;
+  background:#000;
+  color:#C1FF52;
+  font-weight:800;
+  font-size:14px;
+  border:1px solid #C1FF52;
+  box-shadow:0 12px 24px rgba(0,0,0,.35), 0 1px 2px rgba(255,255,255,.15) inset;
 }
 
-.review-input {
-  width: 100%;
-  height: 60px;
-  border: 1px solid #aaa;
-  border-radius: 10px;
-  padding: 8px;
-  margin-bottom: 10px;
+/* 키워드 버튼들 */
+.modal__keywords {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px 14px;
+  justify-content:flex-start;
+  width:100%;
+  margin-bottom:16px;
+}
+.tag {
+  padding:10px 16px;
+  border-radius:27px;
+  border:1px solid #C1FF52;
+  background:#000;
+  color:#C1FF52;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+}
+.tag:hover,
+.tag.selected {
+  background:#C1FF52;
+  color:#000;
 }
 
-.keyword-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  justify-content: center;
-  margin-bottom: 15px;
+/* 모달 제출 버튼 */
+.modal__submit {
+  width:180px;
+  height:52px;
+  border-radius:27px;
+  font-weight:800;
+  font-size:15px;
+  border:1px solid #C1FF52;
+  background:#C1FF52;
+  color:#000;
+  margin-top:auto;
 }
 
-.reason-btn {
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid #C1FF52;
-  background: black;
-  color: #C1FF52;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.reason-btn:hover,
-.reason-btn.selected {
-  background: #C1FF52;
-  color: black;
-}
-
-.confirm-btn {
-  width: 120px;
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 27px;
-  background-color: #C1FF52;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
+/* ===== 바디 스크롤락 시 클래스 (JS에서 사용) ===== */
+.body-lock {
+  position:fixed;
+  overflow:hidden;
+  inset:auto 0 0 0;
+  width:100%;
 }

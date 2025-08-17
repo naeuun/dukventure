@@ -4,112 +4,130 @@
   href="{% static 'css/consumer_home/reservation_home.css' %}"
 />
 {% endblock style %} {% block body %}
-<div class="big_hugger">
-  <div class="character-home">
-    <div class="top-section">
-      <!-- 상단 예약현황 메인 -->
-      <a href="{% url 'consumermain' %}">
-        <img
-          src="{% static 'img/cha_exit.png' %}"
-          alt="예약현황 상세화면 나가기"
-          class="cha_exit"
-        />
-      </a>
-      <img src="{% static 'img/res_gra.png' %}" alt="" class="cha_gra" />
-      <img src="{% static 'img/res_gra.png' %}" alt="" class="res_gra" />
-      <img src="{% static 'img/res_gra.png' %}" alt="" class="res_gra" />
-      <img src="{% static 'img/res_gra.png' %}" alt="" class="res_gra" />
+<div class="page">
+  <!-- 상단바 -->
+  <header class="topbar">
+    <a href="{% url 'consumermain' %}" class="back-btn" aria-label="뒤로가기">
+      <img src="{% static 'img/cha_exit.png' %}" alt="뒤로가기" />
+    </a>
+    <div class="leaf-row">
+      <img src="{% static 'img/res_gra2.png' %}" alt="장식" />
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- 카드 1 : 토마토 (히어로) -->
+    <section class="card card--hero">
+      <div
+        class="card__image"
+        style="background-image: url('{% static 'img/tomato3.png' %}')"
+      >
+        <span class="center-badge">토마토</span>
+      </div>
+      <div class="card__info">
+        <ul>
+          <li>판매자: 박미향</li>
+          <li>위치: 수유역 4번 출구 앞</li>
+          <li>판매 시간: 오늘 오후 4시~7시</li>
+          <li>가격: 2,500원</li>
+          <li>개수: 1팩</li>
+          <li>상태: 예약 완료</li>
+          <li class="note">→ [픽업 완료] 버튼 노출 예정</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 카드 1 버튼 -->
+    <div class="card-actions-row">
+      <button class="btn btn-lime" id="btn-finish">픽업 완료</button>
+      <button class="btn btn-black" id="btn-review">리뷰쓰기</button>
     </div>
 
-    <div class="reservation_zone">
-      <!-- 예약 카드 1 -->
-      <div class="per_res">
-        <div class="reservation-card">
-          <div class="product-img-wrap">
-            <img
-              src="{% static 'img/tomato3.png' %}"
-              alt="상품 이미지"
-              class="product-img"
-            />
-          </div>
-          <div class="product-info">
-            <p>판매자: 박미향</p>
-            <p>위치: 수유역 4번 출구 앞</p>
-            <p>판매 시간: 오늘 오후 4시~7시</p>
-            <p>가격: 2,500원</p>
-            <p>개수 : 1팩</p>
-            <p>상태: 예약 완료</p>
-            <p class="notice">→ [픽업 완료] 버튼 노출 예정</p>
-          </div>
-
-          <div class="button-group">
-            <button class="accept-btn">픽업 완료</button>
-            <button class="reject-btn" onclick="openModal()">리뷰쓰기</button>
-          </div>
-
-          <!-- 리뷰 작성 모달 -->
-          <div id="reviewModal" class="modal">
-            <div class="modal-content">
-              <div class="modal-header">
-                <div class="modal_title">리뷰작성</div>
-                <button class="close-btn" onclick="closeModal()">×</button>
-              </div>
-              <div class="stars">★★★★★</div>
-              <textarea
-                class="review-input"
-                placeholder="입력하세요..."
-              ></textarea>
-              <div class="keyword-box">
-                <button class="reason-btn">#신선해요</button>
-                <button class="reason-btn">#저렴해요</button>
-                <button class="reason-btn">#친절해요</button>
-                <button class="reason-btn">#국내산</button>
-                <button class="reason-btn">#매일판매</button>
-                <button class="reason-btn">#덤이있어요</button>
-                <button class="reason-btn">#정직해요</button>
-                <button class="reason-btn">#한정판매</button>
-                <button class="reason-btn">#수확직송</button>
-              </div>
-              <button class="confirm-btn">입력완료</button>
-            </div>
-          </div>
-        </div>
+    <!-- 카드 2 : 달걀 -->
+    <section class="card">
+      <div
+        class="card__image"
+        style="background-image: url('{% static 'img/dummy_egg.png' %}')"
+      >
+        <span class="center-badge">달걀</span>
       </div>
-
-      <!-- 예약 카드 2 -->
-      <div class="per_res">
-        <div class="reservation-card">
-          <div class="product-img-wrap">
-            <img
-              src="{% static 'img/dummy_egg.png' %}"
-              alt="상품 이미지"
-              class="product-img"
-            />
-          </div>
-
-          <div class="product-info">
-            <p>이름: 김지은</p>
-            <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
-            <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
-            <p>연락처: 010-1234-5678</p>
-          </div>
-
-          <div class="button-group">
-            <button class="accept-btn">수락</button>
-            <button class="reject-btn">거절</button>
-          </div>
-        </div>
+      <div class="card__info">
+        <ul>
+          <li>판매자: 창동시장 달걀 할머니</li>
+          <li>위치: 석연여대 후문 옆</li>
+          <li>판매 시간: 내일 오전 10시~12시</li>
+          <li>가격: 3,000원</li>
+          <li>개수: 1kg</li>
+          <li>상태: 예약 중 (픽업 알림 예정)</li>
+        </ul>
       </div>
+    </section>
+
+    <!-- 카드 2 버튼(예시) -->
+    <div class="card-actions-row">
+      <button class="btn btn-black">10분후 픽업가능</button>
+      <button class="btn btn-lime">픽업 전</button>
     </div>
-  </div>
+  </main>
 </div>
 
-<script>
-  function openModal() {
-    document.getElementById("reviewModal").style.display = "flex";
-  }
-  function closeModal() {
-    document.getElementById("reviewModal").style.display = "none";
-  }
-</script>
-{% endblock body %}
+<!-- 리뷰작성 모달 -->
+<div id="reviewModal" class="modal" aria-hidden="true">
+  <div
+    class="modal__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="리뷰작성"
+  >
+    <div class="modal__head">
+      <div class="modal__title">리뷰작성</div>
+      <div class="modal__head-actions">
+        <button
+          type="button"
+          value="이미지 변경"
+          class="change_photo_btn"
+          id="changePhotoBtn"
+          aria-label="이미지 변경"
+        >
+          <img
+            src="{% static 'img/add_photo.png' %}"
+            alt="이미지 변경"
+            class="change_photo"
+            id="changePhotoImg"
+          />
+        </button>
+        <input type="file" id="reviewPhoto" accept="image/*" hidden />
+        <button class="modal__close" id="modalCloseBtn" aria-label="닫기">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <div class="modal__stars">★★★★★</div>
+
+    <div class="modal__textarea-wrap">
+      <textarea class="modal__input" placeholder="입력하세요..."></textarea>
+    </div>
+
+    <div class="modal__keyword-head">
+      <span class="chip-title">#키워드</span>
+    </div>
+
+    <div class="modal__keywords">
+      <button class="tag">#신선해요</button>
+      <button class="tag">#저렴해요</button>
+      <button class="tag">#친절해요</button>
+      <button class="tag">#국내산</button>
+      <button class="tag">#매일판매</button>
+      <button class="tag">#덤이있어요</button>
+      <button class="tag">#정직해요</button>
+      <button class="tag">#한정판매</button>
+      <button class="tag">#수확직송</button>
+    </div>
+
+    <button class="btn btn-lime modal__submit">입력완료</button>
+  </div>
+</div>
+{% endblock body %} {% block script %}
+<script src="{% static 'js/consumer_home/reservation_home.js' %}"></script>
+{% endblock script %}
