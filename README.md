@@ -7,7 +7,7 @@
    (노션 "키관리"참고)
    
 4. 마이그레이션 적용 <br>
-   python manage.py makemigrations
+   python manage.py makemigrations <br>
    python manage.py migrate
 
 6. 마이그레이션 오류 발생 시 db삭제 후 다시 명령어 입력
