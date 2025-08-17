@@ -45,31 +45,42 @@
 <!-- 리뷰 작성 모달 -->
 <div id="reviewModal" class="modal">
     <div class="modal-content">
-        <h3 id="reviewModalTitle">리뷰 작성</h3>
-        <form id="reviewForm" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ review_form.as_p }}
-            <button type="submit">등록</button>
-            <button type="button" onclick="closeReviewModal()">닫기</button>
-        </form>
+        <div id="review-modal-content">
+            </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const csrftoken = '{{ csrf_token }}';
+document.addEventListener('DOMContentLoaded', function() {
+    const csrftoken = '{{ csrf_token }}';
+    const reviewModal = document.getElementById('reviewModal');
+    const reviewModalContent = document.getElementById('review-modal-content');
 
-     // '픽업 완료' 버튼 클릭 이벤트 처리
-    document.body.addEventListener('click', function(event) {
-        if (event.target.classList.contains('pickup-complete-btn')) {
-            const reservationId = event.target.dataset.pk;
+    // --- 모든 클릭 이벤트를 document.body에서 한 번에 처리 ---
+    document.body.addEventListener('click', async function(event) {
+        const target = event.target;
+
+        if (target.classList.contains('pickup-complete-btn')) {
+            const reservationId = target.dataset.pk;
             handlePickupComplete(reservationId);
+        }
+        
+        if (target.classList.contains('write-review-btn')) {
+            const reservationId = target.dataset.pk;
+            const storeName = target.dataset.storeName;
+            openReviewModal(reservationId, storeName);
+        }
+        
+        if (target.classList.contains('close-modal-btn') || target === reviewModal) {
+            closeReviewModal();
         }
     });
 
-    // '픽업 완료' 서버 요청 및 UI 업데이트 함수
+    // --- '픽업 완료' 기능 함수 ---
     async function handlePickupComplete(reservationId) {
-        const url = `/reservations/change-status/${reservationId}/`;
+        if (!confirm('픽업을 완료하시겠습니까?')) return;
+        
+        const url = `/reservations/${reservationId}/change-status/`;
         const formData = new FormData();
         formData.append('to_status', 'PICKED_UP');
 
@@ -82,29 +93,8 @@
             const result = await response.json();
 
             if (response.ok) {
-                // 1. '진행 중' 목록에서 기존 카드 찾아서 제거
-                const cardToRemove = document.getElementById(`res-card-${reservationId}`);
-                if (cardToRemove) cardToRemove.remove();
-
-                // 2. '지난 예약' 목록에 새 카드를 동적으로 생성 (리뷰 버튼 포함)
-                const pastList = document.getElementById('past-reservations-list');
-                const newCard = cardToRemove.cloneNode(true); // 카드를 복제하여 구조 유지
-                
-                // 상태 텍스트와 버튼 영역을 '픽업 완료' 상태에 맞게 변경
-                newCard.querySelector('.status').textContent = result.new_status;
-                const actionsDiv = newCard.querySelector('.res-card-actions');
-                actionsDiv.innerHTML = `
-                    <p><strong>총 금액:</strong> ${newCard.querySelector('p strong').textContent}</p>
-                    <p><strong>상태:</strong> <span class="status">${result.new_status}</span></p>
-                    <span style="color: green; font-weight: bold;">픽업 완료</span>
-                    <button type="button" class="btn btn-light write-review-btn" data-pk="${reservationId}" data-store-name="${newCard.querySelector('h4').textContent.split('(')[0].trim()}">리뷰쓰기</button>
-                `;
-
-                pastList.insertAdjacentElement('afterbegin', newCard);
-                
-                // 3. 목록이 비었을 때 메시지 처리
-                updateEmptyMessages();
-
+                alert('픽업이 완료되었습니다!');
+                window.location.reload(); // 성공 시 간단하게 새로고침
             } else {
                 alert('오류: ' + result.message);
             }
@@ -114,67 +104,77 @@
         }
     }
 
-    // 리뷰 폼 AJAX 제출 처리
-    const reviewForm = document.getElementById('reviewForm');
-    reviewForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const url = this.action;
-        const formData = new FormData(this);
-
+    // --- 리뷰 관련 기능 함수 ---
+    async function openReviewModal(reservationId, storeName) {
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
-                body: formData
-            });
-            const result = await response.json();
-
-            if (response.ok) {
-                alert(result.message);
-                closeReviewModal();
-                const reservationId = url.split('/').slice(-2)[0];
-                const reviewButton = document.querySelector(`.write-review-btn[data-pk="${reservationId}"]`);
-                if (reviewButton) reviewButton.remove();
-            } else {
-                alert('오류: ' + (result.message || '리뷰 등록 실패'));
+            const response = await fetch(`/reviews/create/${reservationId}/`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || '리뷰 폼을 불러올 수 없습니다.');
             }
+            const formHtml = await response.text();
+            
+            reviewModalContent.innerHTML = `
+                <span class="close-modal-btn" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+                ${formHtml}
+            `;
+            reviewModal.style.display = 'flex';
         } catch (error) {
-            console.error('Error:', error);
-            alert('리뷰 등록 중 오류가 발생했습니다.');
+            console.error('Error opening review modal:', error);
+            alert(error.message);
         }
-    });
-
-    // 모달 제어 함수
-    const reviewModal = document.getElementById('reviewModal');
-    const reviewModalTitle = document.getElementById('reviewModalTitle');
-    function openReviewModal(reservationId, storeName) {
-        reviewModalTitle.textContent = `${storeName} 리뷰 작성`;
-        reviewForm.action = `/reviews/create/${reservationId}/`;
-        reviewModal.style.display = 'block';
     }
+
     function closeReviewModal() {
         reviewModal.style.display = 'none';
+        reviewModalContent.innerHTML = '';
     }
-    // 아래처럼 window에 등록!
-    window.openReviewModal = openReviewModal;
-    window.closeReviewModal = closeReviewModal;
 
-    // 목록 비었는지 확인하고 메시지 표시/숨김 처리하는 함수
+    // --- 리뷰 폼 제출 이벤트 처리 ---
+    reviewModal.addEventListener('submit', async function(event) {
+        if (event.target.tagName === 'FORM') {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message);
+                    window.location.reload();
+                } else {
+                    throw new Error(result.message || '리뷰 등록에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert(`오류: ${error.message}`);
+            }
+        }
+    });
+    
+    // ★★★ 누락되었던 유틸리티 함수 추가 ★★★
     function updateEmptyMessages() {
         const activeList = document.getElementById('active-reservations-list');
         const pastList = document.getElementById('past-reservations-list');
         const noActiveMsg = document.getElementById('no-active-reservations');
         const noPastMsg = document.getElementById('no-past-reservations');
 
-        noActiveMsg.style.display = activeList.children.length === 0 ? 'block' : 'none';
-        noPastMsg.style.display = pastList.children.length === 0 ? 'block' : 'none';
+        if(activeList && noActiveMsg) {
+            noActiveMsg.style.display = activeList.children.length === 0 ? 'block' : 'none';
+        }
+        if(pastList && noPastMsg) {
+            noPastMsg.style.display = pastList.children.length === 0 ? 'block' : 'none';
+        }
     }
 
-    // 페이지 로드 시 한 번 실행
-    updateEmptyMessages();
-
+    // --- 페이지 로드 시 초기 실행 ---
+    updateEmptyMessages(); // 이제 함수가 존재하므로 정상 실행됩니다.
 });
-
-
 </script>
 {% endblock %}

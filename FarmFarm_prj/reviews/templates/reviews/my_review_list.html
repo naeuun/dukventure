@@ -50,9 +50,8 @@
     </div>
 
     {% for review in reviews %}
-        <div class="review-card">
+        <div class="review-card" id="review-card-{{ review.pk }}">
             <div class="review-profile">
-                <!-- 실제 유저 프로필 이미지로 교체 필요 -->
                 <img src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ review.author.user.username|first }}" alt="프로필 사진">
             </div>
             <div class="review-content">
@@ -67,18 +66,28 @@
                     </div>
                 </div>
                 <p class="review-text">{{ review.content }}</p>
+                
                 {% if review.photo %}
                     <div class="review-photo">
                         <img src="{{ review.photo.url }}" alt="리뷰 사진">
                     </div>
                 {% endif %}
+
                 <div class="keywords">
                     {% for keyword in review.get_keywords_as_list %}
                         <span>{{ keyword }}</span>
                     {% endfor %}
                 </div>
-                 <div class="review-info" style="text-align: right; margin-top: 1rem;">
-                    <span>{{ review.created_at|date:"Y.m.d" }}</span>
+
+                <div class="review-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <div class="review-info">
+                        <span>{{ review.created_at|date:"Y.m.d" }}</span>
+                    </div>
+                    <div class="review-actions">
+                        <button type="button" class="btn btn-danger delete-review-btn" data-review-id="{{ review.pk }}" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                            삭제
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,4 +95,38 @@
         <p style="text-align: center;">작성한 리뷰가 없습니다.</p>
     {% endfor %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const csrftoken = '{{ csrf_token }}';
+
+    document.querySelectorAll('.delete-review-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const reviewId = this.dataset.reviewId;
+            
+            if (confirm('정말로 이 리뷰를 삭제하시겠습니까? 되돌릴 수 없습니다.')) {
+                const url = `/reviews/${reviewId}/delete/`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // 이제 이 코드가 정상적으로 동작합니다!
+                        document.getElementById(`review-card-${reviewId}`).remove();
+                        alert(data.message);
+                    } else {
+                        alert('오류: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('리뷰 삭제 중 오류가 발생했습니다.');
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

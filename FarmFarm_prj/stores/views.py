@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from google.cloud import speech
 import base64
 import traceback
-import genai
+#import genai
 from django.conf import settings
 import google.generativeai as genai
 import re 
@@ -418,5 +418,3 @@ def edit_item(request, item_id):
     return render(request, 'stores/edit_item.html', {
         'store_item': store_item
     })
-
-
