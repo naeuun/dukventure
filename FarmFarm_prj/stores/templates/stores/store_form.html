@@ -107,6 +107,31 @@
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 <script>
+
+// 아이템 추가/제거 버튼 동작 
+function removeItem(btn) {
+    const div = btn.closest('div');
+    if (div) div.remove();
+}
+
+document.getElementById('addItemBtn').onclick = function() {
+    const itemList = document.getElementById('itemList');
+    // p 태그 제외하고 div 개수 세기
+    const idx = itemList.querySelectorAll('div').length;
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <input type="text" name="item_name_${idx}" id="item_name_${idx}" placeholder="품목명">
+        <input type="text" name="item_unit_${idx}" id="item_unit_${idx}" placeholder="단위">
+        <input type="number" name="item_price_${idx}" id="item_price_${idx}" placeholder="가격">
+        <input type="text" name="item_desc_${idx}" id="item_desc_${idx}" placeholder="설명">
+        <input type="file" name="item_photo_${idx}" accept="image/*">
+        <button type="button" onclick="removeItem(this)">제거</button>
+    `;
+    itemList.appendChild(div);
+};
+
+
+
 const addressInput = document.getElementById('addressInput');
 const latitudeInput = document.getElementById('latitudeInput');
 const longitudeInput = document.getElementById('longitudeInput');
