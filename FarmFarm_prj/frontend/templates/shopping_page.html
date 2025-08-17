@@ -150,17 +150,16 @@
           </div>
 
           <!-- 수량 + 시간 조절 -->
-          <div class="reserve_controls">
-            <div class="quantity_box">
-              <button class="qty_btn minusBtn"><b>-</b></button>
-              <span class="quantity">0</span>
-              <button class="qty_btn plusBtn"><b>+</b></button>
+            <div class="reserve_controls">
+              <div class="quantity_box">
+                <button class="qty_btn minusBtn"><b>-</b></button>
+                <span class="quantity">0</span>
+                <button class="qty_btn plusBtn"><b>+</b></button>
+              </div>
+              <div class="time_box">
+                <input type="time" id="reserveTime" placeholder="00:00">
+              </div>
             </div>
-            <div class="time_box">
-              <input type="number" class="hourInput" min="0" max="23" placeholder="0" /> 시
-              <input type="number" class="minuteInput" min="0" max="59" placeholder="0" /> 분
-            </div>
-          </div>
 
           <!-- 예약 버튼 -->
           <div class="resbuttonhugger">
@@ -190,8 +189,7 @@
                 <button class="qty_btn plusBtn"><b>+</b></button>
               </div>
               <div class="time_box">
-                <input type="number" class="hourInput" min="0" max="23" placeholder="0" /> 시
-                <input type="number" class="minuteInput" min="0" max="59" placeholder="0" /> 분
+                <input type="time" id="reserveTime" placeholder="00:00">
               </div>
             </div>
             <div class="resbuttonhugger">
@@ -217,8 +215,7 @@
                 <button class="qty_btn plusBtn"><b>+</b></button>
               </div>
               <div class="time_box">
-                <input type="number" class="hourInput" min="0" max="23" placeholder="0" /> 시
-                <input type="number" class="minuteInput" min="0" max="59" placeholder="0" /> 분
+                <input type="time" id="reserveTime" placeholder="00:00">
               </div>
             </div>
             <div class="resbuttonhugger">
@@ -243,7 +240,7 @@
         </a>
       </div>
       <div class="btn">
-        <a href="#">
+        <a href="/consumermain">
           <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
         </a>
       </div>

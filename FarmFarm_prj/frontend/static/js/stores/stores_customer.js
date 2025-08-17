@@ -15,31 +15,21 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     map = new kakao.maps.Map(container, options);
 
-    // 기본 마커 이미지 (필요하면 변경)
     const imageSize = new kakao.maps.Size(20, 20);
     const imageOption = { offset: new kakao.maps.Point(20, 40) };
-    const markerImageSrc = "/static/img/stores.png"; // 마커 이미지 경로 설정
+    const markerImageSrc = "/static/img/stores.png";
     const markerImage = new kakao.maps.MarkerImage(
       markerImageSrc,
       imageSize,
       imageOption
     );
 
-    // 샘플 가게들
     const stores = [
-      {
-        name: "4.19민주역 달걀 할머니",
-        lat: 37.6495,
-        lng: 127.0141,
-      },
-      {
-        name: "4.19민주역 달걀 할머니",
-        lat: 37.6495,
-        lng: 127.0151,
-      },
+      { name: "4.19민주역 달걀 할머니", lat: 37.6495, lng: 127.0141 },
+      { name: "4.19민주역 달걀 할머니", lat: 37.6495, lng: 127.0151 },
     ];
 
-    // 가게별 마커 생성 및 클릭 이벤트에 바텀시트 열기 추가
+    // 가게별 마커 생성
     stores.forEach((store) => {
       const position = new kakao.maps.LatLng(store.lat, store.lng);
       const storeMarker = new kakao.maps.Marker({
@@ -49,41 +39,30 @@ document.addEventListener("DOMContentLoaded", function () {
         image: markerImage,
       });
 
-      kakao.maps.event.addListener(storeMarker, "click", () => {
-        openBottomSheet();
-        // 필요하면 바텀시트 내 정보 갱신 코드 추가 가능
-      });
+      kakao.maps.event.addListener(storeMarker, "click", () =>
+        openBottomSheet()
+      );
     });
 
-    // 검색 버튼 및 엔터키로 장소 검색
-    const ps = new kakao.maps.services.Places();
-    searchBtn.addEventListener("click", searchPlaces);
-    searchInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") searchPlaces();
-    });
+    // 검색
+    if (searchBtn && searchInput) {
+      searchBtn.addEventListener("click", searchPlaces);
+      searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") searchPlaces();
+      });
+    }
+
     function searchPlaces() {
       const keyword = searchInput.value.trim();
-      if (!keyword) {
-        alert("검색어를 입력하세요!");
-        return;
-      }
+      if (!keyword) return alert("검색어를 입력하세요!");
 
-      // stores 중 이름에 keyword 포함하는 가게만 필터링
       const filteredStores = stores.filter((store) =>
         store.name.includes(keyword)
       );
+      if (filteredStores.length === 0) return alert("검색 결과가 없습니다.");
 
-      if (filteredStores.length === 0) {
-        alert("검색 결과가 없습니다.");
-        return;
-      }
+      if (marker) marker.setMap(null);
 
-      // 기존 검색 마커 제거
-      if (marker) {
-        marker.setMap(null);
-      }
-
-      // 만약 여러 개면 첫 번째 가게 위치로 지도 이동하고 마커 표시
       const firstStore = filteredStores[0];
       const coords = new kakao.maps.LatLng(firstStore.lat, firstStore.lng);
       map.setCenter(coords);
@@ -93,55 +72,27 @@ document.addEventListener("DOMContentLoaded", function () {
         map: map,
         title: firstStore.name,
       });
-
-      // 마커 클릭 시 바텀시트 열기
-      kakao.maps.event.addListener(marker, "click", () => {
-        openBottomSheet();
-      });
-    }
-
-    function placesSearchCB(data, status) {
-      if (status === kakao.maps.services.Status.OK) {
-        const place = data[0];
-        const coords = new kakao.maps.LatLng(place.y, place.x);
-
-        map.setCenter(coords);
-
-        // 기존 검색 마커 제거 후 새로 표시
-        if (marker) {
-          marker.setMap(null);
-        }
-        marker = new kakao.maps.Marker({
-          position: coords,
-          map: map,
-          title: place.place_name,
-        });
-
-        // 마커 클릭 시 바텀시트 열기 (필요시)
-        kakao.maps.event.addListener(marker, "click", () => {
-          openBottomSheet();
-        });
-      } else {
-        alert("검색 결과가 없습니다.");
-      }
+      kakao.maps.event.addListener(marker, "click", () => openBottomSheet());
     }
   } else {
     document.getElementById("errorMessage").innerHTML =
       "카카오맵을 불러올 수 없습니다.<br>API 키를 확인해주세요.";
   }
 
-  // 바텀시트 열기/닫기 함수
+  // 바텀시트 열기/닫기
   function openBottomSheet() {
     bottomSheet.classList.remove("hidden");
     bottomSheet.classList.add("show");
     applyManyItemsStoreMargin();
+    bindPerStoreEvents(); // 동적 요소 이벤트 바인딩
   }
+
   function hideBottomSheet() {
     bottomSheet.classList.remove("show", "expanded");
     bottomSheet.classList.add("hidden");
   }
 
-  // 바텀시트 터치 드래그 이벤트
+  // 바텀시트 터치 드래그
   let isDragging = false;
   let startY = 0;
 
@@ -152,99 +103,72 @@ document.addEventListener("DOMContentLoaded", function () {
 
   bottomSheet.addEventListener("touchmove", (e) => {
     if (!isDragging) return;
-    const moveY = e.touches[0].clientY;
-    const diffY = startY - moveY;
+    const diffY = startY - e.touches[0].clientY;
 
-    if (diffY > 30 && !bottomSheet.classList.contains("expanded")) {
+    if (diffY > 30 && !bottomSheet.classList.contains("expanded"))
       bottomSheet.classList.add("expanded");
-    } else if (diffY < -30 && bottomSheet.classList.contains("expanded")) {
+    else if (diffY < -30 && bottomSheet.classList.contains("expanded"))
       bottomSheet.classList.remove("expanded");
-    }
   });
 
   bottomSheet.addEventListener("touchend", (e) => {
-    const endY = e.changedTouches[0].clientY;
-    const diffY = startY - endY;
     isDragging = false;
-
-    if (diffY < -400) {
-      hideBottomSheet();
-    }
+    if (startY - e.changedTouches[0].clientY < -400) hideBottomSheet();
   });
 
-  // 바텀시트 내 스크롤 이벤트 (확장/축소 제어)
+  // 바텀시트 내 스크롤 제어
   const sheetContent = document.querySelector(".sheet_content_v2");
   let lastScrollTop = 0;
   let isExpanded = false;
 
-  sheetContent.addEventListener("scroll", () => {
-    const currentScrollTop = sheetContent.scrollTop;
-
-    if (currentScrollTop > lastScrollTop) {
-      if (!isExpanded) {
+  if (sheetContent) {
+    sheetContent.addEventListener("scroll", () => {
+      const currentScrollTop = sheetContent.scrollTop;
+      if (currentScrollTop > lastScrollTop && !isExpanded) {
         bottomSheet.classList.add("expanded");
         isExpanded = true;
-      }
-    } else {
-      if (isExpanded) {
+      } else if (currentScrollTop < lastScrollTop && isExpanded) {
         bottomSheet.classList.remove("expanded");
         isExpanded = false;
       }
-    }
-
-    lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-  });
-
-  // 수량 및 시간 조절: 각 .per_stores 단위별로 이벤트 바인딩
-  document.querySelectorAll(".per_stores").forEach((store) => {
-    const minusBtn = store.querySelector(".minusBtn");
-    const plusBtn = store.querySelector(".plusBtn");
-    const quantitySpan = store.querySelector(".quantity");
-    const hourInput = store.querySelector(".hourInput");
-    const minuteInput = store.querySelector(".minuteInput");
-
-    let quantity = 0;
-
-    minusBtn.addEventListener("click", () => {
-      if (quantity > 0) {
-        quantity--;
-        quantitySpan.textContent = quantity;
-      }
+      lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
     });
+  }
 
-    plusBtn.addEventListener("click", () => {
-      quantity++;
-      quantitySpan.textContent = quantity;
+  // 동적 이벤트 바인딩 (수량 및 시간)
+  function bindPerStoreEvents() {
+    const perStoresElements = document.querySelectorAll(".per_stores");
+    perStoresElements.forEach((store) => {
+      const minusBtn = store.querySelector(".minusBtn");
+      const plusBtn = store.querySelector(".plusBtn");
+      const quantitySpan = store.querySelector(".quantity");
+      const timeInput = store.querySelector(".timeInput");
+      let quantity = 0;
+
+      minusBtn?.addEventListener("click", () => {
+        if (quantity > 0) quantitySpan.textContent = --quantity;
+      });
+
+      plusBtn?.addEventListener("click", () => {
+        quantitySpan.textContent = ++quantity;
+      });
+
+      timeInput?.addEventListener("focus", () => {
+        // 기본 아이콘 안보이게, 클릭하면 편집 가능
+        timeInput.type = "time";
+      });
     });
+  }
 
-    hourInput.addEventListener("input", () => {
-      if (hourInput.value > 23) hourInput.value = 23;
-      if (hourInput.value < 0) hourInput.value = 0;
-    });
-
-    minuteInput.addEventListener("input", () => {
-      if (minuteInput.value > 59) minuteInput.value = 59;
-      if (minuteInput.value < 0) minuteInput.value = 0;
-    });
-  });
-
-  // many_items_store 위치 확인 후 margin 적용
+  // many_items_store 위치 조정
   function applyManyItemsStoreMargin() {
-    const sheetContent = bottomSheet.querySelector(".sheet_content_v2");
     if (!sheetContent) return;
-
     const manyItemsStores = sheetContent.querySelectorAll(".many_items_store");
     if (manyItemsStores.length === 0) return;
 
     const lastElement = sheetContent.lastElementChild;
     manyItemsStores.forEach((store) => {
       store.style.marginBottom = "";
-      if (store === lastElement) {
-        const huggerElements = document.getElementsByClassName("per_stores");
-        const hugger = huggerElements[huggerElements.length - 1];
-        hugger.style.marginBottom = "0px";
-        store.style.marginBottom = "130px";
-      }
     });
   }
 });
