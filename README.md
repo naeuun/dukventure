@@ -1,10 +1,28 @@
-# 초기 페르소나 계정 적용 방법
+# 연동 시 세팅 방법 
 
-(admin 계정은 createsuperuser로 생성해주세요!)
-1. 아래 명령어 터미널에 입력 - 초기 계정 데이터를 DB에 적용:
-   python manage.py loaddata users/fixtures/users.json
-2. .env 파일의 비밀번호로 로그인
+1. requirements.txt 다운로드 <br>
+  pip install -r requirements.txt
 
-- json 파일의 password는 암호화된 비밀번호이기 때문에 .env 파일의 password를 확인해주세요!
-- 혹시 VS Code json 파일에서 한글이 깨져 보인다면 json 파일을 메모장으로 직접 열고, 다른 이름으로 저장 - 인코딩 방법을 UTF-8로 변경해서 덮어쓰기 해주세요!
+2. .env 환경 변수 설정, 키 json 파일 생성 <br>
+   (노션 "키관리"참고)
    
+4. 마이그레이션 적용 <br>
+   python manage.py makemigrations
+   python manage.py migrate
+
+6. 마이그레이션 오류 발생 시 db삭제 후 다시 명령어 입력
+
+8. admin계정 생성 <br>
+   python manage.py createsuperuser <br>
+   -> 이름 : admin / 비밀번호 : admin 으로 통일 <br>
+   -> 비밀번호 짧다는 질문 나오면 y로 무시 처리 <br>
+
+10. 페르소나 계정 정보 DB에 적용 <br>
+   python manage.py loaddata users/fixtures/users.json <br> 
+
+12. 서버 돌리기 <br>
+   python manage.py runserver
+
+14. 페르소나 계정 자동 로그인 버튼 눌렀을 때 로그인 되는지 확인 
+    
+16. 음성 인식 기능 잘 작동하는지 확인 (키가 제대로 들어갔는지 확인하는겁니다!)
