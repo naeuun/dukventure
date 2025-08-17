@@ -434,11 +434,30 @@ body {
   border: 1px solid black;
   display: flex;     
   padding: 5px;
+  position: relative;
+}
+/* 우상단 "더보기" 버튼 */
+.information-card .cha_more {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 24px;
+  width: auto;
+  cursor: pointer;
+  z-index: 10;
 }
 
+/* 우하단 장식 이미지 */
+.information-card .cha_gra {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: auto;
+  height: 230px;
+  z-index: 5;
+}
 .info-wrapper {
   display: flex;
-  justify-content: space-around; 
   align-items: flex-end;          /* 아래쪽 정렬 */
   width: 100%;
   
@@ -504,7 +523,7 @@ body {
 
 /* 오른쪽 정보 */
 .information_detail {
-  width: 140px;
+  width: 100px;
   height: 208px;
   background: rgba(55, 61, 45, 0.5);
   border: 0.5px solid #C1FF52;
@@ -570,7 +589,6 @@ body {
   width: 100%;               /* 부모 영역 안에서만 너비 */
   max-width: 180px;          /* 필요한 최대 너비 */
   height: 210px;
-  margin-right: 20px;  
   }
 .rew_section{
   margin-top: 80px;
@@ -588,6 +606,31 @@ body {
   border: 3px solid #C1FF52;
   display: flex;     
   padding: 5px;
+  position: relative;
+}
+/* 우상단 더보기/장식 묶음 배치 */
+.information2-card .more {
+  position: absolute;   /* 이미 있으나, information2-card 안으로 한정 */
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;        /* ✅ 세로로 깔끔히 정렬 */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;             /* ✅ 서로 겹치지 않게 간격 */
+}
+/* 더보기 아이콘 크기 유지 */
+.information2-card .res_more {
+  height: 24px;         /* 기존 값 유지 */
+  width: auto;
+  display: block;
+}
+
+/* 녹색 장식 이미지가 카드 밖으로 밀려나지 않게 */
+.information2-card .rew_gra {
+  /* height: 220px;  <- ❌ 너무 커서 잘릴 수 있음 */
+  height: 23opx;        /* ✅ 카드 안에 보이도록 적정 크기 */
+  margin-top: 60px;        /* ✅ 큰 마진 제거(잘림 방지) */
 }
 .rew_total{
   display: flex;
@@ -826,149 +869,133 @@ body {
   color: #828282;
 }
 
-
 .buy_section{
   margin-top: 80px;
   align-self: flex-start;
 }
-.information4-card {
-  background: #000;
-  border-radius: 35px;
-  overflow: hidden;
+
+:root{ --neon:#C1FF52; }
+
+/* 섹션 프레임 (첫 번째 참고 이미지 비율/느낌) */
+.information4-card{
+  position:relative;
   width: 373px;
   height: 332px;
-  box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.25);
-  border: 3px solid #C1FF52;
-  display: flex;   
-  position: relative;
-  padding: 5px;
+  padding: 6px 16px 16px 16px; /* 오른쪽 장식 열 공간 확보 */
+  background:#000;
+  border:3px solid var(--neon);
+  border-radius:35px;
+  box-shadow:0 5px 2px rgba(0,0,0,.25);
+  overflow:hidden;
 }
-/* 카드 스택 영역 */
+
+/* 우측 장식 열: 카드보다 아래 레이어(z-index:0) */
+.side_glyphs{
+  position:absolute; right:10px; top:54px; bottom:54px; width:40px;
+  display:flex; flex-direction:column; justify-content:space-between; align-items:center;
+  border-left:2px solid rgba(193,255,82,.18);
+  filter: drop-shadow(0 0 6px rgba(193,255,82,.35));
+  z-index:0;
+}
+.side_glyphs span{ color:var(--neon); font-size:18px; }
+
+/* 스택을 위 레이어로 */
 .history_container{
   position:relative;
-  width: 86%;
-  height: 75%;
-  display:flex;align-items:center;justify-content:center;
+  width: 100%;
+  height: 100%;
+  display:flex; align-items:center; justify-content:center;
   perspective:1200px;
+  z-index:1;
 }
 
-/* 개별 카드 */
+/* ===== 카드 기본 (하얀 베이스) ===== */
 .history_card{
   position:absolute;
-  width: 340px;
-  height: 190px;
-  background:#fff;
-  border-radius: 28px;
-  border: 1px solid #000;
-  box-shadow:0 10px 26px rgba(0,0,0,.45);
-  display:flex;gap:0;overflow:hidden;
-  transform:scale(.92);
+  width:300px;               /* 고정(요청값) */
+  height:189.12px;
+  border-radius:35px;
+  border:1px solid #000;
+  background: linear-gradient(180deg,
+              rgba(244,245,239,.40) 5.44%,
+              rgba(164,255,0,.40) 100%), #F4F5EF;
+  box-shadow:0 2px 20px rgba(0,0,0,.40);
+  display:flex;
+  gap: 12px;
+  padding: 14px;             /* 내부 여백으로 정확한 배치 */
+  transform: scale(.92);
   opacity:0;
-  transition:transform .45s ease, opacity .4s ease, filter .4s ease;
+  transition: transform .4s ease, opacity .35s ease, filter .35s ease;
 }
 
-/* 카드 좌측 이미지 */
-.card_img{
-  flex: 1.15;
-  display:flex;align-items:center;justify-content:center;
-  border-right:1px solid #000;overflow:hidden;background:#eaeaea;
+/* 좌측 이미지 프레임 (정확 수치) */
+.history_card .card_img{
+  width:102.116px;
+  height:159.967px;
+  flex:0 0 102.116px;
+  border-radius:17px;
+  border:2px solid #000;
+  overflow:hidden;
+  background:#d9d9d9;
 }
-.card_img img{width:100%;height:100%;object-fit:cover}
+.history_card .card_img img{ width:100%; height:100%; object-fit:cover; }
 
-/* 카드 우측 내용 */
-.card_text{
-  flex: 1.85; position:relative;
-  padding:12px 14px;
-  background:rgba(0,0,0,.30);
-  border-left:2px solid var(--neon);
-  color:#222;
-}
-.card_text h3{margin:4px 0 6px;font-size:16px;color:#8cff5a}
-.card_text .date{position:absolute;right:12px;top:10px;font-size:12px;color:#e5e5e5}
-.card_text ul{margin:22px 0 0 14px;padding:0;color:#e9e9e9;font-size:13px;list-style:disc}
-.card_text li{margin-bottom:4px}
-
-/* 스택 배치 (활성/중간/뒤쪽) */
-.card--1{transform: translateY(-8px) rotateX(0deg) scale(1); opacity:1; z-index:3;}
-.card--2{transform: translateY(86px) scale(.98); opacity:.9; z-index:2; filter:blur(.1px) saturate(.92)}
-.card--3{transform: translateY(158px) scale(.96); opacity:.75; z-index:1; filter:blur(.4px) saturate(.88)}
-
-.history_card.active{ /* 첫 카드 하이라이트 */
-  box-shadow:
-    0 14px 34px rgba(0,0,0,.55),
-    0 0 0 3px #fff inset,
-    0 0 0 4px #000 inset;
+/* 우측 초록 패널 (네온 보더 + 반투명) */
+.history_card .panel{
+  position:relative;
+  width:260.955px;   /* 시안 수치 기준 */
+  height:154.381px;
+  margin-left: 6px;  /* 이미지와 간격 */
+  border-radius:35px;
+  border:2px solid var(--neon);
+  background: rgba(0,0,0,.30);
+  box-shadow: 0 3px 1px rgba(0,0,0,.20);
+  padding: 10px 12px;
+  color:#b6ff90;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  overflow:hidden;
 }
 
-/* 반사 효과: 활성 카드 스냅샷을 CSS만으로 */
+/* 텍스트 스타일 (시안 맞춤) */
+.history_card .panel h3{
+  margin: 16px 0 6px;
+  font-size:14px;
+  font-weight:800;
+  color:#C1FF52;
+}
+.history_card .panel .date{
+  position:absolute; right:12px; top:8px;
+  font-size:12px; color:rgba(255,255,255,.85); font-weight:700;
+}
+.history_card .panel ul{
+  margin: 0; padding-left: 16px;
+  font-size:12px; font-weight:700; line-height:1.35;
+}
+.history_card .panel li{ margin-bottom:6px; }
+
+/* 스택 배치(첫 이미지처럼) */
+.card--1{ transform: translateY(-6px) scale(1); opacity:1; z-index:3; }
+.card--2{ transform: translateY(82px) scale(.985); opacity:.9; z-index:2; filter: blur(.1px) saturate(.92); }
+.card--3{ transform: translateY(152px) scale(.965); opacity:.75; z-index:1; filter: blur(.35px) saturate(.88); }
+
+/* 활성 카드 추가 강조 (내부선 제거, 외곽만 유지) */
+.history_card.card--1.active{
+  transform: translateY(-6px) scale(1);
+  opacity: 1;
+  z-index: 10;
+}
+
+/* 반사 효과 */
 .card_reflection{
-  position:absolute;left:0;right:0;bottom:-72px;height:180px;border-radius:28px;
+  position:absolute; left:8%; right:18%; bottom:-56px; height:120px; border-radius:30px;
   pointer-events:none;
-  /* active 카드만 복제해 보이게 하는 트릭: 현재 레이어를 다시 그려 반사처럼 */
-  --g: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0));
   background:
-    var(--g),
-    /* 아래는 캔버스 네온을 흘리는 바닥 글로우 */
+    linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0)),
     radial-gradient(40% 40% at 50% 0%, rgba(193,255,82,.35), transparent 60%);
   mask-image: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0));
   filter: blur(2px);
 }
 
-/* 컨테이너 자체의 바닥 반사/광택 */
-.information4-card::after{
-  content:""; position:absolute; inset:auto 10% 10px 10%;
-  height:36px; border-radius:18px;
-  background: radial-gradient(60% 160% at 50% 0%, rgba(193,255,82,.35), rgba(193,255,82,0));
-  filter: blur(10px);
-}
 
-
-/* 카드 1 (active) */
-.history_card.card--1.active {
-  width: 300px;
-  height: 189.12px;
-  flex-shrink: 0;
-  border-radius: 35px;
-  border: 1px solid #000;
-  background: linear-gradient(
-      180deg,
-      rgba(244, 245, 239, 0.40) 5.44%,
-      rgba(164, 255, 0, 0.40) 100%
-    ),
-    #F4F5EF;
-  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.40);
-  display: flex;
-  flex-direction: row;
-  opacity: 1;
-  transform: scale(1);
-  z-index: 10;
-}
-
-/* 카드 내부 이미지 영역 */
-.history_card.card--1.active .card_img {
-  width: 102.116px;
-  height: 159.967px;
-  flex-shrink: 0;
-  border-radius: 17px;
-  border: 2px solid #000;
-  background: url(<path-to-image>) lightgray 50% / cover no-repeat;
-  overflow: hidden;
-}
-
-/* 카드 내부 텍스트 영역 */
-.history_card.card--1.active .card_text {
-  width: 145.32px;
-  height: 143.695px;
-  flex-shrink: 0;
-  border-radius: 35px;
-  border: 2px solid #C1FF52;
-  background: rgba(0, 0, 0, 0.30);
-  box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
-  padding: 12px;
-  color: #C1FF52;
-  font-family: Pretendard, sans-serif;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}

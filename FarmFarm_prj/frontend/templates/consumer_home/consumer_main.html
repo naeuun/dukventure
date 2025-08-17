@@ -234,11 +234,22 @@
               alt="리워드 현황 아이콘"
               class="rew_total"
             />
-            <img
-              src="{% static 'img/rew_gra.png' %}"
-              alt="리워드 현황 아이콘"
-              class="rew_gra"
-            />
+            <div class="more">
+              <a href="{% url 'reservationhome' %}">
+                <img
+                  src="{% static 'img/res_more.png' %}"
+                  alt="예약 현황 더보기"
+                  class="res_more"
+                />
+                <img
+                  src="{% static 'img/rew_gra.png' %}"
+                  alt="리워드 현황 아이콘"
+                  class="rew_gra"
+                />
+              </a>
+
+            </div>
+            
           </div>
         </div>
       </div>
@@ -428,86 +439,76 @@
           <img src="{% static 'img/buy_icon.png' %}" alt="구매 내역 아이콘" class="buy_icon" />
         </div>
 
-        <!-- 구매 내역 상세 내용 -->
         <div class="information_zone">
           <div class="res_res">
             <section class="information4-card">
-              <!-- 우측 장식 아이콘 열 -->
-              <div class="side_glyphs" aria-hidden="true">
-                <span>✳</span><span>✺</span><span>✽</span><span>✿</span><span>❂</span>
-              </div>
-
-              <div class="more">
-                <a href="{% url 'historyhome' %}">
-                  <img src="{% static 'img/res_more.png' %}" alt="구매 내역 더보기" class="res_more" />
-                  <img src="{% static 'img/rew_gra.png' %}" alt="리워드 현황 아이콘" class="rew_gra" />
-                </a>
-              </div>
 
               <!-- 카드 스택 -->
               <div class="history_container">
-                <!-- 카드 1 (활성) -->
+                <!-- 카드 1 : 활성 -->
                 <article class="history_card card--1 active">
-                  <!-- 좌측 이미지 -->
-                  <figure class="card_img">
+                  <!-- 좌 이미지 -->
+                  <div class="card_img">
                     <img src="{% static 'img/his_tomato.png' %}" alt="토마토" />
-                  </figure>
+                  </div>
 
-                  <!-- 우측 텍스트 패널(네온 보더 + 반투명) -->
-                  <div class="card_panel">
-                    <div class="card_text">
-                      <span class="date">2025.03.04</span>
-                      <h3>[도봉산 토마토 할아버지]</h3>
-                      <ul>
-                        <li>품목: 방울토마토 1팩</li>
-                        <li>위치: 도봉산역 1번 출구 인근</li>
-                        <li>판매 시간: 오전 11시 ~ 오후 2시</li>
-                        <li>가격: 2,000원</li>
-                      </ul>
-                    </div>
+                  <!-- 우측 초록 패널 -->
+                  <div class="panel">
+                    <span class="date">2025.03.04</span>
+                    <h3>[도봉산 토마토 할아버지]</h3>
+                    <ul>
+                      <li>품목: 방울토마토 1팩</li>
+                      <li>위치: 도봉산역 1번 출구 인근</li>
+                      <li>판매 시간: 오전 11시 ~ 오후 2시</li>
+                      <li>가격: 2,000원</li>
+                    </ul>
                   </div>
                 </article>
 
                 <!-- 카드 2 -->
                 <article class="history_card card--2">
-                  <figure class="card_img">
+                  <div class="card_img">
                     <img src="{% static 'img/his_po.png' %}" alt="감자" />
-                  </figure>
-                  <div class="card_panel">
-                    <div class="card_text">
-                      <span class="date">2025.03.05</span>
-                      <h3>[우이천 감자 아저씨]</h3>
-                      <ul>
-                        <li>품목: 햇감자 1kg</li>
-                        <li>위치: 우이천 산책로 입구</li>
-                        <li>판매 시간: 오후 1시 ~ 4시</li>
-                        <li>가격: 2,500원</li>
-                      </ul>
-                    </div>
+                  </div>
+                  <div class="panel">
+                    <span class="date">2025.03.05</span>
+                    <h3>[우이천 감자 아저씨]</h3>
+                    <ul>
+                      <li>품목: 햇감자 1kg</li>
+                      <li>위치: 우이천 산책로 입구</li>
+                      <li>판매 시간: 오후 1시 ~ 4시</li>
+                      <li>가격: 2,500원</li>
+                    </ul>
                   </div>
                 </article>
 
                 <!-- 카드 3 -->
                 <article class="history_card card--3">
-                  <figure class="card_img">
+                  <div class="card_img">
                     <img src="{% static 'img/his_egg.png' %}" alt="달걀" />
-                  </figure>
-                  <div class="card_panel">
-                    <div class="card_text">
-                      <span class="date">2025.03.06</span>
-                      <h3>[창동시장 달걀 할머니]</h3>
-                      <ul>
-                        <li>품목: 신선한 달걀 10구</li>
-                        <li>위치: 덕성여대 후문 옆</li>
-                        <li>판매 시간: 오전 10시 ~ 12시</li>
-                        <li>가격: 3,000원</li>
-                      </ul>
-                    </div>
+                  </div>
+                  <div class="panel">
+                    <span class="date">2025.03.06</span>
+                    <h3>[창동시장 달걀 할머니]</h3>
+                    <ul>
+                      <li>품목: 신선한 달걀 10구</li>
+                      <li>위치: 덕성여대 후문 옆</li>
+                      <li>판매 시간: 오전 10시 ~ 12시</li>
+                      <li>가격: 3,000원</li>
+                    </ul>
                   </div>
                 </article>
 
                 <!-- 반사 -->
                 <div class="card_reflection" aria-hidden="true"></div>
+              </div>
+
+              <!-- 더보기/리워드 (카드 위로 겹치지 않게 코너로) -->
+              <div class="more">
+                <a href="{% url 'historyhome' %}">
+                  <img src="{% static 'img/res_more.png' %}" alt="구매 내역 더보기" class="res_more" />
+                  <img src="{% static 'img/rew_gra.png' %}" alt="리워드 현황 아이콘" class="rew_gra" />
+                </a>
               </div>
             </section>
           </div>
