@@ -699,6 +699,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: 8px;
+  position: relative;
+  z-index: 3; /* 맨 위 */
 }
 
 .detail_img{
@@ -742,6 +744,7 @@ body {
   justify-content: flex-start;
   padding: 5px;
   margin: 0 10px; /* 양 옆 여백 */
+  
 }
 
 .egg,.pota{
@@ -975,17 +978,31 @@ body {
 }
 .history_card .panel li{ margin-bottom:6px; }
 
-/* 스택 배치(첫 이미지처럼) */
-.card--1{ transform: translateY(-6px) scale(1); opacity:1; z-index:3; }
-.card--2{ transform: translateY(82px) scale(.985); opacity:.9; z-index:2; filter: blur(.1px) saturate(.92); }
-.card--3{ transform: translateY(152px) scale(.965); opacity:.75; z-index:1; filter: blur(.35px) saturate(.88); }
-
-/* 활성 카드 추가 강조 (내부선 제거, 외곽만 유지) */
-.history_card.card--1.active{
-  transform: translateY(-6px) scale(1);
+.card--1 {
+  transform: translate(-26px, -26px) scale(1);   /* card-2보다 66px 위 */
   opacity: 1;
-  z-index: 10;
+  z-index: 3;
 }
+
+.card--2 {
+  transform: translate(-26px, 66px) scale(.985); /* 기준 카드 */
+  opacity: .9;
+  z-index: 2;
+  filter: blur(.1px) saturate(.92);
+}
+
+.card--3 {
+  transform: translate(-26px, 198px) scale(.965); /* card-2보다 132px 아래 */
+  opacity: .75;
+  z-index: 1;
+  filter: blur(.35px) saturate(.88);
+}
+
+
+
+
+
+
 
 /* 반사 효과 */
 .card_reflection{
