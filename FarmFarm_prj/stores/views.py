@@ -10,7 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 from google.cloud import speech
 import base64
 import traceback
-#import genai
 from django.conf import settings
 import google.generativeai as genai
 import re 
