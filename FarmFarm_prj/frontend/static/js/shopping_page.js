@@ -5,17 +5,20 @@ document.addEventListener("DOMContentLoaded", function () {
   const mapEl = document.getElementById("map");
   const toggleHugger = document.querySelector(".toggle_hugger");
   const firstSight = document.querySelector(".firstsight");
+  const bottomSheet = document.getElementById("bottomSheet");
 
   // 검색 버튼 클릭 시 지도/토글 표시, 첫 화면 숨김
-  searchBtn.addEventListener("click", () => {
-    mapEl.style.display = "block";
-    toggleHugger.style.display = "flex";
-    firstSight.style.display = "none";
-    if (map) {
-      map.relayout();
-      map.setCenter(new kakao.maps.LatLng(37.6495, 127.0141));
-    }
-  });
+  if (searchBtn && mapEl && toggleHugger && firstSight) {
+    searchBtn.addEventListener("click", () => {
+      mapEl.style.display = "block";
+      toggleHugger.style.display = "flex";
+      firstSight.style.display = "none";
+      if (map) {
+        map.relayout();
+        map.setCenter(new kakao.maps.LatLng(37.6495, 127.0141));
+      }
+    });
+  }
 
   if (typeof kakao !== "undefined" && kakao.maps) {
     const container = document.getElementById("map");
@@ -38,7 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     keywordButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
-        searchInput.value = btn.textContent.trim().replace(/^#/, "");
+        if (searchInput)
+          searchInput.value = btn.textContent.trim().replace(/^#/, "");
       });
     });
 
@@ -62,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const toggleBox = document.getElementById("toggleBox");
     const toggleButton = document.getElementById("toggleButton");
-    const bottomSheet = document.getElementById("bottomSheet");
 
     // stores마다 마커 + 커스텀 오버레이 생성
     stores.forEach((store, i) => {
@@ -80,18 +83,16 @@ document.addEventListener("DOMContentLoaded", function () {
           <img src="${store.img}" class="perimg" data-index="${i}">
         </div>
       `;
-
       const customOverlay = new kakao.maps.CustomOverlay({
-        position: position,
-        content: content,
-        map: null, // 처음엔 안 보이게
+        position,
+        content,
+        map: null,
         yAnchor: 1,
       });
       customOverlays.push(customOverlay);
 
-      // 마커 클릭 시 (토글 활성 중이면) 오버레이 보이기 & 바텀시트 열기
       kakao.maps.event.addListener(marker, "click", () => {
-        if (toggleBox.classList.contains("active")) {
+        if (toggleBox && toggleBox.classList.contains("active")) {
           customOverlay.setMap(map);
           openBottomSheet();
         }
@@ -99,38 +100,63 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 토글 버튼 클릭 시 오버레이 on/off
-    toggleBox.addEventListener("click", () => {
-      toggleBox.classList.toggle("active");
-      toggleButton.classList.toggle("active");
+    if (toggleBox && toggleButton) {
+      toggleBox.addEventListener("click", () => {
+        toggleBox.classList.toggle("active");
+        toggleButton.classList.toggle("active");
 
-      if (toggleBox.classList.contains("active")) {
-        customOverlays.forEach((overlay) => overlay.setMap(map));
-        if (markers.length > 0) map.setCenter(markers[0].getPosition());
-      } else {
-        customOverlays.forEach((overlay) => overlay.setMap(null));
-      }
-    });
+        if (toggleBox.classList.contains("active")) {
+          customOverlays.forEach((overlay) => overlay.setMap(map));
+          if (markers.length > 0) map.setCenter(markers[0].getPosition());
+        } else {
+          customOverlays.forEach((overlay) => overlay.setMap(null));
+        }
+      });
+    }
 
-    // document 전체에서 perimg 클릭 감지
+    // perimg 클릭 시 바텀시트 열기 (이벤트 위임)
     document.body.addEventListener("click", (e) => {
-      if (e.target.classList.contains("perimg")) {
-        openBottomSheet();
-      }
+      if (e.target.classList.contains("perimg")) openBottomSheet();
     });
 
     function openBottomSheet() {
+      if (!bottomSheet) return;
       bottomSheet.classList.remove("hidden");
       bottomSheet.classList.add("show");
       applyManyItemsStoreMargin();
+
+      // 바텀시트 스크롤 이벤트 등록 (동적 요소 안전하게)
+      const sheetContent = bottomSheet.querySelector(".sheet_content_v2");
+      if (sheetContent && !sheetContent.dataset.scrollBound) {
+        let lastScrollTop = 0;
+        let isExpanded = false;
+        sheetContent.addEventListener("scroll", () => {
+          const currentScrollTop = sheetContent.scrollTop;
+          if (currentScrollTop > lastScrollTop) {
+            if (!isExpanded) {
+              bottomSheet.classList.add("expanded");
+              isExpanded = true;
+            }
+          } else {
+            if (isExpanded) {
+              bottomSheet.classList.remove("expanded");
+              isExpanded = false;
+            }
+          }
+          lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+        });
+        sheetContent.dataset.scrollBound = "true"; // 중복 등록 방지
+      }
     }
 
     function hideBottomSheet() {
+      if (!bottomSheet) return;
       bottomSheet.classList.remove("show", "expanded");
       bottomSheet.classList.add("hidden");
     }
 
-    // many_items_store 위치 확인 후 margin 적용
     function applyManyItemsStoreMargin() {
+      if (!bottomSheet) return;
       const sheetContent = bottomSheet.querySelector(".sheet_content_v2");
       if (!sheetContent) return;
 
@@ -143,71 +169,48 @@ document.addEventListener("DOMContentLoaded", function () {
         store.style.marginBottom = "";
         if (store === lastElement) {
           const huggerElements = document.getElementsByClassName("per_stores");
-          const hugger = huggerElements[huggerElements.length - 1];
-          hugger.style.marginBottom = "0px";
+          if (huggerElements.length > 0) {
+            const hugger = huggerElements[huggerElements.length - 1];
+            hugger.style.marginBottom = "0px";
+          }
           store.style.marginBottom = "130px";
         }
       });
     }
 
-    // 바텀시트 터치 드래그로 확장/축소 및 숨기기 기능
-    let isDragging = false;
-    let startY = 0;
+    // 바텀시트 터치 이벤트
+    if (bottomSheet) {
+      let isDragging = false;
+      let startY = 0;
 
-    bottomSheet.addEventListener("touchstart", (e) => {
-      startY = e.touches[0].clientY;
-      isDragging = true;
-    });
+      bottomSheet.addEventListener("touchstart", (e) => {
+        startY = e.touches[0].clientY;
+        isDragging = true;
+      });
 
-    bottomSheet.addEventListener("touchmove", (e) => {
-      if (!isDragging) return;
-      const moveY = e.touches[0].clientY;
-      const diffY = startY - moveY;
+      bottomSheet.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        const moveY = e.touches[0].clientY;
+        const diffY = startY - moveY;
 
-      if (diffY > 30 && !bottomSheet.classList.contains("expanded")) {
-        bottomSheet.classList.add("expanded");
-      } else if (diffY < -30 && bottomSheet.classList.contains("expanded")) {
-        bottomSheet.classList.remove("expanded");
-      }
-    });
-
-    bottomSheet.addEventListener("touchend", (e) => {
-      const endY = e.changedTouches[0].clientY;
-      const diffY = startY - endY;
-      isDragging = false;
-
-      if (diffY < -400) {
-        hideBottomSheet();
-      }
-    });
-
-    // 바텀시트 내 스크롤 이벤트
-    const sheetContent = document.querySelector(".sheet_content_v2");
-    let lastScrollTop = 0;
-    let isExpanded = false;
-
-    sheetContent.addEventListener("scroll", () => {
-      const currentScrollTop = sheetContent.scrollTop;
-
-      if (currentScrollTop > lastScrollTop) {
-        if (!isExpanded) {
+        if (diffY > 30 && !bottomSheet.classList.contains("expanded"))
           bottomSheet.classList.add("expanded");
-          isExpanded = true;
-        }
-      } else {
-        if (isExpanded) {
+        else if (diffY < -30 && bottomSheet.classList.contains("expanded"))
           bottomSheet.classList.remove("expanded");
-          isExpanded = false;
-        }
-      }
+      });
 
-      lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-    });
+      bottomSheet.addEventListener("touchend", (e) => {
+        const endY = e.changedTouches[0].clientY;
+        const diffY = startY - endY;
+        isDragging = false;
+        if (diffY < -400) hideBottomSheet();
+      });
+    }
 
     // 지도 클릭 시 바텀시트 숨기기
-    container.addEventListener("click", () => {
-      hideBottomSheet();
-    });
+    if (container) {
+      container.addEventListener("click", hideBottomSheet);
+    }
 
     // 수량/시간 조절 이벤트
     document.querySelectorAll(".per_stores").forEach((store) => {
@@ -217,32 +220,37 @@ document.addEventListener("DOMContentLoaded", function () {
       const hourInput = store.querySelector(".hourInput");
       const minuteInput = store.querySelector(".minuteInput");
 
+      if (!minusBtn || !plusBtn || !quantitySpan) return;
+
       let quantity = 0;
 
       minusBtn.addEventListener("click", () => {
-        if (quantity > 0) {
-          quantity--;
-          quantitySpan.textContent = quantity;
-        }
+        if (quantity > 0) quantitySpan.textContent = --quantity;
       });
 
       plusBtn.addEventListener("click", () => {
-        quantity++;
-        quantitySpan.textContent = quantity;
+        quantitySpan.textContent = ++quantity;
       });
 
-      hourInput.addEventListener("input", () => {
-        if (hourInput.value > 23) hourInput.value = 23;
-        if (hourInput.value < 0) hourInput.value = 0;
-      });
+      if (hourInput) {
+        hourInput.addEventListener("input", () => {
+          if (hourInput.value > 23) hourInput.value = 23;
+          if (hourInput.value < 0) hourInput.value = 0;
+        });
+      }
 
-      minuteInput.addEventListener("input", () => {
-        if (minuteInput.value > 59) minuteInput.value = 59;
-        if (minuteInput.value < 0) minuteInput.value = 0;
-      });
+      if (minuteInput) {
+        minuteInput.addEventListener("input", () => {
+          if (minuteInput.value > 59) minuteInput.value = 59;
+          if (minuteInput.value < 0) minuteInput.value = 0;
+        });
+      }
     });
   } else {
-    document.getElementById("errorMessage").innerHTML =
-      "카카오맵을 불러올 수 없습니다.<br>API 키를 확인해주세요.";
+    const errorMessage = document.getElementById("errorMessage");
+    if (errorMessage) {
+      errorMessage.innerHTML =
+        "카카오맵을 불러올 수 없습니다.<br>API 키를 확인해주세요.";
+    }
   }
 });
