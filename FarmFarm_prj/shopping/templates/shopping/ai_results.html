@@ -8,89 +8,28 @@
 
 {% block script %}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    // ------------------------
-    // 0️⃣ Kakao Map SDK 로드 확인
-    // ------------------------
-    function loadMap() {
-        if (typeof kakao !== 'undefined') {
-            initMap();
-        } else {
-            console.error('Kakao Maps SDK not loaded');
-        }
-    }
-    window.onload = loadMap;
+document.addEventListener('DOMContentLoaded', function() {
 
-    // ------------------------
-    // 1️⃣ 프로필 이미지 & 닉네임 로컬스토리지
-    // ------------------------
-    const profileImgDisplay = document.getElementById("profileImage");
-    const previewImgDisplay = document.querySelector(".preview_img");
-    const nameDisplay = document.querySelector(".nickname");
-    const nameInput = document.getElementById("nicknameInput");
-
-    const savedName = localStorage.getItem("profile_name");
-    const savedImg = localStorage.getItem("profile_image");
-
-    if (nameDisplay && savedName) nameDisplay.textContent = savedName;
-    if (profileImgDisplay && savedImg) {
-        profileImgDisplay.src = savedImg;
-        if (previewImgDisplay) previewImgDisplay.src = savedImg;
-    }
-
-    const profileImgInput = document.getElementById("profileImageInput");
-    if (profileImgInput) {
-        profileImgInput.addEventListener("change", () => {
-            if (profileImgInput.files && profileImgInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const imgUrl = e.target.result;
-                    profileImgDisplay.src = imgUrl;
-                    if (previewImgDisplay) previewImgDisplay.src = imgUrl;
-                    localStorage.setItem("profile_image", imgUrl);
-                };
-                reader.readAsDataURL(profileImgInput.files[0]);
-            }
-        });
-    }
-
-    if (nameInput) {
-        nameInput.addEventListener("input", () => {
-            const newName = nameInput.value;
-            if (nameDisplay) nameDisplay.textContent = newName;
-            localStorage.setItem("profile_name", newName);
-        });
-    }
-
-    // ------------------------
-    // 2️⃣ 지도 및 마커 초기화
-    // ------------------------
+    // --- 데이터 로드 및 지도 생성 ---
     const storesData = JSON.parse(document.getElementById('stores-data').textContent);
     const userLocationData = JSON.parse(document.getElementById('user-location-data').textContent);
+    let markers = [];
     const mapContainer = document.getElementById('map');
-    let map, markers = [];
+    const mapOption = { 
+        center: new kakao.maps.LatLng(userLocationData.lat, userLocationData.lng), 
+        level: 5 
+    };
+    const map = new kakao.maps.Map(mapContainer, mapOption);
 
-    function initMap() {
-        mapContainer.style.display = 'block';
-        if (!map) {
-            map = new kakao.maps.Map(mapContainer, {
-                center: new kakao.maps.LatLng(userLocationData.lat, userLocationData.lng),
-                level: 5
-            });
-            map.relayout();
-        }
-        renderMarkers(storesData);
-    }
-
-    function clearMarkers() {
-        markers.forEach(marker => marker.setMap(null));
-        markers = [];
-    }
-
+    const storeModal = document.getElementById('storeModal');
+    const modalItemListEl = document.getElementById('modalItemList');
+    const csrfToken = '{{ csrf_token }}';
+    // --- 마커 렌더링 함수 ---
     function renderMarkers(stores) {
-        clearMarkers();
-        if (!stores || stores.length === 0) return;
-
+        if (!stores || stores.length === 0) {
+            console.log('표시할 가게가 없습니다.');
+            return;
+        }
         const bounds = new kakao.maps.LatLngBounds();
         stores.forEach(store => {
             if (store.latitude && store.longitude) {
@@ -98,59 +37,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 const marker = new kakao.maps.Marker({ map: map, position: position, title: store.name });
                 markers.push(marker);
                 bounds.extend(position);
-
+                
                 kakao.maps.event.addListener(marker, 'click', function() {
                     fetchStoreItems(store.id, store.name, store.distance);
-                    document.getElementById('storeModal').style.display = 'block';
+                    storeModal.style.display = 'block';
                 });
             }
         });
         if (markers.length > 0) map.setBounds(bounds);
     }
 
-    // ------------------------
-    // 3️⃣ 검색 기능 (지도 마커 갱신)
-    // ------------------------
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
 
-    searchForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if (!query) return;
-
-        // 서버 fetch 없이 storesData 기반으로 지도 갱신
-        const filteredStores = storesData.filter(store =>
-            store.name.includes(query) || (store.tags && store.tags.includes(query))
-        );
-        renderMarkers(filteredStores);
-    });
-
-    document.querySelectorAll('.per_foods').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const dishName = btn.textContent.replace('#','');
-            document.getElementById('tag-dish-input').value = dishName;
-            document.getElementById('tag-search-form').submit();
-            const filteredStores = storesData.filter(store =>
-                store.name.includes(dishName) || (store.tags && store.tags.includes(dishName))
-            );
-            renderMarkers(filteredStores);
-        });
-    });
-
-    // ------------------------
-    // 4️⃣ 모달 관련 함수
-    // ------------------------
-    const storeModal = document.getElementById('storeModal');
-    const modalItemListEl = document.getElementById('modalItemList');
-    const csrfToken = '{{ csrf_token }}';
-
+    function searchTag(tagName) {
+        const dishName = tagName.replace('#', '');
+        document.getElementById('tag-dish-input').value = dishName;
+        document.getElementById('tag-search-form').submit();
+    }
+    
+    // --- 모달 관련 함수 ---
     async function fetchStoreItems(storeId, storeName, distance) {
         try {
             const resp = await fetch(`/reservations/api/store/${storeId}/items/`);
             if (!resp.ok) throw new Error('API response not OK');
             const data = await resp.json();
-
+            
             document.getElementById('modalStoreName').innerHTML = `${storeName} <span style="font-size: 0.8em; color: #666;">(${distance}km)</span>`;
             modalItemListEl.innerHTML = '';
 
@@ -158,7 +68,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 data.items.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'item-card';
-                    card.setAttribute('data-item-id', item.id);
+                    card.setAttribute('data-item-id', item.id); // 카드 자체에 item-id 저장
+                    
+                    // ★★★ 수량, 시간 선택 UI가 포함된 HTML로 변경 ★★★
                     card.innerHTML = `
                         ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}">` : ''}
                         <p><strong>품목:</strong> ${item.name} (${item.unit}) ${item.price.toLocaleString()}원</p>
@@ -194,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // --- 모달창 내부의 버튼 클릭 이벤트 처리 (이벤트 위임 사용) ---
     modalItemListEl.addEventListener('click', function(event) {
         const target = event.target;
         const card = target.closest('.item-card');
@@ -202,8 +115,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const qtyInput = card.querySelector('.qty-input');
         let currentQty = parseInt(qtyInput.value);
 
-        if (target.classList.contains('plus-btn')) qtyInput.value = currentQty + 1;
-        else if (target.classList.contains('minus-btn')) qtyInput.value = Math.max(1, currentQty - 1);
+        if (target.classList.contains('plus-btn')) {
+            qtyInput.value = currentQty + 1;
+        } 
+        else if (target.classList.contains('minus-btn')) {
+            qtyInput.value = Math.max(1, currentQty - 1);
+        }
         else if (target.classList.contains('reserve-now-btn')) {
             const itemId = card.dataset.itemId;
             const quantity = qtyInput.value;
@@ -212,29 +129,53 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // --- 예약을 서버에 전송하는 새 함수 ---
     async function submitReservation(itemId, quantity, pickupTime) {
         if (!pickupTime) {
             alert('픽업 시간을 선택해주세요.');
             return;
         }
-        const reservationData = { item_id: itemId, quantity: quantity, pickup_time: pickupTime };
+
+        const reservationData = {
+            item_id: itemId,
+            quantity: quantity,
+            pickup_time: pickupTime,
+        };
+
         try {
             const response = await fetch("{% url 'reservations:api_create' %}", {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify(reservationData)
             });
+
             const result = await response.json();
+
             if (response.ok) {
                 alert('예약이 성공적으로 완료되었습니다!');
-                storeModal.style.display = 'none';
-            } else throw new Error(result.error || '예약에 실패했습니다.');
+                closeStoreModal();
+                // 여기에 예약 완료 후 추가적인 동작을 넣을 수 있습니다 (예: 예약 목록으로 이동)
+                // window.location.href = "{% url 'reservations:list' %}";
+            } else {
+                // 서버에서 보낸 에러 메시지를 표시
+                throw new Error(result.error || '예약에 실패했습니다.');
+            }
         } catch (error) {
             console.error('Reservation failed:', error);
             alert(`예약 중 오류 발생: ${error.message}`);
         }
     }
-});
+
+    function closeStoreModal() {
+        storeModal.style.display = 'none';
+    }
+
+    // --- 초기 실행 ---
+    renderMarkers(storesData);
+})
 </script>
 
 
@@ -380,141 +321,64 @@ document.addEventListener("DOMContentLoaded", function () {
       <div id="errorMessage"></div>
     </div>
 
-    <div id="storeModal" style="position: fixed; left:0; bottom:0; width:100%; max-width:500px; height:60vh; background:#fff; color: #000; border-radius:24px 24px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,0.15); z-index:999; display:none; overflow-y:auto; padding:24px; box-sizing: border-box;">
-        <h3 id="modalStoreName"></h3>
-        <button onclick="closeStoreModal()" style="position: absolute; top: 20px; right: 20px;">닫기</button>
-        <hr>
-        <div id="modalItemList"></div>
-    </div>
-
-    {{ stores_for_map_json|json_script:"stores-data" }}
-    {{ user_location|json_script:"user-location-data" }}
-
-    <!-- 토글 버튼 -->
-    <div class="toggle_hugger" style="display:none;">
-      <div class="toggle_box" id="toggleBox">
-        <div class="toggle_button" id="toggleButton"></div>
+    <div id="storeModal" class="bottom_sheet" style="display:none;">
+      <div class="sheet_content_v2">
+        <div class="many_items_store">
+          <h3 id="modalStoreName"></h3>
+          <button onclick="closeStoreModal()" style="position: absolute; top: 20px; right: 20px;">닫기</button>
+          <hr>
+          <div id="modalItemList"></div>
+        </div>
       </div>
     </div>
 
-    <!-- 바텀시트 -->
-    <div id="bottomSheet" class="bottom_sheet hidden">
-      <div class="sheet_content_v2">
-
-        <!-- 단일 스토어 정보 -->
-        <div class="per_stores">
-          <div class="modal_info_box">
-            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
-            <div class="detail_info">
-              <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
-              <p class="product_detail">음식: 계란 10개 3,000원</p>
-              <p class="product_detail">시간: 오전 10시 ~ 12시</p>
-              <p class="product_detail">위치: 4.19민주역 1번출구</p>
-            </div>
-          </div>
-
-          <!-- 수량 + 시간 조절 -->
-            <div class="reserve_controls">
-              <div class="quantity_box">
-                <button class="qty_btn minusBtn"><b>-</b></button>
-                <span class="quantity">0</span>
-                <button class="qty_btn plusBtn"><b>+</b></button>
-              </div>
-              <div class="time_box">
-                <input type="time" id="reserveTime" placeholder="00:00">
-              </div>
-            </div>
-
-          <!-- 예약 버튼 -->
-          <div class="resbuttonhugger">
-            <button class="reserve_btn">예약하기</button>
-          </div>
-        </div>
-
-        <!-- 여러 아이템 스토어 -->
-        <div class="many_items_store">
-          <div class="many_items_store_name">4.19 민주역 달걀 할머니</div>
-
-          <!-- 반복되는 per_stores 요소 -->
-          <div class="per_stores">
-            <div class="modal_info_box">
-              <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
-              <div class="detail_info">
-                <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
-                <p class="product_detail">음식: 계란 10개 3,000원</p>
-                <p class="product_detail">시간: 오전 10시 ~ 12시</p>
-                <p class="product_detail">위치: 4.19민주역 1번출구</p>
-              </div>
-            </div>
-            <div class="reserve_controls">
-              <div class="quantity_box">
-                <button class="qty_btn minusBtn"><b>-</b></button>
-                <span class="quantity">0</span>
-                <button class="qty_btn plusBtn"><b>+</b></button>
-              </div>
-              <div class="time_box">
-                <input type="time" id="reserveTime" placeholder="00:00">
-              </div>
-            </div>
-            <div class="resbuttonhugger">
-              <button class="reserve_btn">예약하기</button>
-            </div>
-          </div>
-
-          <!-- 동일한 per_stores 반복 -->
-          <div class="per_stores">
-            <div class="modal_info_box">
-              <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
-              <div class="detail_info">
-                <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
-                <p class="product_detail">음식: 계란 10개 3,000원</p>
-                <p class="product_detail">시간: 오전 10시 ~ 12시</p>
-                <p class="product_detail">위치: 4.19민주역 1번출구</p>
-              </div>
-            </div>
-            <div class="reserve_controls">
-              <div class="quantity_box">
-                <button class="qty_btn minusBtn"><b>-</b></button>
-                <span class="quantity">0</span>
-                <button class="qty_btn plusBtn"><b>+</b></button>
-              </div>
-              <div class="time_box">
-                <input type="time" id="reserveTime" placeholder="00:00">
-              </div>
-            </div>
-            <div class="resbuttonhugger">
-              <button class="reserve_btn">예약하기</button>
-            </div>
-          </div>
-
-        </div> <!-- many_items_store 끝 -->
-
-      </div> <!-- sheet_content_v2 끝 -->
-    </div> <!-- bottomSheet 끝 -->
+{{ stores_for_map_json|json_script:"stores-data" }}
+{{ user_location|json_script:"user-location-data" }}
 
   </div> <!-- container 끝 -->
 
   <!-- 네비게이션 바 -->
-  <div class="nav_box">
-    <nav class="bottom_nav">
-      <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
-      <div class="btn">
-        <a href="/storescustomer">
-          <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
-        </a>
-      </div>
-      <div class="btn">
-        <a href="/consumermain">
-          <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
-        </a>
-      </div>
-      <div class="btn selected_nav">
-        <a href="/reservationsseller">
-          <span class="shopping_page">AI</span>
-        </a>
-      </div>
-    </nav>
-  </div>
+        <div class="nav_box">
+        {% if user.usertype == 'BUYER' %}
+        <nav class="bottom_nav">
+            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <div class="btn">
+            <a href="{% url 'stores:map' %}">
+                <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'users:buyer_home' %}">
+                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+            </a>
+            </div>
+            <div class="btn selected_nav">
+            <a href="{% url 'shopping:ai_shopping' %}">
+                <span class="shopping_page">AI</span>
+            </a>
+            </div>
+        </nav>
+        {% elif user.usertype == 'SELLER' %}
+        <nav class="bottom_nav">
+            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <div class="btn selected_nav">
+            <a href="{% url 'stores:map' %}">
+                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'users:seller_home' %}">
+                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'reservations:seller_list' %}">
+                <span class="shopping_page">예약</span>
+            </a>
+            </div>
+        </nav>
+        {% endif %}
+        </div>
 
 </div> <!-- big_hugger 끝 -->
 {% endblock body %}
