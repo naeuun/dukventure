@@ -72,19 +72,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 
-// 사용자 위치/판매자 중심 이동
-{% if request.user.is_authenticated and request.user.usertype == 'SELLER' and request.user.store %}
-    var sellerLat = "{{ request.user.store.latitude|default:'37.6509' }}";
-    var sellerLng = "{{ request.user.store.longitude|default:'127.0164' }}";
-    map.setCenter(new kakao.maps.LatLng(Number(sellerLat), Number(sellerLng)));
-{% elif request.user.is_authenticated and request.user.usertype == 'BUYER' %}
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(function(pos){
-            map.setCenter(new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-        });
-    }
-{% endif %}
-
 // 판매자 마커 생성
 function createStoreMarker(store) {
     if (store.latitude && store.longitude) {

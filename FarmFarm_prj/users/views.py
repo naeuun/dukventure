@@ -17,23 +17,56 @@ import json
 
 @never_cache
 def onboarding(request):
+    if request.user.is_authenticated:
+        if request.user.usertype == 'BUYER':
+            return redirect('users:buyer_home')
+        elif request.user.usertype == 'SELLER':
+            return redirect('users:seller_home')
     return render(request, 'users/onboarding.html')
 
-# 개발용 회원가입
+@never_cache
+def signup_type(request):
+    if request.method == "POST":
+        usertype = request.POST.get("usertype")
+        request.session["usertype"] = usertype  # 세션에 저장
+        return redirect("users:signup")  # 다음 단계로 이동
+    return render(request, "users/signup_type.html")
+    
 def signup(request):
+    usertype = request.session.get("usertype")  # 세션에서 가져오기
+    if not usertype:
+        return redirect("users:signup_type")  # 유형 선택 안 했으면 타입 선택으로 이동
+
     if request.method == 'GET':
         form = SignUpForm()
         return render(request, 'users/signup.html', {'form': form})
+    
     form = SignUpForm(request.POST)
+        
     if form.is_valid():
         user = form.save(commit=False)
-        user.set_password(form.cleaned_data['password1'])
-        user.save()
+        # 세션에서 가져온 usertype 적용
+        user.usertype = usertype
+        user.save()  # commit=True로 DB 저장
         auth_login(request, user)
-        if user.usertype == 'SELLER':
-            return redirect('users:seller_step1')
+        
+        # ✅ 비밀번호 인증 후 로그인
+        user = authenticate(
+            request,
+            username=user.username,
+            password=form.cleaned_data['password1']
+        )
+        if user is not None:
+            auth_login(request, user)
+
+            if user.usertype == 'SELLER':
+                return redirect('users:seller_step1')
+            else:
+                return redirect('users:buyer_home')
         else:
-            return redirect('users:buyer_home')
+            print("❌ 로그인 실패: authenticate가 None 반환")
+    else:
+        print(form.errors)
     return render(request, 'users/signup.html', {'form': form})
 
 
@@ -157,15 +190,6 @@ def seller_step3(request):
     return render(request, 'users/seller-step3.html')
 
 
-@login_required
-def home(request):
-    role = request.user.usertype
-    if role == 'BUYER':
-        return render(request, 'users/buyer-home.html')
-    elif role == 'SELLER':
-        return render(request, 'users/seller-home.html')
-    else:
-        return redirect('users:onboarding')
 
 @login_required
 def buyer_home(request):

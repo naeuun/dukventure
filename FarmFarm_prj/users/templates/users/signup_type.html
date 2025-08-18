@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>당신은 무엇인가요?</h2>
+<form method="post" action="{% url 'users:signup_type' %}">
+    {% csrf_token %}
+    <button type="submit" name="usertype" value="SELLER">판매자</button>
+    <button type="submit" name="usertype" value="BUYER">구매자</button>
+</form>
+{% endblock %}
