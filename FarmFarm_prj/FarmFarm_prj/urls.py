@@ -20,4 +20,10 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("frontend.urls")), # 프론트엔드에서 추가한 부분
+    path('', include('users.urls')),
+    path('stores/', include('stores.urls')),
+    path("reservations/", include('reservations.urls')),
+    path('reviews/', include(('reviews.urls'), namespace='reviews')),
+    path('shopping/', include(('shopping.urls'), namespace='shopping')),
+    path('rewards/', include('rewards.urls')),
 ]

@@ -1,0 +1,225 @@
+{% extends "users/base_home.html" %}
+{% load static %}
+{% block role_content %}
+
+
+<div class="map-container" style="position: relative; width: 100%; height: 85vh;">
+    <div class="map-ui-overlay" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10; width: 90%; max-width: 400px;">
+        <form method="post" action="{% url 'shopping:ai_shopping' %}">
+            {% csrf_token %}
+            <div style="display: flex; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <input type="text" name="dish" value="{{ dish_name }}" placeholder="다른 요리 검색" style="flex-grow: 1; padding: 10px; border-radius: 10px 0 0 10px; border: none;">
+                <button type="submit" style="padding: 10px 15px; border-radius: 0 10px 10px 0; background: #A5D6A7; color: #121212; border: none; font-weight: bold;">검색</button>
+            </div>
+        </form>
+        <div class="tags" style="text-align: center;">
+            <button onclick="searchTag('#비빔밥')" class="hashtag-btn">#비빔밥</button>
+            <button onclick="searchTag('#샐러드')" class="hashtag-btn">#샐러드</button>
+            <button onclick="searchTag('#된장찌개')" class="hashtag-btn">#된장찌개</button>
+        </div>
+    </div>
+    
+    <form id="tag-search-form" method="post" action="{% url 'shopping:ai_shopping' %}" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" id="tag-dish-input" name="dish">
+    </form>
+
+    <div style="position: absolute; bottom: 30px; left: 20px; z-index: 10; display: flex; align-items: center; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 20px;">
+        <span style="color: #fff; margin-right: 10px; font-size: 0.9em;">가게 핀</span>
+        <label class="switch">
+            <input type="checkbox" id="markerToggle" checked>
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <div id="map" style="width:100%; height:100%; border-radius: 15px;"></div>
+</div>
+
+<div id="storeModal" style="position: fixed; left:0; bottom:0; width:100%; max-width:500px; height:60vh; background:#fff; color: #000; border-radius:24px 24px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,0.15); z-index:999; display:none; overflow-y:auto; padding:24px; box-sizing: border-box;">
+    <h3 id="modalStoreName"></h3>
+    <button onclick="closeStoreModal()" style="position: absolute; top: 20px; right: 20px;">닫기</button>
+    <hr>
+    <div id="modalItemList"></div>
+</div>
+
+{{ stores_for_map_json|json_script:"stores-data" }}
+{{ user_location|json_script:"user-location-data" }}
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
+<script>
+    // --- 데이터 로드 및 지도 생성 ---
+    const storesData = JSON.parse(document.getElementById('stores-data').textContent);
+    const userLocationData = JSON.parse(document.getElementById('user-location-data').textContent);
+    let markers = [];
+    const mapContainer = document.getElementById('map');
+    const mapOption = { 
+        center: new kakao.maps.LatLng(userLocationData.lat, userLocationData.lng), 
+        level: 5 
+    };
+    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+    const storeModal = document.getElementById('storeModal');
+    const modalItemListEl = document.getElementById('modalItemList');
+    const csrfToken = '{{ csrf_token }}';
+    // --- 마커 렌더링 함수 ---
+    function renderMarkers(stores) {
+        if (!stores || stores.length === 0) {
+            console.log('표시할 가게가 없습니다.');
+            return;
+        }
+        const bounds = new kakao.maps.LatLngBounds();
+        stores.forEach(store => {
+            if (store.latitude && store.longitude) {
+                const position = new kakao.maps.LatLng(store.latitude, store.longitude);
+                const marker = new kakao.maps.Marker({ map: map, position: position, title: store.name });
+                markers.push(marker);
+                bounds.extend(position);
+                
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    fetchStoreItems(store.id, store.name, store.distance);
+                    storeModal.style.display = 'block';
+                });
+            }
+        });
+        if (markers.length > 0) map.setBounds(bounds);
+    }
+
+    // --- 이벤트 리스너 ---
+    document.getElementById('markerToggle').addEventListener('change', toggleMarkers);
+
+    function toggleMarkers() {
+        const isVisible = document.getElementById('markerToggle').checked;
+        markers.forEach(marker => {
+            marker.setMap(isVisible ? map : null);
+        });
+    }
+
+    function searchTag(tagName) {
+        const dishName = tagName.replace('#', '');
+        document.getElementById('tag-dish-input').value = dishName;
+        document.getElementById('tag-search-form').submit();
+    }
+    
+    // --- 모달 관련 함수 ---
+    async function fetchStoreItems(storeId, storeName, distance) {
+        try {
+            const resp = await fetch(`/reservations/api/store/${storeId}/items/`);
+            if (!resp.ok) throw new Error('API response not OK');
+            const data = await resp.json();
+            
+            document.getElementById('modalStoreName').innerHTML = `${storeName} <span style="font-size: 0.8em; color: #666;">(${distance}km)</span>`;
+            modalItemListEl.innerHTML = '';
+
+            if (data.items && data.items.length > 0) {
+                data.items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.setAttribute('data-item-id', item.id); // 카드 자체에 item-id 저장
+                    
+                    // ★★★ 수량, 시간 선택 UI가 포함된 HTML로 변경 ★★★
+                    card.innerHTML = `
+                        ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}">` : ''}
+                        <p><strong>품목:</strong> ${item.name} (${item.unit}) ${item.price.toLocaleString()}원</p>
+                        <p><strong>판매 시간:</strong> ${item.sale_hours || ''}</p>
+                        <p><strong>위치:</strong> ${item.address || ''}</p>
+                        <p><strong>설명:</strong> ${item.description || ''}</p>
+                        <div class="reservation-form" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <label>수량</label>
+                                <div class="qty-box" style="display: flex; align-items: center; gap: 8px;">
+                                    <button type="button" class="qty-btn minus-btn">-</button>
+                                    <input type="number" class="qty-input" value="1" min="1" style="width: 50px; text-align: center;">
+                                    <button type="button" class="qty-btn plus-btn">+</button>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <label>픽업 시간</label>
+                                <input type="time" class="pickup-time-input" step="600" required>
+                            </div>
+                            <button type="button" class="reserve-now-btn" style="width: 100%; text-align: center; padding: 12px; background-color: #A5D6A7; color: #121212; text-decoration: none; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">
+                                예약하기
+                            </button>
+                        </div>
+                    `;
+                    modalItemListEl.appendChild(card);
+                });
+            } else {
+                modalItemListEl.innerHTML = '<p>등록된 품목이 없습니다.</p>';
+            }
+        } catch (error) {
+            console.error("Error fetching store items:", error);
+            modalItemListEl.innerHTML = '<p>품목 정보를 불러오는 데 실패했습니다.</p>';
+        }
+    }
+
+    // --- 모달창 내부의 버튼 클릭 이벤트 처리 (이벤트 위임 사용) ---
+    modalItemListEl.addEventListener('click', function(event) {
+        const target = event.target;
+        const card = target.closest('.item-card');
+        if (!card) return;
+
+        const qtyInput = card.querySelector('.qty-input');
+        let currentQty = parseInt(qtyInput.value);
+
+        if (target.classList.contains('plus-btn')) {
+            qtyInput.value = currentQty + 1;
+        } 
+        else if (target.classList.contains('minus-btn')) {
+            qtyInput.value = Math.max(1, currentQty - 1);
+        }
+        else if (target.classList.contains('reserve-now-btn')) {
+            const itemId = card.dataset.itemId;
+            const quantity = qtyInput.value;
+            const pickupTime = card.querySelector('.pickup-time-input').value;
+            submitReservation(itemId, quantity, pickupTime);
+        }
+    });
+
+    // --- 예약을 서버에 전송하는 새 함수 ---
+    async function submitReservation(itemId, quantity, pickupTime) {
+        if (!pickupTime) {
+            alert('픽업 시간을 선택해주세요.');
+            return;
+        }
+
+        const reservationData = {
+            item_id: itemId,
+            quantity: quantity,
+            pickup_time: pickupTime,
+        };
+
+        try {
+            const response = await fetch("{% url 'reservations:api_create' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(reservationData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('예약이 성공적으로 완료되었습니다!');
+                closeStoreModal();
+                // 여기에 예약 완료 후 추가적인 동작을 넣을 수 있습니다 (예: 예약 목록으로 이동)
+                // window.location.href = "{% url 'reservations:list' %}";
+            } else {
+                // 서버에서 보낸 에러 메시지를 표시
+                throw new Error(result.error || '예약에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Reservation failed:', error);
+            alert(`예약 중 오류 발생: ${error.message}`);
+        }
+    }
+
+    function closeStoreModal() {
+        storeModal.style.display = 'none';
+    }
+
+    // --- 초기 실행 ---
+    renderMarkers(storesData);
+</script>
+
+{% endblock %}

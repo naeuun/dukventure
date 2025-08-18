@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>예약 만들기</title>
+  <style>
+    .wrap{max-width:520px;margin:24px auto;padding:0 16px}
+    .row{display:flex;gap:8px;align-items:center}
+    .btn{border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
+    input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
+    .qty-box{display:flex;gap:8px;align-items:center}
+    .qty-btn{width:36px;height:36px;border-radius:10px;border:1px solid #ccc;background:#fff}
+    .qty-input{width:70px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>예약하기</h2>
+
+    <form id="reserveForm" method="post" action="{% url 'reservations:create_from_form' %}">
+      {% csrf_token %}
+      
+      <input type="hidden" name="store_id" value="{{ store.id }}">
+      <p><strong>가게:</strong> {{ store.name }}</p>
+
+      {# 상품 정보를 view에서 받은 item 객체로 동적 표시 #}
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      <input type="hidden" name="unit_price" value="{{ item.price }}">
+
+      <p style="margin-top:8px"><strong>상품:</strong> {{ item.item.name }} ({{ item.price|floatformat:"0," }}원 / {{ item.unit }})</p>
+
+      <label>수량</label>
+      <div class="qty-box">
+        <button class="qty-btn" type="button" id="minus">-</button>
+        <input class="qty-input" type="number" name="quantity" id="qty" min="1" value="1" required>
+        <button class="qty-btn" type="button" id="plus">+</button>
+      </div>
+      <div style="height:12px"></div>
+
+      <label>도착 시간</label>
+      <input type="time" name="pickup_time" step="300" required>
+
+      <div style="height:16px"></div>
+
+      <label>요청 메모 (선택)</label>
+      <input type="text" name="note" placeholder="ex) 포장 넉넉히 부탁드려요">
+
+      <div style="height:16px"></div>
+      <button class="btn" type="submit">예약하기</button>
+    </form>
+  </div>
+
+  <script>
+    const minus = document.getElementById('minus');
+    const plus = document.getElementById('plus');
+    const qty = document.getElementById('qty');
+    minus.onclick = () => { qty.value = Math.max(1, parseInt(qty.value||1) - 1); };
+    plus.onclick  = () => { qty.value = parseInt(qty.value||1) + 1; };
+
+    // 제출 전 store_id 방어
+    document.getElementById('reserveForm').addEventListener('submit', function(e){
+      const fd = new FormData(this);
+      const storeId = fd.get('store_id');
+      if (!storeId || !/^\d+$/.test(storeId)) {
+        e.preventDefault();
+        alert('가게를 선택해 주세요.');
+      }
+    });
+  </script>
+</body>
+</html>

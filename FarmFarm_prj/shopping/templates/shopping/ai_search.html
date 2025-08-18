@@ -1,0 +1,27 @@
+{% extends "users/base_home.html" %}
+{% load static %}
+{% block role_content %}
+
+
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; text-align: center;">
+    
+    <img src="{% static 'path/to/your/broccoli-character.png' %}" alt="AI 캐릭터" style="width: 150px; margin-bottom: 20px;">
+
+    <h1 style="font-size: 1.8em; font-weight: bold; margin-bottom: 30px;">
+        오늘은 어떤 음식을 드시나요?
+    </h1>
+    
+    <form method="post" action="{% url 'shopping:ai_shopping' %}" style="width: 100%; max-width: 400px;">
+        {% csrf_token %}
+        <div style="display: flex;">
+            <input type="text" name="dish" placeholder="요리 이름 입력 (예: 김치찌개)" required style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 10px 0 0 10px;">
+            <button type="submit" style="padding: 12px 20px; border: none; background: #A5D6A7; color: #121212; font-weight: bold; border-radius: 0 10px 10px 0;">장보기 코스 분석</button>
+        </div>
+    </form>
+    
+    {% if error %}
+        <p style="color: red; margin-top: 15px;">{{ error }}</p>
+    {% endif %}
+</div>
+{% endblock %}
