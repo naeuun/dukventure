@@ -1,294 +1,343 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block content %}
-<!-- 검색창 -->
-<div style="margin-bottom: 16px;">
-    <input type="text" id="storeSearchInput" placeholder="가게 이름 또는 품목 검색" style="width: 300px; padding: 8px; border-radius: 8px; border: 1px solid #ccc;">
-    <button id="searchBtn" style="padding: 8px 16px; border-radius: 8px; background: #6d6f6d; color: #fff; border: none;">검색</button>
-    <button id="resetBtn" style="padding: 8px 16px; border-radius: 8px; background: #bdbdbd; color: #333; border: none; margin-left: 8px;">초기화</button>
-</div>
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}" />
+{% endblock style %}
 
-<hr>
-
-<!-- 지도 영역 -->
-<div id="map" style="width:100%; height:400px;"></div>
-
-<!-- 구매자 한정 가게 제보 버튼 -->
-{% if request.user.is_authenticated and request.user.usertype == 'BUYER' %}
-    <a href="{% url 'stores:store_report' %}">가게 제보</a>
-{% endif %}
-
-{{ stores|json_script:"store-data" }}
-{{ reports|json_script:"report-data" }}
-
-<style>
-    #map { height: 100vh; }
-    .item-card { background: #c5d2bc; color: #000; padding: 1rem; border-radius: 15px; margin-bottom: 1rem; }
-</style>
-
-<!-- 판매자 모달 -->
-<div id="storeModal" style="position: fixed; left:0; bottom:0; width:500px; height:60vh; background:#fff; border-radius:24px 24px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,0.15); z-index:999; display:none; overflow-y:auto; padding:24px;">
-    <h3 id="modalStoreName"></h3>
-    <button onclick="closeStoreModal()">닫기</button>
-    <div id="modalItemList"></div>
-</div>
-
-<!-- 제보 모달 -->
-<div id="reportModal" style="position: fixed; left:0; bottom:0; width:500px; height:60vh; background:#fff; border-radius:24px 24px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,0.15); z-index:999; display:none; overflow-y:auto; padding:24px;">
-    <h3 id="reportName"></h3>
-    <button onclick="closeReportModal()">닫기</button>
-    <p id="reportAddress"></p>
-    <p id="reportItems"></p>
-    <p id="reportKeywords"></p>
-</div>
+{% block script %}
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 <script>
 // --- 전역 변수 설정 ---
-var mapContainer = document.getElementById('map');
-var mapOption = { center: new kakao.maps.LatLng(37.6509, 127.0164), level: 5 };
-var map = new kakao.maps.Map(mapContainer, mapOption);
-var markers = [];
 
-// Django 템플릿 변수 -> JavaScript 변수
-const stores = JSON.parse(document.getElementById('store-data').textContent);
-const reportsData = JSON.parse(document.getElementById('report-data').textContent);
-const reports = Array.isArray(reportsData) ? reportsData : [];
-const csrfToken = '{{ csrf_token }}'; // CSRF 토큰 추가
+document.addEventListener('DOMContentLoaded', function() {
 
-// 모달 엘리먼트
-const storeModal = document.getElementById('storeModal');
-const modalItemListEl = document.getElementById('modalItemList');
-const reportModal = document.getElementById('reportModal');
+    var mapContainer = document.getElementById('map');
+    var mapOption = { center: new kakao.maps.LatLng(37.6509, 127.0164), level: 5 };
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+    var markers = [];
 
-// 초기화 버튼도 수정
-document.getElementById('searchBtn').addEventListener('click', filterStores);
-document.getElementById('storeSearchInput').addEventListener('keydown', e => {
-    if(e.key === 'Enter') filterStores();
-});
-document.getElementById('resetBtn').addEventListener('click', () => {
-    document.getElementById('storeSearchInput').value = '';
-    renderMarkers(stores, reports);
-});
+    // Django 템플릿 변수 -> JavaScript 변수
+    const stores = JSON.parse(document.getElementById('store-data').textContent);
+    const reportsData = JSON.parse(document.getElementById('report-data').textContent);
+    const reports = Array.isArray(reportsData) ? reportsData : [];
+    const csrfToken = '{{ csrf_token }}'; // CSRF 토큰 추가
+
+    // 모달 엘리먼트
+    const storeModal = document.getElementById('storeModal');
+    const modalItemListEl = document.getElementById('modalItemList');
+    const reportModal = document.getElementById('reportModal');
+
+    // 초기화 버튼도 수정
+    document.getElementById('searchBtn').addEventListener('click', filterStores);
+    document.getElementById('storeSearchInput').addEventListener('keydown', e => {
+        if(e.key === 'Enter') filterStores();
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        document.getElementById('storeSearchInput').value = '';
+        renderMarkers(stores, reports);
+    });
 
 
-// 사용자 위치/판매자 중심 이동
-{% if request.user.is_authenticated and request.user.usertype == 'SELLER' and request.user.store %}
-    var sellerLat = "{{ request.user.store.latitude|default:'37.6509' }}";
-    var sellerLng = "{{ request.user.store.longitude|default:'127.0164' }}";
-    map.setCenter(new kakao.maps.LatLng(Number(sellerLat), Number(sellerLng)));
-{% elif request.user.is_authenticated and request.user.usertype == 'BUYER' %}
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(function(pos){
-            map.setCenter(new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-        });
+    // 사용자 위치/판매자 중심 이동
+    {% if request.user.is_authenticated and request.user.usertype == 'SELLER' and request.user.store %}
+        var sellerLat = "{{ request.user.store.latitude|default:'37.6509' }}";
+        var sellerLng = "{{ request.user.store.longitude|default:'127.0164' }}";
+        map.setCenter(new kakao.maps.LatLng(Number(sellerLat), Number(sellerLng)));
+    {% elif request.user.is_authenticated and request.user.usertype == 'BUYER' %}
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(function(pos){
+                map.setCenter(new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+            });
+        }
+    {% endif %}
+
+    // 판매자 마커 생성
+    function createStoreMarker(store) {
+        if (store.latitude && store.longitude) {
+            var coords = new kakao.maps.LatLng(store.latitude, store.longitude);
+
+            var markerImage = new kakao.maps.MarkerImage(
+                markerImageSrc,
+                new kakao.maps.Size(20, 20),
+                { offset: new kakao.maps.Point(20, 40) }
+            );
+
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords,
+                title: store.name,
+                image: markerImage
+            });
+
+            markers.push(marker);
+            
+            kakao.maps.event.addListener(marker, 'click', function() {
+                fetchStoreItems(store.id, store.name);
+                storeModal.style.display = 'block';
+            });
+        }
     }
-{% endif %}
 
-// 판매자 마커 생성
-function createStoreMarker(store) {
-    if (store.latitude && store.longitude) {
-        var coords = new kakao.maps.LatLng(store.latitude, store.longitude);
-        var marker = new kakao.maps.Marker({ map: map, position: coords, title: store.name });
-        markers.push(marker);
-        
-        kakao.maps.event.addListener(marker, 'click', function() {
-            fetchStoreItems(store.id, store.name); // 이제 fetchStoreItems는 예약 기능이 있는 버전
-            storeModal.style.display = 'block';
-        });
-    }
-}
 
-// 판매자 모달
-// 판매자 모달 채우기 (예약 기능이 추가된 버전)
-async function fetchStoreItems(storeId, storeName) {
-    try {
-        const resp = await fetch(`/reservations/api/store/${storeId}/items/`);
-        if (!resp.ok) throw new Error('API response not OK');
-        const data = await resp.json();
-        
-        document.getElementById('modalStoreName').textContent = storeName;
-        modalItemListEl.innerHTML = '';
+    // 판매자 모달
+    // 판매자 모달 채우기 (예약 기능이 추가된 버전)
+    async function fetchStoreItems(storeId, storeName) {
+        try {
+            const resp = await fetch(`/reservations/api/store/${storeId}/items/`);
+            if (!resp.ok) throw new Error('API response not OK');
+            const data = await resp.json();
+            
+            document.getElementById('modalStoreName').textContent = storeName;
+            modalItemListEl.innerHTML = '';
 
-        if (data.items && data.items.length > 0) {
-            data.items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                card.setAttribute('data-item-id', item.id);
-                card.innerHTML = `
-                    ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}" style="width:100%; border-radius:8px;">` : ''}
-                    <p><strong>품목:</strong> ${item.name} (${item.unit || ''})</p>
-                    <p><strong>가격:</strong> ${item.price.toLocaleString()}원</p>
-                    <p><strong>설명:</strong> ${item.description || ''}</p>
-                    <div class="reservation-form" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <label>수량</label>
-                            <div class="qty-box" style="display: flex; align-items: center; gap: 8px;">
-                                <button type="button" class="qty-btn minus-btn">-</button>
-                                <input type="number" class="qty-input" value="1" min="1" style="width: 50px; text-align: center;">
-                                <button type="button" class="qty-btn plus-btn">+</button>
+            if (data.items && data.items.length > 0) {
+                data.items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.setAttribute('data-item-id', item.id);
+                    card.innerHTML = `
+                        <div class="modal_info_box">
+                            ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}" style="width:100%; border-radius:8px;" class="product_img">`: ''}
+                            <div class="detail_info">
+                                <p class="store_name"><b>{{ store.name }}</b></p>
+                                <p class="product_detail"> ${item.name} (${item.unit || ''}) ${item.price.toLocaleString()}원</p>
+                                <p class="product_detail">시간: 오전 10시 ~ 12시</p>
+                                <p class="product_detail">위치: 4.19민주역 1번출구</p>
+                                <p><strong>설명:</strong> ${item.description || ''}</p>
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <label>픽업 시간</label>
-                            <input type="time" class="pickup-time-input" step="600" required>
+                        <div class="reserve_controls reservation-form">
+                            <div class="quantity_box">
+                                <button type="button" class="qty_btn minusBtn"><b>-</b></button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button type="button" class="qty_btn plusBtn"><b>+</b></button>
+                            </div>
+                            <div class="time_box">
+                                <input type="time" id="reserveTime" class="pickup-time-input" step="600" required>
+                            </div>
+                            <div class="resbuttonhugger">
+                                <button type="button" class="reserve_btn reserve-now-btn">예약하기</button>
+                            </div>
                         </div>
-                        <button type="button" class="reserve-now-btn" style="width: 100%; text-align: center; padding: 12px; background-color: #A5D6A7; color: #121212; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">
-                            예약하기
-                        </button>
-                    </div>
-                `;
-                modalItemListEl.appendChild(card);
-            });
-        } else {
-            modalItemListEl.innerHTML = '<p>등록된 품목이 없습니다.</p>';
-        }
-    } catch (error) {
-        console.error("Error fetching store items:", error);
-        modalItemListEl.innerHTML = '<p>품목 정보를 불러오는 데 실패했습니다.</p>';
-    }
-}
-
-function closeStoreModal() { storeModal.style.display = 'none'; }
-
-// 모달 내 예약 버튼 클릭 이벤트 처리
-modalItemListEl.addEventListener('click', function(event) {
-    const target = event.target;
-    const card = target.closest('.item-card');
-    if (!card) return;
-    const qtyInput = card.querySelector('.qty-input');
-    let currentQty = parseInt(qtyInput.value);
-
-    if (target.classList.contains('plus-btn')) { qtyInput.value = currentQty + 1; } 
-    else if (target.classList.contains('minus-btn')) { qtyInput.value = Math.max(1, currentQty - 1); }
-    else if (target.classList.contains('reserve-now-btn')) {
-        const itemId = card.dataset.itemId;
-        const quantity = qtyInput.value;
-        const pickupTime = card.querySelector('.pickup-time-input').value;
-        submitReservation(itemId, quantity, pickupTime);
-    }
-});
-
-// 예약을 서버에 전송하는 함수
-async function submitReservation(itemId, quantity, pickupTime) {
-    if (!pickupTime) {
-        alert('픽업 시간을 선택해주세요.');
-        return;
-    }
-    const reservationData = { item_id: itemId, quantity: quantity, pickup_time: pickupTime };
-
-    try {
-        const response = await fetch("{% url 'reservations:api_create' %}", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-            body: JSON.stringify(reservationData)
-        });
-        const result = await response.json();
-        if (response.ok) {
-            alert('예약이 성공적으로 완료되었습니다!');
-            closeStoreModal();
-            window.location.href = "{% url 'reservations:list' %}";
-        } else {
-            throw new Error(result.error || '예약에 실패했습니다.');
-        }
-    } catch (error) {
-        console.error('Reservation failed:', error);
-        alert(`예약 중 오류 발생: ${error.message}`);
-    }
-}
-
-// 제보 마커 생성
-function createReportMarker(report){
-    if(report.latitude && report.longitude){
-        var coords = new kakao.maps.LatLng(report.latitude, report.longitude);
-        placeReportMarker(coords, report);
-    } else if(report.address){
-        var geocoder = new kakao.maps.services.Geocoder();
-        geocoder.addressSearch(report.address, function(result, status){
-            if(status === kakao.maps.services.Status.OK){
-                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-                placeReportMarker(coords, report);
+                    `;
+                    modalItemListEl.appendChild(card);
+                });
+            } else {
+                modalItemListEl.innerHTML = '<p>등록된 품목이 없습니다.</p>';
             }
+        } catch (error) {
+            console.error("Error fetching store items:", error);
+            modalItemListEl.innerHTML = '<p>품목 정보를 불러오는 데 실패했습니다.</p>';
+        }
+    }
+
+    function closeStoreModal() { storeModal.style.display = 'none'; }
+
+    // 모달 내 예약 버튼 클릭 이벤트 처리
+    modalItemListEl.addEventListener('click', function(event) {
+        const target = event.target;
+        const card = target.closest('.item-card');
+        if (!card) return;
+        const qtyInput = card.querySelector('.qty-input');
+        let currentQty = parseInt(qtyInput.value);
+
+        if (target.classList.contains('plus-btn')) { qtyInput.value = currentQty + 1; } 
+        else if (target.classList.contains('minus-btn')) { qtyInput.value = Math.max(1, currentQty - 1); }
+        else if (target.classList.contains('reserve-now-btn')) {
+            const itemId = card.dataset.itemId;
+            const quantity = qtyInput.value;
+            const pickupTime = card.querySelector('.pickup-time-input').value;
+            submitReservation(itemId, quantity, pickupTime);
+        }
+    });
+
+    // 예약을 서버에 전송하는 함수
+    async function submitReservation(itemId, quantity, pickupTime) {
+        if (!pickupTime) {
+            alert('픽업 시간을 선택해주세요.');
+            return;
+        }
+        const reservationData = { item_id: itemId, quantity: quantity, pickup_time: pickupTime };
+
+        try {
+            const response = await fetch("{% url 'reservations:api_create' %}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify(reservationData)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('예약이 성공적으로 완료되었습니다!');
+                closeStoreModal();
+                window.location.href = "{% url 'reservations:list' %}";
+            } else {
+                throw new Error(result.error || '예약에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Reservation failed:', error);
+            alert(`예약 중 오류 발생: ${error.message}`);
+        }
+    }
+
+    // 제보 마커 생성
+    function createReportMarker(report){
+        if(report.latitude && report.longitude){
+            var coords = new kakao.maps.LatLng(report.latitude, report.longitude);
+            placeReportMarker(coords, report);
+        } else if(report.address){
+            var geocoder = new kakao.maps.services.Geocoder();
+            geocoder.addressSearch(report.address, function(result, status){
+                if(status === kakao.maps.services.Status.OK){
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    placeReportMarker(coords, report);
+                }
+            });
+        }
+    }
+
+    function placeReportMarker(coords, report){
+        var marker = new kakao.maps.Marker({ map: map, position: coords, title: report.name });
+        markers.push(marker);
+        kakao.maps.event.addListener(marker,'click',function(){ showReportModal(report); });
+    }
+
+    function showReportModal(report){
+        reportModal.querySelector('#reportName').textContent = report.store_name;
+        reportModal.querySelector('#reportAddress').textContent = report.address;
+        reportModal.querySelector('#reportItems').textContent = report.items.map(i=>i.name).join(', ');
+        reportModal.querySelector('#reportKeywords').textContent = report.keywords.join(', ');
+
+        // 기존 이미지 제거
+        var existingImg = reportModal.querySelector('img.report-image');
+        if(existingImg) existingImg.remove();
+
+        // 이미지 표시
+        if(report.image){  
+            var reportImageHTML = `<img class="report-image" src="${report.image}" alt="${report.store_name}" style="width:200px; max-height:200px; object-fit:cover; margin-bottom:12px;">`;
+            reportModal.querySelector('#reportItems').insertAdjacentHTML('beforebegin', reportImageHTML);
+        }
+
+        reportModal.style.display='block';
+    }
+
+    function closeReportModal(){ reportModal.style.display='none'; }
+
+    // 초기 마커 렌더링
+    stores.forEach(createStoreMarker);
+    reports.forEach(createReportMarker);
+
+
+    // renderMarkers 수정: 제보도 같이 받도록
+    function renderMarkers(filteredStores, filteredReports){
+        // 기존 마커 제거
+        markers.forEach(m => m.setMap(null));
+        markers = [];
+
+        // 판매자 가게 마커
+        filteredStores.forEach(createStoreMarker);
+
+        // 제보 마커
+        if(filteredReports){
+            filteredReports.forEach(createReportMarker);
+        } else {
+            reports.forEach(createReportMarker);
+        }
+    }
+
+    // 검색 기능
+    function filterStores(){
+        var keyword = document.getElementById('storeSearchInput').value.trim().toLowerCase();
+        if(!keyword){
+            renderMarkers(stores, reports);  // 초기화 시 제보도 같이 렌더링
+            return;
+        }
+
+        var filteredStores = stores.filter(store => {
+            if(store.name && store.name.toLowerCase().includes(keyword)) return true;
+            if(store.items && store.items.some(i => i.name && i.name.toLowerCase().includes(keyword))) return true;
+            return false;
         });
-    }
-}
+        
+        var filteredReports = reports.filter(report => {
+            // 이름 검색
+            if(report.store_name && report.store_name.toLowerCase().includes(keyword)) return true;
 
-function placeReportMarker(coords, report){
-    var marker = new kakao.maps.Marker({ map: map, position: coords, title: report.name });
-    markers.push(marker);
-    kakao.maps.event.addListener(marker,'click',function(){ showReportModal(report); });
-}
+            // report_items 검색: 배열의 name 속성 확인
+            if(report.items && report.items.some(i => i.name && i.name.toLowerCase().includes(keyword))) return true;
 
-function showReportModal(report){
-    reportModal.querySelector('#reportName').textContent = report.store_name;
-    reportModal.querySelector('#reportAddress').textContent = report.address;
-    reportModal.querySelector('#reportItems').textContent = report.items.map(i=>i.name).join(', ');
-    reportModal.querySelector('#reportKeywords').textContent = report.keywords.join(', ');
-
-    // 기존 이미지 제거
-    var existingImg = reportModal.querySelector('img.report-image');
-    if(existingImg) existingImg.remove();
-
-    // 이미지 표시
-    if(report.image){  
-        var reportImageHTML = `<img class="report-image" src="${report.image}" alt="${report.store_name}" style="width:200px; max-height:200px; object-fit:cover; margin-bottom:12px;">`;
-        reportModal.querySelector('#reportItems').insertAdjacentHTML('beforebegin', reportImageHTML);
+            return false;
+        });
+        renderMarkers(filteredStores, filteredReports);
     }
 
-    reportModal.style.display='block';
-}
-
-function closeReportModal(){ reportModal.style.display='none'; }
-
-// 초기 마커 렌더링
-stores.forEach(createStoreMarker);
-reports.forEach(createReportMarker);
-
-
-// renderMarkers 수정: 제보도 같이 받도록
-function renderMarkers(filteredStores, filteredReports){
-    // 기존 마커 제거
-    markers.forEach(m => m.setMap(null));
-    markers = [];
-
-    // 판매자 가게 마커
-    filteredStores.forEach(createStoreMarker);
-
-    // 제보 마커
-    if(filteredReports){
-        filteredReports.forEach(createReportMarker);
-    } else {
-        reports.forEach(createReportMarker);
-    }
-}
-
-// 검색 기능
-function filterStores(){
-    var keyword = document.getElementById('storeSearchInput').value.trim().toLowerCase();
-    if(!keyword){
-        renderMarkers(stores, reports);  // 초기화 시 제보도 같이 렌더링
-        return;
-    }
-
-    var filteredStores = stores.filter(store => {
-        if(store.name && store.name.toLowerCase().includes(keyword)) return true;
-        if(store.items && store.items.some(i => i.name && i.name.toLowerCase().includes(keyword))) return true;
-        return false;
-    });
-    
-    var filteredReports = reports.filter(report => {
-        // 이름 검색
-        if(report.store_name && report.store_name.toLowerCase().includes(keyword)) return true;
-
-        // report_items 검색: 배열의 name 속성 확인
-        if(report.items && report.items.some(i => i.name && i.name.toLowerCase().includes(keyword))) return true;
-
-        return false;
-    });
-    renderMarkers(filteredStores, filteredReports);
-}
-
-
+})
 
 </script>
+<script>
+  const markerImageSrc = "{% static 'img/stores.png' %}";
+</script>
+{% endblock script %}
+
+{% block content %}
+<div class="big_hugger">
+    <div class="container">
+        <!-- 검색창 -->
+        <div class="search_box">
+            <img src="{% static 'img/map_deco.png' %}" alt="지도 검색창 위 데코" class="map_deco">
+            <div class="searching_">
+                <input type="text" class="searchInput" id="storeSearchInput" placeholder="입력하시오..." />
+                <button id="searchBtn">
+                <img src="{% static 'img/search.png' %}" alt="검색 아이콘">
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- 지도 영역 -->
+        <div id="map">
+            <div id="errorMessage"></div>
+        </div>
+
+        <!-- 구매자 한정 가게 제보 버튼 -->
+        {% if request.user.is_authenticated and request.user.usertype == 'BUYER' %}
+        <div class="adding_zone">
+            <div class="add_store_msg msg">
+                <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox">
+                <div class="text">가게<span style="color:grey;">를 추가해주세요!</span></div>
+            </div>
+
+            <a href="{% url 'stores:store_report' %}" class="add_store_btn">
+                <button type="button" value="가게 추가" id="add_store">+</button>
+            </a>
+        </div>        
+        {% endif %}
+
+        {{ stores|json_script:"store-data" }}
+        {{ reports|json_script:"report-data" }}
+
+        <style>
+            .item-card { background: #c5d2bc; color: #000; padding: 1rem; border-radius: 15px; margin-bottom: 1rem; }
+        </style>
+
+        <!-- 판매자 모달 -->
+        <div id="storeModal" style="position: fixed; left:0; bottom:0; width:500px; height:60vh; background:#fff; border-radius:24px 24px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,0.15); z-index:999; display:none; overflow-y:auto; padding:24px;">
+            <h3 id="modalStoreName"></h3>
+            <button onclick="closeStoreModal()">닫기</button>
+            <div id="modalItemList"></div>
+        </div>
+
+        <!-- 제보 모달 -->
+        <div id="reportModal" style="position: fixed; left:0; bottom:0; width:500px; height:60vh; background:#fff; border-radius:24px 24px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,0.15); z-index:999; display:none; overflow-y:auto; padding:24px;">
+            <h3 id="reportName"></h3>
+            <button onclick="closeReportModal()">닫기</button>
+            <p id="reportAddress"></p>
+            <p id="reportItems"></p>
+            <p id="reportKeywords"></p>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
