@@ -1,57 +1,331 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base_2.html" %}
+{% load static %}
 
-<h2>가게 제보하기</h2>
-<hr>
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/stores_plus.css' %}" />
+{% endblock style %}
 
-<form method="post" enctype="multipart/form-data" id="reportForm">
+{% block script %}
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const addressInput = document.getElementById('addressInput');
+    const latitudeInput = document.getElementById('latitudeInput');
+    const longitudeInput = document.getElementById('longitudeInput');
+    const geocoder = new kakao.maps.services.Geocoder();
+
+    let map, marker;
+
+    // 지도 모달 열기
+    document.getElementById('mapBtn').onclick = function() {
+        document.getElementById('mapModal').style.display = 'block';
+        setTimeout(function() {
+            let initLat = parseFloat(latitudeInput.value) || 37.6509;
+            let initLng = parseFloat(longitudeInput.value) || 127.0164;
+            const initPos = new kakao.maps.LatLng(initLat, initLng);
+            mapInit(initPos);
+        }, 100);
+    };
+
+    // 지도 모달 닫기
+    document.getElementById('closeModal').onclick = function() {
+        document.getElementById('mapModal').style.display = 'none';
+    };
+
+    // 지도 초기화
+    function mapInit(center) {
+        const container = document.getElementById('mapContainer');
+
+        if (!map) {
+            map = new kakao.maps.Map(container, {
+                center: center,
+                level: 3
+            });
+        } else {
+            map.setCenter(center);
+        }
+
+        if (!marker) {
+            marker = new kakao.maps.Marker({ position: center, map: map });
+        } else {
+            marker.setPosition(center);
+        }
+
+        map.relayout(); // 모달에서 열릴 때 지도 갱신
+
+        // 지도 클릭 시 주소/좌표 반영
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            marker.setPosition(latlng);
+
+            geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+                if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
+                    addressInput.value = result[0].address.address_name;
+                    latitudeInput.value = latlng.getLat();
+                    longitudeInput.value = latlng.getLng();
+                } else {
+                    alert("주소 변환 실패. 한글 주소를 입력해주세요.");
+                    latitudeInput.value = latlng.getLat();
+                    longitudeInput.value = latlng.getLng();
+                }
+            });
+        });
+    }
+
+    // 음성 인식 관련 코드는 그대로
+    const reportVoiceBtn = document.getElementById('voiceBtn');
+    const reportVoiceStatus = document.getElementById('voiceStatus');
+    let mediaRecorderReport = null;
+    let audioChunksReport = [];
+    let currentStreamReport = null;
+
+    reportVoiceBtn.addEventListener('click', async () => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert("브라우저가 음성 입력을 지원하지 않습니다.");
+            return;
+        }
+
+        if (mediaRecorderReport && mediaRecorderReport.state === "recording") {
+            mediaRecorderReport.stop();
+            if (currentStreamReport) {
+                currentStreamReport.getTracks().forEach(track => track.stop());
+                currentStreamReport = null;
+            }
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            currentStreamReport = stream; 
+            mediaRecorderReport = new MediaRecorder(stream);
+            audioChunksReport = [];
+
+            mediaRecorderReport.ondataavailable = e => audioChunksReport.push(e.data);
+
+            mediaRecorderReport.onstart = () => {
+                reportVoiceStatus.textContent = "🎤 녹음 중...";
+                reportVoiceBtn.textContent = "⏹️ 녹음 중지";
+            };
+
+            mediaRecorderReport.onstop = async () => {
+                if (currentStreamReport) {
+                    currentStreamReport.getTracks().forEach(track => track.stop());
+                    currentStreamReport = null;
+                }
+                const audioBlob = new Blob(audioChunksReport);
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+
+                reader.onloadend = async () => {
+                    const base64Audio = reader.result;
+                    reportVoiceStatus.textContent = "⏳ 서버 처리 중...";
+                    reportVoiceBtn.textContent = "🎤 음성 인식";
+
+                    try {
+                        const response = await fetch("{% url 'stores:voice_input' %}", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ audio: base64Audio, form_type: 'report' })
+                        });
+
+                        const data = await response.json();
+                        if (!data.form_data) {
+                            reportVoiceStatus.textContent = "⚠️ 음성 처리 실패";
+                            return;
+                        }
+
+                        const formData = data.form_data;
+
+                        if (formData.store_name) {
+                            const storeNameInput = document.getElementById('id_store_name');
+                            if (storeNameInput) storeNameInput.value = formData.store_name;
+                        }
+
+                        if (formData.report_items) {
+                            const reportItemsInput = document.getElementById('id_report_items');
+                            if (reportItemsInput) reportItemsInput.value = formData.report_items;
+                        }
+
+                        if (formData.time) {
+                            const timeInput = document.getElementById('id_time');
+                            if (timeInput) timeInput.value = formData.time;
+                        }
+
+                        if (formData.address) {
+                            const addressInput = document.getElementById('addressInput');
+                            if (addressInput) addressInput.value = formData.address;
+                        }
+
+                        if (formData.address) {
+                            const geocoder = new kakao.maps.services.Geocoder();
+                            geocoder.addressSearch(formData.address, function(result, status) {
+                                if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                                    document.getElementById('latitudeInput').value = result[0].y;
+                                    document.getElementById('longitudeInput').value = result[0].x;
+                                } else {
+                                    alert("주소를 좌표로 변환할 수 없습니다. 지도에서 직접 선택해주세요.");
+                                    document.getElementById('latitudeInput').value = "";
+                                    document.getElementById('longitudeInput').value = "";
+                                }
+                            });
+                        }
+
+                        if (formData.keywords) {
+                            let keywordsArr = Array.isArray(formData.keywords)
+                                ? formData.keywords
+                                : String(formData.keywords).split(',').map(s => s.trim());
+
+                            keywordsArr.forEach(keywordText => {
+                                document.querySelectorAll('input[name="keywords"]').forEach(checkbox => {
+                                    const label = checkbox.parentElement;
+                                    if (
+                                        label &&
+                                        label.textContent.replace(/\s/g, '').toLowerCase().includes(
+                                            keywordText.replace(/\s/g, '').toLowerCase()
+                                        )
+                                    ) {
+                                        checkbox.checked = true;
+                                    }
+                                });
+                            });
+                        }
+
+                        reportVoiceStatus.textContent = "✅ 음성 입력 완료";
+                    } catch (err) {
+                        console.error(err);
+                        reportVoiceStatus.textContent = "❌ 서버 오류";
+                    }
+                };
+            };
+
+            mediaRecorderReport.start();
+        } catch (err) {
+            console.error(err);
+            reportVoiceStatus.textContent = "❌ 마이크 접근 거부됨";
+        }
+    });
+});
+</script>
+
+<script src="{% static 'js/stores_plus.js' %}"></script>
+
+{% endblock script %}
+
+{% block body %}
+<div class="welcome_overlay"></div>
+
+<div class="big_hugger">
+  <div class="container">
+    <form method="post" enctype="multipart/form-data" id="reportForm">
     {% csrf_token %}
-    <div>
-        <label>가게 별명</label>
-        <input type="text" name="store_name" id="id_store_name" value="{{ form.store_name.value|default_if_none:'' }}">
+    <img src="{% static 'img/map_deco.png' %}" alt="위 데코" class="deco" />
+    <img src="{% static 'img/left_back_neon.png' %}" alt="뒤로가기" class="before_page" onclick="history.back()" />
+
+    <!-- 이미지 업로드 -->
+    <div class="gapsection">
+      <label class="section-title">이미지</label>
+      <div class="file_upload">
+        <!-- 파일 업로드 input -->
+        <input type="file" name="image" id="id_image" accept="image/*" style="display: none;" />
+
+        <!-- 아이콘 -->
+        <label for="id_image" class="upload_label">
+          <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon" />
+        </label>
+
+        <!-- 말풍선 -->
+        <div class="text_box_text">
+          <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox" />
+          <span class="texts">누르면 <span style="color:grey;">갤러리로 연결돼요!</span></span>
+        </div>
+
+        <!-- 업로드된 파일 정보 -->
+        <div class="file_info_wrap" style="display: none;">
+          <span class="file_name"></span>
+          <button type="button" class="delete_file_btn">삭제</button>
+        </div>
+      </div>
     </div>
 
-    <div>
-        <label>이미지</label>
-        <input type="file" name="image" id="id_image">
-    </div>
-    
-    <div>
-        <label>품목</label>
-        <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}">
-    </div>
-    
-    <div>
-        <label>시간</label>
-        <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}">
+    <!-- 가게 이름 -->
+    <div class="section">
+      <label class="section-title">가게이름</label>
+      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." />
     </div>
 
-    <div>
-        <p>키워드 선택</p>
+    <!-- 음식 종류 -->
+    <div class="section">
+      <label class="section-title">음식종류</label>
+      <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." />
+    </div>
+    <!-- 장소 -->
+    <div class="section">
+      <label class="section-title">장소</label>
+      <input type="hidden" id="latitudeInput" name="latitude" value="">
+      <input type="hidden" id="longitudeInput" name="longitude" value="">
+      <input type="text" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
+      <button type="button" id="mapBtn">지도에서 위치 선택</button>    
+    </div>
+
+    <!-- 시간 -->
+    <div class="gapsection">
+      <label class="section-title">시간</label>
+      <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." />
+    </div>
+
+    <!-- 키워드 -->
+    <div class="keyword_section">
+      <label class="section-title">#키워드</label>
+      <div class="keyword-list">
         {% for keyword in form.keywords.field.queryset %}
-            <label>
-                <input type="checkbox" name="keywords" value="{{ keyword.id }}"
-                {% if keyword in form.keywords.value %}checked{% endif %}>
-                {{ keyword.keyword }}
-            </label>
+        <label class="keyword-option">
+            <input type="checkbox" name="keywords" value="{{ keyword.id }}"
+            {% if form.keywords.value %}
+                {% if keyword.id|stringformat:"s" in form.keywords.value %}
+                checked
+                {% endif %}
+            {% endif %}>
+            {{ keyword.keyword }}
+        </label>
         {% endfor %}
+
+      </div>
     </div>
-
-    <div>
-        <label>주소</label>
-        <input type="hidden" id="latitudeInput" name="latitude" value="">
-        <input type="hidden" id="longitudeInput" name="longitude" value="">
-        <input type="text" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
-        <button type="button" id="mapBtn">지도에서 위치 선택</button>
+    <!-- 등록 버튼 -->
+    <div class="btn_hugger">
+      <div class="voice_recognization">
+        <div class="voice_texts">
+          <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
+          <span class="texts">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
+        </div>
+        <button class="circle_btn">
+          <img src="{% static 'img/mic.png' %}" alt="음성인식버튼" class="voice_recognization_btn" />
+        </button>
+      </div>
+      <button type="submit" class="register_btn">등록하기</button>
     </div>
+  </form>
+  </div>
 
-    <button type="submit">제보하기</button>
-</form>
+  
+</div>
 
-<!-- 음성 인식 버튼 -->
-<div>
-    <button type="button" id="voiceBtn" data-form-type="report">🎤 음성 인식</button>
-    <span id="voiceStatus" style="margin-left:10px;color:#555;">(녹음 상태 표시)</span>
+<!-- 음성 인식 모달 -->
+<div class="voice_modal hidden">
+  <div class="voice_modal_overlay"></div>
+  <div class="voice_modal_content">
+    <button class="voice_modal_close">✕</button>
+    <div class="text_box_area">
+      <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+      <div class="ann_text">버튼을 누르고, 말하세요!</div>
+    </div>
+    <div class="voice_recognizing_btn">
+      <button type="button" id="voiceBtn" data-form-type="report">
+        <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
+      </button>
+      <span id="voiceStatus" style="margin-left:10px;color:#555;">(녹음 상태 표시)</span>
+    </div>
+  </div>
 </div>
 
 <!-- 지도 모달 -->
@@ -62,209 +336,4 @@
     <div id="mapContainer" style="width:100%; height:90%;"></div>
 </div>
 
-<!-- 카카오 지도 SDK -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
-<script>
-const addressInput = document.getElementById('addressInput');
-const latitudeInput = document.getElementById('latitudeInput');
-const longitudeInput = document.getElementById('longitudeInput');
-const geocoder = new kakao.maps.services.Geocoder();
-
-let map, marker;
-
-// 지도 모달 열기
-document.getElementById('mapBtn').onclick = function() {
-    document.getElementById('mapModal').style.display = 'block';
-    setTimeout(function() {
-        let initLat = parseFloat(latitudeInput.value) || 37.6509;
-        let initLng = parseFloat(longitudeInput.value) || 127.0164;
-        const initPos = new kakao.maps.LatLng(initLat, initLng);
-        mapInit(initPos);
-    }, 100); // 모달이 열린 뒤에 지도 초기화
-};
-
-// 지도 모달 닫기
-document.getElementById('closeModal').onclick = function() {
-    document.getElementById('mapModal').style.display = 'none';
-};
-
-// 지도 초기화
-function mapInit(center) {
-    if (!map) {
-        map = new kakao.maps.Map(document.getElementById('mapContainer'), {
-            center: center,
-            level: 3
-        });
-    } else {
-        map.setCenter(center);
-    }
-
-    if (!marker) {
-        marker = new kakao.maps.Marker({ position: center, map: map });
-    } else {
-        marker.setPosition(center);
-    }
-
-    // 지도 클릭 시 주소/좌표 반영
-    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-        const latlng = mouseEvent.latLng;
-        marker.setPosition(latlng);
-
-        geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
-            if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
-                addressInput.value = result[0].address.address_name;
-                latitudeInput.value = latlng.getLat();
-                longitudeInput.value = latlng.getLng();
-            } else {
-                alert("주소 변환 실패. 한글 주소를 입력해주세요.");
-                latitudeInput.value = latlng.getLat();
-                longitudeInput.value = latlng.getLng();
-            }
-        });
-    });
-}
-// 제보 폼 음성 인식 기능
-const reportVoiceBtn = document.getElementById('voiceBtn');
-const reportVoiceStatus = document.getElementById('voiceStatus');
-let mediaRecorderReport = null;
-let audioChunksReport = [];
-let currentStreamReport = null;
-
-reportVoiceBtn.addEventListener('click', async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("브라우저가 음성 입력을 지원하지 않습니다.");
-        return;
-    }
-
-    // 녹음 중이면 중지
-    if (mediaRecorderReport && mediaRecorderReport.state === "recording") {
-        mediaRecorderReport.stop();
-        if (currentStreamReport) {
-            currentStreamReport.getTracks().forEach(track => track.stop());
-            currentStreamReport = null;
-        }
-        return;
-    }
-
-    // 녹음 시작
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        currentStreamReport = stream; 
-        mediaRecorderReport = new MediaRecorder(stream);
-        audioChunksReport = [];
-
-        mediaRecorderReport.ondataavailable = e => audioChunksReport.push(e.data);
-
-        mediaRecorderReport.onstart = () => {
-            reportVoiceStatus.textContent = "🎤 녹음 중...";
-            reportVoiceBtn.textContent = "⏹️ 녹음 중지";
-        };
-
-        mediaRecorderReport.onstop = async () => {
-            if (currentStreamReport) {
-                currentStreamReport.getTracks().forEach(track => track.stop());
-                currentStreamReport = null;
-            }
-            const audioBlob = new Blob(audioChunksReport);
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-
-            reader.onloadend = async () => {
-                const base64Audio = reader.result;
-                reportVoiceStatus.textContent = "⏳ 서버 처리 중...";
-                reportVoiceBtn.textContent = "🎤 음성 인식";
-
-                try {
-                    const response = await fetch("{% url 'stores:voice_input' %}", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ audio: base64Audio, form_type: 'report' })
-                    });
-
-                    const data = await response.json();
-                    if (!data.form_data) {
-                        reportVoiceStatus.textContent = "⚠️ 음성 처리 실패";
-                        return;
-                    }
-
-                    const formData = data.form_data;
-
-                    // store_name
-                    if (formData.store_name) {
-                        const storeNameInput = document.getElementById('id_store_name');
-                        if (storeNameInput) storeNameInput.value = formData.store_name;
-                    }
-
-                    // report_items
-                    if (formData.report_items) {
-                        const reportItemsInput = document.getElementById('id_report_items');
-                        if (reportItemsInput) reportItemsInput.value = formData.report_items;
-                    }
-
-                    // time
-                    if (formData.time) {
-                        const timeInput = document.getElementById('id_time');
-                        if (timeInput) timeInput.value = formData.time;
-                    }
-
-                    // address
-                    if (formData.address) {
-                        const addressInput = document.getElementById('addressInput');
-                        if (addressInput) addressInput.value = formData.address;
-                    }
-
-
-                    // 위도/경도 자동 설정 (Gemini가 주소만 주면 geocoder로 변환 가능)
-                    if (formData.address) {
-                        const geocoder = new kakao.maps.services.Geocoder();
-                        geocoder.addressSearch(formData.address, function(result, status) {
-                            if (status === kakao.maps.services.Status.OK && result.length > 0) {
-                                document.getElementById('latitudeInput').value = result[0].y;
-                                document.getElementById('longitudeInput').value = result[0].x;
-                            } else {
-                                alert("주소를 좌표로 변환할 수 없습니다. 지도에서 직접 선택해주세요.");
-                                document.getElementById('latitudeInput').value = "";
-                                document.getElementById('longitudeInput').value = "";
-                            }
-                        });
-                    }
-
-                    // 키워드 자동 체크 (formData.keywords가 배열 또는 쉼표로 구분된 문자열일 수 있음)
-                    if (formData.keywords) {
-                        let keywordsArr = Array.isArray(formData.keywords)
-                            ? formData.keywords
-                            : String(formData.keywords).split(',').map(s => s.trim());
-
-                        keywordsArr.forEach(keywordText => {
-                            document.querySelectorAll('input[name="keywords"]').forEach(checkbox => {
-                                const label = checkbox.parentElement;
-                                // 한글도 포함 여부 체크 가능!
-                                if (
-                                    label &&
-                                    label.textContent.replace(/\s/g, '').toLowerCase().includes(
-                                        keywordText.replace(/\s/g, '').toLowerCase()
-                                    )
-                                ) {
-                                    checkbox.checked = true;
-                                }
-                            });
-                        });
-                    }
-
-                    reportVoiceStatus.textContent = "✅ 음성 입력 완료";
-                } catch (err) {
-                    console.error(err);
-                    reportVoiceStatus.textContent = "❌ 서버 오류";
-                }
-            };
-        };
-
-        mediaRecorderReport.start();
-    } catch (err) {
-        console.error(err);
-        reportVoiceStatus.textContent = "❌ 마이크 접근 거부됨";
-    }
-});
-</script>
-
-{% endblock %}
+{% endblock body %}

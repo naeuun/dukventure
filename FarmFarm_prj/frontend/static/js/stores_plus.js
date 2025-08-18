@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- 이미지 업로드 UI 제어 (아이콘 숨기기 포함) ---
-  const fileInput = document.getElementById("field9");
+  const fileInput = document.getElementById("id_image");
   const fileInfoWrap = document.querySelector(".file_info_wrap");
   const fileNameSpan = fileInfoWrap
     ? fileInfoWrap.querySelector(".file_name")
@@ -148,15 +148,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
         fileNameSpan.textContent = file.name;
-        fileInfoWrap.style.display = "inline-flex";
-        balloon.style.display = "none"; // 말풍선 숨김
-        uploadLabel.style.display = "none"; // 업로드 아이콘 숨김
+        fileInfoWrap.style.display = "flex"; // inline-flex → flex로 변경
+        balloon.style.display = "none";
+        uploadLabel.style.display = "none";
       } else {
         fileInfoWrap.style.display = "none";
-        balloon.style.display = "block"; // 말풍선 보임
-        uploadLabel.style.display = "inline-block"; // 업로드 아이콘 보임
+        balloon.style.display = "block";
+        uploadLabel.style.display = "inline-block";
       }
     }
+
 
     fileInput.addEventListener("change", updateFileUI);
     deleteBtn.addEventListener("click", () => {
@@ -200,29 +201,5 @@ document.addEventListener("DOMContentLoaded", () => {
     cb.addEventListener("change", () => enforceMaxSelection(null, cb))
   );
 
-  // --- 등록 후 웰컴 모달 ---
-  const welcomeContent = document.querySelector(".welcome_content");
-  const welcomeOverlay = document.querySelector(".welcome_overlay");
-
-  if (registerBtn && welcomeContent && welcomeOverlay) {
-    registerBtn.addEventListener("click", (e) => {
-      if (registerBtn.disabled) return;
-
-      welcomeOverlay.style.display = "block";
-      welcomeContent.style.display = "flex";
-      document.body.style.overflow = "hidden";
-
-      e.preventDefault();
-
-      setTimeout(() => {
-        window.location.href = "/storescustomer";
-      }, 1000);
-    });
-
-    welcomeOverlay.addEventListener("click", () => {
-      welcomeOverlay.style.display = "none";
-      welcomeContent.style.display = "none";
-      document.body.style.overflow = "";
-    });
-  }
+  
 });
