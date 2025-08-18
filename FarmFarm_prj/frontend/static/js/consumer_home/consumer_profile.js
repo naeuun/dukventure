@@ -57,3 +57,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+
+  (function () {
+    // 카드 안의 말풍선 모달 찾기
+    const bubble = document.querySelector('.information-card .speech-bubble-modal');
+    if (!bubble) return;
+
+    // ❶ 처음 로드 시 잠깐 보여주기
+    const show = () => bubble.classList.add('show');
+    const hide = () => bubble.classList.remove('show');
+
+    // 페이지 로드 직후 표시
+    show();
+    // 3초 뒤 자동 숨김 (필요하면 시간 조절)
+    let hideTimer = setTimeout(hide, 3000);
+
+    // ❷ 닫기 버튼
+    const closeBtn = bubble.querySelector('.bubble-close');
+    closeBtn.addEventListener('click', () => {
+      hide();
+      clearTimeout(hideTimer);
+    });
+
+    // ❸ 카드에 마우스 올리면 다시 보여주고, 떼면 숨김
+    const card = document.querySelector('.information-card');
+    card.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer);
+      show();
+    });
+    card.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(hide, 300); // 살짝 딜레이 후 숨김
+    });
+  })();
+

@@ -29,5 +29,6 @@ urlpatterns = [
     path("consumerprofile", consumerprofile, name="consumerprofile"),
     path("consumermain", consumermain, name="consumermain"),
     path("characterhome", characterhome, name="characterhome"),
-    
+    path("historyhome", historyhome, name="historyhome"),
+    path("reservationhome", reservationhome, name="reservationhome"),
 ]

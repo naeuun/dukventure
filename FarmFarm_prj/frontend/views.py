@@ -53,3 +53,10 @@ def consumermain(request):
 
 def characterhome(request):
     return render(request, "consumer_home/character_home.html")
+
+def historyhome(request):
+    return render(request, "consumer_home/history_home.html")
+
+def reservationhome(request):
+    return render(request, "consumer_home/reservation_home.html")
+

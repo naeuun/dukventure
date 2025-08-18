@@ -56,6 +56,7 @@ body {
 
 /* 오른쪽 정보 */
 .information_detail {
+  position: relative;
   width: 100px;
   height: 240x;
   background:#373D2D;
@@ -66,11 +67,105 @@ body {
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; 
-  align-items: flex-end;
+  position: relative;  
   margin-left: 0;
 }
+/* 이름 수정 팝업 (기본: 숨김) */
+.name-edit-popover {
+  position: absolute;
+  top: -8px;          /* 위치는 상황에 맞게 미세조정 */
+  right: -6px;
 
+  width: 105.528px;
+  min-height: 58.881px;
+  padding: 10px 12px;
+
+  border-radius: 16px;
+  border: 0.6px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.07);
+  background-blend-mode: plus-lighter;
+  box-shadow:
+    -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
+    -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
+    1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
+    0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
+  backdrop-filter: blur(2.72px);
+
+  color: #FFF;
+  font-family: Pretendard, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: normal;
+
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 50;
+}
+
+/* 보임 상태 */
+.name-edit-popover.show { display: flex; }
+
+/* 닫기(X) 버튼 */
+.name-pop-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  /* border 제거 */
+  border: none;
+  background: transparent; 
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+  cursor: pointer;
+}
+
+/* 인풋 */
+.name-input {
+  width: 75%;
+  height: 28px;
+  padding: 4px 8px;
+  /* border 제거 */
+  border: none;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.18);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+}
+
+.name-input::placeholder { color: rgba(255,255,255,.65); }
+
+/* 저장 버튼 */
+.name-pop-save {
+  align-self: flex-end;
+  height: 12px;
+  padding: 0 10px;
+  /* border 제거 */
+  border: none;
+  background: transparent; 
+  position: relative;
+  left: 10px;
+  cursor: pointer;
+}
+
+/* 연필 아이콘 클릭 영역 */
+.edit { 
+  cursor: pointer; 
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+}
+.name-box {
+  width: 100%;
+  text-align: left;
+  margin-top: 24px; /* edit 버튼 아래 여백 */
+}
 .cha_name {
   font-size: 14px;
   font-weight: 600;
@@ -220,3 +315,81 @@ body {
 
 /* (선택) 메달만 따로 쓰는 .th 클래스가 있으면 유지 가능 */
 .th { width: 50px; height: 50px; }
+
+/* 하단네비게이션 */
+.bottom_nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 74px;
+  max-width: 401px;
+  margin: auto;
+  background: inherit;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.664);
+  box-shadow:
+  0 0 30px rgba(255, 255, 255, 0.6),
+  0 0 8px rgba(255, 255, 255, 0.8),
+  inset 0 0 3px rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding:7px 0;
+  z-index: 1000;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+}
+
+.bottom_nav a {
+  text-decoration: none;
+  color: #888;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.map_page {
+  width: 16px;
+  margin: 3px 0 -3px;
+}
+
+.home_page {
+  width: 24px;
+  margin: 3px 0 -3px;
+}
+
+.shopping_page {
+  font-size: 20px;
+  font-weight: 600;
+  color: #D9D9D9;
+}
+
+.selected_nav {
+  background-color: #C1FF52;
+  border: 1px solid black;
+  border-radius: 11px;
+  color: black;
+}
+
+.selected_nav a {
+  color: black;
+}
+
+.nav_box {
+  position: relative;
+}
+
+.now_page {
+  width: 10.7px;
+  position: absolute;
+  bottom: 72px;
+  left: 195px;
+}
