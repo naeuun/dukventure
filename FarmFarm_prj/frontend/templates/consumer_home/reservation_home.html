@@ -128,6 +128,39 @@
     <button class="btn btn-lime modal__submit">입력완료</button>
   </div>
 </div>
+<!-- 네비게이션 바 -->
+<div class="nav_box">
+  <nav class="bottom_nav">
+    <div class="btn1">
+      <a href="/storescustomer">
+        <img
+          src="{% static 'img/map_page_black.png' %}"
+          alt="지도페이지"
+          class="map_page"
+        />
+      </a>
+    </div>
+    <img
+      src="{% static 'img/now_page.png' %}"
+      alt="현재 페이지"
+      class="now_page"
+    />
+    <div class="btn selected_nav">
+      <a href="/consumermain">
+        <img
+          src="{% static 'img/home_page_gray.png' %}"
+          alt="홈페이지"
+          class="home_page"
+        />
+      </a>
+    </div>
+    <div class="btn1">
+      <a href="/shoppingpage">
+        <span class="shopping_page">AI</span>
+      </a>
+    </div>
+  </nav>
+</div>
 {% endblock body %} {% block script %}
 <script src="{% static 'js/consumer_home/reservation_home.js' %}"></script>
 {% endblock script %}
