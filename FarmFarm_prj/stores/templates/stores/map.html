@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 제보 마커 ---
     function createReportMarker(report){
+        
         if(report.latitude && report.longitude){
             placeReportMarker(new kakao.maps.LatLng(report.latitude, report.longitude), report);
         } else if(report.address){
@@ -76,24 +77,56 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function placeReportMarker(coords, report){
-        const marker = new kakao.maps.Marker({ map: map, position: coords, title: report.store_name });
-        markers.push(marker);
+function placeReportMarker(coords, report){
+    const markerImage = new kakao.maps.MarkerImage(markerImageSrc, new kakao.maps.Size(20, 20), { offset: new kakao.maps.Point(20, 40) });
+    const marker = new kakao.maps.Marker({ map: map, position: coords, title: report.store_name, image: markerImage });
+    markers.push(marker);
 
-        kakao.maps.event.addListener(marker,'click', function(){ 
-            reportModal.querySelector('#reportName').textContent = report.store_name;
-            reportModal.querySelector('#reportAddress').textContent = report.address || '';
-            reportModal.querySelector('#reportItems').textContent = report.items?.map(i=>i.name).join(', ') || '';
-            reportModal.querySelector('#reportKeywords').textContent = report.keywords?.join(', ') || '';
-            if(report.image){
-                const existingImg = reportModal.querySelector('img.report-image');
-                if(existingImg) existingImg.remove();
-                const imgHTML = `<img class="report-image" src="${report.image}" alt="${report.store_name}" style="width:200px; max-height:200px; object-fit:cover; margin-bottom:12px;">`;
-                reportModal.querySelector('#reportItems').insertAdjacentHTML('beforebegin', imgHTML);
-            }
-            openReportModal();
-        });
-    }
+    kakao.maps.event.addListener(marker,'click', async function(){ 
+        const reportItemListEl = document.getElementById('reportItemList');
+        reportItemListEl.innerHTML = ''; // 초기화
+
+        // 모달 상단 이름
+        document.getElementById('reportName').textContent = report.store_name;
+
+        // 이미지 카드
+        if(report.image){
+            const imgCard = document.createElement('div');
+            imgCard.className = 'item-card';
+            imgCard.innerHTML = `<img src="${report.image}" alt="${report.store_name}" class="modal_product_img">`;
+            reportItemListEl.appendChild(imgCard);
+        }
+
+        // 품목 카드
+        if(report.items && report.items.length > 0){
+            report.items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.innerHTML = `
+                    <p><strong>품목:</strong> ${item.name} (${item.unit || ''})</p>
+                    <p><strong>설명:</strong> ${item.description || ''}</p>
+                `;
+                reportItemListEl.appendChild(card);
+            });
+        } else {
+            reportItemListEl.innerHTML += '<div class="item-card"><p>등록된 품목이 없습니다.</p></div>';
+        }
+
+        // 키워드 카드
+        if(report.keywords && report.keywords.length > 0){
+            const kwCard = document.createElement('div');
+            kwCard.className = 'item-card';
+            kwCard.innerHTML = `<p><strong>키워드:</strong> ${report.keywords.join(', ')}</p>`;
+            reportItemListEl.appendChild(kwCard);
+        }
+
+        openReportModal();
+    });
+}
+
+
+
+
 
     // --- 판매자 모달 & 예약 ---
     async function fetchStoreItems(storeId, storeName) {
@@ -111,9 +144,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     card.className = 'item-card';
                     card.setAttribute('data-item-id', item.id);
                     card.innerHTML = `
-                        ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}" style="width:100%; border-radius:8px;">` : ''}
-                        <p class="product_detail"><strong>품목:</strong> ${item.name} (${item.unit || ''})  ${item.price.toLocaleString()}원</p>
-                        <p><strong>설명:</strong> ${item.description || ''}</p>
+                    <div class="per_stores">
+                        <div class="modal_info_box">
+                        ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}" class="modal_product_img">` : ''}
+                        <div class="detail_info">
+                            <p class="product_detail"><strong>품목:</strong> ${item.name} (${item.unit || ''})  ${item.price.toLocaleString()}원</p>
+                            <p><strong>설명:</strong> ${item.description || ''}</p>
+                        </div>
                         {% if request.user.is_authenticated and request.user.usertype == 'BUYER' %}
 
                         <div class="reservation-form">
@@ -121,17 +158,23 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="quantity_box">
                                     <label>수량</label>
                                     <div>
-                                        <button type="button" class="qty-btn minus-btn">-</button>
-                                        <input type="number" class="qty-input" value="1" min="1" style="width:50px; text-align:center;">
-                                        <button type="button" class="qty-btn plus-btn">+</button>
+                                        <button type="button" class="qty_btn minusBtn">-</button>
+                                        <input type="number" class="qty-input quantity" value="1" min="1" style="width:50px; text-align:center;">
+                                        <button type="button" class="qty_btn plusBtn">+</button>
                                     </div>
                                     <label>픽업 시간</label>
-                                    <input type="time" class="pickup-time-input" step="600" required style="margin-bottom:10px;">
-                                    <button type="button" class="reserve-now-btn" style="width:100%; padding:10px; background:#A5D6A7; border:none; border-radius:8px; font-weight:bold;">예약하기</button>
+                                    <div class="time_box">
+                                        <input type="time" class="pickup-time-input" step="600" required style="margin-bottom:10px;">
+                                    </div>
+                                    <div class="resbuttonhugger">
+                                        <button type="button" class="reserve_btn reserve-now-btn" style="width:100%; padding:10px; background:#A5D6A7; border:none; border-radius:8px; font-weight:bold;">예약하기</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         {% endif %}
+                        </div>
+                    </div>
                     `;
                     modalItemListEl.appendChild(card);
                 });
@@ -260,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="sheet_content_v2">
                 <div class="many_items_store">
                     <h3 id="modalStoreName"></h3>
-                    <button onclick="closeStoreModal()">닫기</button>
+                    <button onclick="closeStoreModal()" class="closingbtn">×</button>
                     <div id="modalItemList"></div>
                 </div>
             </div>
@@ -271,13 +314,13 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="sheet_content_v2">
                 <div class="many_items_store">
                     <h3 id="reportName"></h3>
-                    <button onclick="closeReportModal()">닫기</button>
-                    <p id="reportAddress"></p>
-                    <p id="reportItems"></p>
-                    <p id="reportKeywords"></p>
+                    <button onclick="closeReportModal()" class="closingbtn">×</button>
+                    <div id="reportItemList"></div>
                 </div>
             </div>
         </div>
+
+
 
         <!-- 네비게이션 바 -->
         <div class="nav_box">
