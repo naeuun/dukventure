@@ -67,12 +67,14 @@
             <span class="smalltext">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
           </div>
           <img src="{% static 'img/voice_brocoli.png' %}" alt="쪼꼬미브로콜리" class="small_brocoli" />
-          <button 
-            type="button"
-            class="letsregister"
-            onclick="location.href='selleronboarding3'">
-            등록하기
-          </button>
+          <a href="{% url 'stores:register' %}">
+            <button 
+              type="button"
+              class="letsregister"
+              onclick="location.href='selleronboarding3'">
+              등록하기
+            </button>
+          </a>
         </div>
       </div>
     </div>

@@ -277,11 +277,11 @@ document.addEventListener("DOMContentLoaded", function () {
       />
     </div>
 
-    {% if store %}
     <!-- 정보 카드 영역 -->
     <div class="information_zone">
       <div class="per_res">
         <div class="information-card">
+          {% if store %}
           {% for store_item in store.store_items.all %}
           <div class="information_hugger">
             <div class="product-img-wrap">
@@ -328,14 +328,26 @@ document.addEventListener("DOMContentLoaded", function () {
           {% empty %}
           <div>등록된 품목이 없습니다.</div>
           {% endfor %}
-        <a href="{% url 'stores:edit_store' store.id %}">가게 정보 수정</a>
+          <a href="{% url 'stores:edit_store' store.id %}">가게 정보 수정</a>
+          {% else %}
+          <img src="{% static 'img/smiling_brocoli.png' %}" alt="브로콜리" class="brocoli" />
+          <div>
+            <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="textbox_small" />
+            <span class="smalltext">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
+          </div>
+          <img src="{% static 'img/voice_brocoli.png' %}" alt="쪼꼬미브로콜리" class="small_brocoli" />
+          <a href="{% url 'stores:register' %}">
+            <button 
+              type="button"
+              class="letsregister"
+              onclick="location.href='selleronboarding3'">
+              등록하기
+            </button>
+          </a>
+          {% endif %}
         </div>
       </div>
     </div>
-    {% else %}
-      <p>아직 등록된 가게가 없습니다.</p>
-      <button type="button"><a href="{% url 'stores:register' %}">가게 등록하기</a></button>
-    {% endif %}
 
 
     <!-- 품목 수정 모달 -->
