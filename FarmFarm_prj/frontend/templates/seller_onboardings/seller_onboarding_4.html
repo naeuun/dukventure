@@ -21,7 +21,7 @@
             </p>
             <div class="registerornot">
                 <button type="button" value="사업자 등록 O" class="btns"
-                    onclick="window.location.href='https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&menuCd=index3'">
+                    onclick="window.location.href='https://hometax.go.kr'">
                     등록 하러 가기
                 </button>
 
@@ -52,8 +52,10 @@
             </div>
 
         
-        <div class="prev_page" onclick="history.back()">
-            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        <div class="prev_page">
+            <a href="{% url 'users:seller_step1' %}">
+                <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+            </a>
         </div>
     </div>
 </div>

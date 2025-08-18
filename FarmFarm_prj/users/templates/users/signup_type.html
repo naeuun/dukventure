@@ -1,9 +1,47 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% load static %} 
+{% block style %} 
+    <link
+    rel="stylesheet"
+    href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}"
+    />
+{% endblock style %}
+
+{% block script %} {% endblock script %} 
+
+{% block body %}
+
+<!-- common_onboarding.html (재사용) ✅ -->
 {% block content %}
-<h2>당신은 무엇인가요?</h2>
-<form method="post" action="{% url 'users:signup_type' %}">
-    {% csrf_token %}
-    <button type="submit" name="usertype" value="SELLER">판매자</button>
-    <button type="submit" name="usertype" value="BUYER">구매자</button>
-</form>
+<div class="big_hugger">
+    <div class="container">
+        <div class="progress_bar"></div>
+        <div class="content">
+        <p class="bigger_content">당신은 무엇인가요?</p>
+        <form action="{% url 'users:signup_type' %}" method="post">
+            {% csrf_token %}
+            <div class="buttons">
+            <button
+                type="submit"
+                name="usertype"
+                value="SELLER"
+                class="button_"
+            >
+                판매자
+            </button>
+            <button
+                type="submit"
+                name="usertype"
+                value="BUYER"
+                class="button_"
+            >
+                구매자
+            </button>
+            </div>
+        </form>
+        </div>
+    </div>
+    <!--뒤로가기 추가해서 버튼 아래 링크 끼워넣어주세요 -->
+    <!--<a href="{% url 'users:onboarding' %}" class="button_">뒤로가기</a> -->
+</div>
 {% endblock %}
+{% endblock body %}

@@ -16,29 +16,27 @@
     <div class="progress_bar"></div>
     <div class="content">
       <p class="bigger_content">당신은 무엇인가요?</p>
-      <form action="{% url 'users:auto_login' %}" method="post">
+      <form action="{% url 'users:signup_type' %}" method="post">
         {% csrf_token %}
         <div class="buttons">
           <button
             type="submit"
-            name="role"
-            value="seller"
+            name="usertype"
+            value="SELLER"
             class="button_"
           >
-            판매자 박OO
+            판매자
           </button>
           <button
             type="submit"
-            name="role"
-            value="buyer"
+            name="usertype"
+            value="BUYER"
             class="button_"
           >
-            구매자 김OO
+            구매자
           </button>
         </div>
       </form>
-      <a href="{% url 'users:login' %}">로그인</a>
-      <a href="{% url 'users:signup_type' %}">회원가입</a>
     </div>
   </div>
 </div>

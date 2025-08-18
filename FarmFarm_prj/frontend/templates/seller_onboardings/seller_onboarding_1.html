@@ -16,10 +16,13 @@
         </div>
         <div class="content">
             <p class="bigger_content"><span class="green_highlight">사업자등록</span>을 하셨나요?</p>
-            <div class="buttons">
-                <button type="button" value="사업자 등록 O" onclick="location.href='selleronboarding6'" class="button_">네</button>
-                <button type="button" value="사업자 등록 X" onclick="location.href='selleronboarding4'" class="button_">아니요</button>
-            </div>
+            <form action="{% url 'users:seller_step1' %}" method="post">
+                {% csrf_token %}
+                <div class="buttons">
+                    <button type="submit" name="registered" value="yes" class="button_">네</button>
+                    <button type="submit" name="registered" value="no" class="button_">아니요</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

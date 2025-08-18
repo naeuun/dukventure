@@ -34,7 +34,7 @@
     display:flex;
     align-items: center;
     counter-increment: item;
-    margin:10px 0 70px -30px;
+    margin:10px 0 45px -30px;
 }
 .form_row li:last-child{
     margin-bottom:10px;
