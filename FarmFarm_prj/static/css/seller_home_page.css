@@ -173,7 +173,6 @@ body {
     overflow: hidden;
     width: 365px;
     height: auto;
-    min-height: 400px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     border: 1px solid black;
     display: flex;
@@ -195,12 +194,12 @@ body {
   }
 
   .information_zone {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* 카드 간 간격 */
-  margin-top: 350px; /* 필요 시 조정 */
-  position: relative; /* 절대 위치 제거 */
-}
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 카드 간 간격 */
+    margin-top: 350px; /* 필요 시 조정 */
+    position: relative; /* 절대 위치 제거 */
+  }
 
   .product-img-wrap {
     position: relative;
@@ -437,10 +436,12 @@ body {
   color: black;
   border: none;
 }
+.review_section{
+    margin: 20px 0; /* 위 아래 간격 */
 
-.review_section {
-  margin-top: 20px; /* 가게 정보 끝과 리뷰 간 간격 */
-  position: relative; /* 절대 위치 제거 */
+  position: relative;    width: 100%; 
+    display: flex;
+    justify-content: center;
 }
 
 .review_hugger {
@@ -455,6 +456,7 @@ body {
   flex-direction: column;
   padding: 10px;
 }
+
 .review_deco{
   position:absolute;
   width:22.6px;
@@ -561,8 +563,4 @@ body {
 }
 .modal-content{
   top:177px;
-}
-
-#editItemForm label{
-  color:black;
 }
