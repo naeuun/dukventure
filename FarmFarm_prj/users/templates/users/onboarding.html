@@ -37,8 +37,10 @@
           </button>
         </div>
       </form>
-      <a href="{% url 'users:login' %}">로그인</a>
-      <a href="{% url 'users:signup_type' %}">회원가입</a>
+      <div>
+        <a href="{% url 'users:login' %}" style="text-decoration: none; color:white;">로그인</a> / 
+        <a href="{% url 'users:signup_type' %}" style="text-decoration: none; color:white;">회원가입</a>
+      </div>
     </div>
   </div>
 </div>

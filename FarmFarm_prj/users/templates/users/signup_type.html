@@ -14,7 +14,9 @@
 {% block content %}
 <div class="big_hugger">
     <div class="container">
-        <div class="progress_bar"></div>
+        <div class="progress_bar">
+            <div class="now_step" style="width: 30px;"></div>
+        </div>
         <div class="content">
         <p class="bigger_content">당신은 무엇인가요?</p>
         <form action="{% url 'users:signup_type' %}" method="post">

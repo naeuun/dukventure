@@ -1,0 +1,22 @@
+.input_field {
+    border: 1px solid #C1FF52;
+    width: 297px;
+    height: 46px;
+    border-radius: 26px;
+    font-size: 15px;
+    font-weight: 700;
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1px 6px;
+    margin-bottom: 8px;
+}
+
+.now_step{
+    width: 199px; /* 초기 너비 */
+}
+.now_step.completed {
+  width: 336px !important; 
+}
