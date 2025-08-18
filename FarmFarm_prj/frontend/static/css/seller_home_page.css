@@ -1,0 +1,564 @@
+body {
+  margin: 0;
+  background-color: transparent;
+}
+
+.big_hugger {
+  margin: 0 auto;
+  max-width: 402px;
+  min-height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(#ffffff, #daf6cf);
+  
+}
+
+  .container {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0;
+  }
+  
+  .line_{
+    position: absolute;
+    top:265px;
+    width:100%;
+    height:3px;
+    border-top: 0.5px solid black;
+    background-color: #C1FF52;
+    border-bottom: 1px solid black;
+  }
+
+  .res_section {
+    margin: 20px 0;
+    position:absolute;
+    top:270px;
+    left:20px;
+  }
+  
+  .information_ {
+    background: #C1FF52;
+    width: 130px;
+    height:46px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color: black;
+    font-weight: 700;
+    font-size: 15px;
+    border: 1px solid black;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+  }
+  
+  .res_check{
+    width:30px;
+    margin-left:10px;
+  }
+
+  .bottom_nav {
+    position: fixed;
+    height: 74px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 401px;
+    margin: auto;
+    background: inherit;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.664);
+    box-shadow:
+      0 0 30px rgba(255, 255, 255, 0.6),
+      0 0 8px rgba(255, 255, 255, 0.8),
+      inset 0 0 3px rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 7px 0;
+    z-index: 1000;
+  }
+  
+  .bottom_nav a {
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .map_page {
+    width: 16px;
+  }
+  
+  .home_page {
+    width: 24px;
+  }
+  
+  .shopping_page {
+    font-size: 20px;
+    font-weight: 600;
+    color: #D9D9D9;
+  }
+  
+  .selected_nav {
+    background-color: #C1FF52;
+    border: 1px solid black;
+    border-radius: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+  }
+  
+  .selected_nav a {
+    color: black;
+  }
+  
+  .nav_box {
+    position: relative;
+  }
+  
+  .now_page {
+    width: 10.7px;
+    position: absolute;
+    bottom: 72px;
+    left: 195px;
+  }
+  
+  .side_deco {
+    margin-top:5px;
+    transform: rotate(-90deg);
+    width: 19.65px;
+    height: auto;
+    display: block;
+  }
+  
+  .decoration_right {
+    position: absolute;
+    right: 100px;
+    top: 180px;
+    z-index: 10;
+  }
+  .twinkle{
+    width:20px;
+    margin-bottom:-5px;
+  }
+
+  .boom{
+    width:40px;
+    margin-left:10px;
+  }
+  .hello{
+    width:300px;
+    margin:0;
+    display:flex;
+    align-items: flex-end;
+  }
+
+  .information-card {
+    background: linear-gradient(#ffffff, #617c57);
+    border-radius: 16px;
+    overflow: hidden;
+    width: 365px;
+    height: 433px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .information_hugger{
+    width:315px;
+    height: 321px;
+    background: linear-gradient(#ffffff, #daf6cf);
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 23px;
+    margin-top:15px;
+  }
+
+  .information_zone{
+    display:flex;
+    flex-direction:column;
+    position:absolute;
+    top:350px;
+  }
+
+  .product-img-wrap {
+    position: relative;
+    width: 285px;
+  
+  }
+  
+  .product-img {
+    width: 100%;
+    height: 190.5px;
+    object-fit: cover;
+    border-radius:17px;
+  }
+  .change_photo_btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+  .change_photo{
+    width:18px;
+    z-index:10;
+  }
+  .product-info {
+    margin-top: -40px; /* 프로필 겹치는 공간 확보 */
+    text-align: left;
+    font-size: 13px;
+    font-weight:700;
+    color:black;
+    width:265px;
+    height:92.6px;
+    border: 0.7px solid #828282;
+    border-radius:16px;
+    padding:40px 10px 0 10px;
+    background-color:rgba(255, 255, 255, 0.8);
+  }
+  
+  .product-info li{
+    margin: -5px 0;
+  }
+.recog{
+    position:absolute;
+    bottom: 70px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.textbox{
+    width:183.7px;
+    position:absolute;
+    left:-110px;
+    bottom:-40px;
+}
+.texts{
+  position: absolute;
+  font-size: 12px;
+  font-weight:700;
+  color: black;
+  white-space: nowrap;
+  bottom:-27px;
+  left:-90px;
+}
+.text_box_hugger{
+    position: relative;
+}
+.voice_recognization_btn{
+  position: absolute;
+  bottom:-36px;
+  right:-140px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    width: 46.4px;
+    height:46.4px;
+    border-radius: 50%;
+    background-color: #C1FF52;
+}
+.mic{
+    width:20px;
+}
+
+
+
+/* 모달 전체 */
+.voice_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* 숨김 클래스 */
+  .hidden {
+    display: none;
+  }
+  
+  /* 배경 오버레이 */
+  .voice_modal_overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* 모달 내부 콘텐츠 */
+  .voice_modal_content {
+    position: absolute;
+    border: 1px solid white; 
+    box-shadow:
+    24px 24px 24px rgba(42, 42, 42, 0.3),
+    18px 18px 18px rgba(109, 109, 109, 0.12),
+    inset 0 0 8px rgba(255, 255, 255, 0.35);
+    border-radius: 20px;
+    width: 339px;
+    height: 161px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #C1FF52;
+    transition: transform .18s ease, opacity .18s ease;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    bottom:10vh;
+  }
+  
+  
+  
+  /* 안내 텍스트 */
+  .voice_modal_text {
+    width:161px;
+  }
+  
+  /* 닫기 버튼 */
+  .voice_modal_close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+/*음성인식모달*/
+.text_box_area{
+  position:relative;
+}
+.voice_modal_ann{
+  width:195px;
+  top:0;
+}
+.ann_text{
+  color:black;
+  position:absolute;
+  top:10px;
+  left:23px;
+  font-size: 14px;
+  font-weight: 700;
+}
+  .voice_recognizing_btn{
+    width:47px;
+    height:47px;
+    border:2px solid #C1FF52;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    transition: background-color 0.2s;
+  }
+  /* 마이크 아이콘 */
+  .voice_modal_mic {
+    width: 21px;
+  }
+
+.voice_recognizing_btn.recording {
+    background-color: #C1FF52; 
+  }
+  
+.brocoli{
+  width:326px;
+  position:absolute;
+  top:50px;
+  opacity: 30%;
+}
+.smalltext{
+  position:absolute;
+  white-space: nowrap;
+  top:146px;
+  left:115px;
+  font-size: 13px;
+  font-weight:700;
+}
+.small_brocoli{
+  position:absolute;
+  width:217px;
+  top:120px;
+}
+.textbox_small{
+  position:absolute;
+  top:140px;
+  left:105px;
+  width:162px;
+}
+.letsregister{
+  width: 152.8px;
+  height:52px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 28px;
+  position:absolute;
+  bottom:105px;
+  background-color: black;
+  color: #C1FF52;
+  border: 1px solid #C1FF52;
+}
+.letsregister:hover{
+  background-color: #C1FF52;
+  color: black;
+  border: none;
+}
+.review_section{
+    margin: 20px 0;
+    position:absolute;
+    top:780px;
+    left:20px;
+  
+}
+/*리뷰내역요소*/
+.review_hugger{
+  position:relative;
+  top:740px;
+  width:366.6px;
+  height:606px;
+  background: linear-gradient(black, #0b2401);
+  border:1px solid #C1FF52;
+  border-radius: 35px 35px 0 0 ;
+  display:flex;
+  padding:10px;
+  flex-direction: column;
+}
+.review_deco{
+  position:absolute;
+  width:22.6px;
+  right:20px;
+  top:60px;
+}
+.per_review{
+  margin:10px;
+  width:302px;
+  height:90px;
+  background: linear-gradient(#ffffff, #daf6cf);
+  border:1px solid black;
+  border-radius: 23px;
+  position:relative;
+}
+.reviewer_profile{
+  width:46.5px;
+  height:46.5px;
+  border:2px solid #C1FF52;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top:-10px;
+  z-index: 10;
+}
+.r_profile_p{
+  width:46.5px;
+  height:46.5px;
+  border-radius: 50%;
+}
+.stars{
+  display:flex;
+  position: absolute;
+  left:55px;
+  top:8px;
+}
+.per_star{
+  width:15px;
+  margin:0 2.2px;
+}
+.review_content{
+  width:150px;
+  height:54px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  position:absolute;
+  top:28px;
+  left:10px;
+  background-color: #FFFFFF;
+  border:1px solid black;
+  opacity: 70%;
+  border-radius: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  padding:0 20px;
+  color:#0b2401;
+}
+.date{
+  position: absolute;
+  top:10px;
+  right:20px;
+  font-size: 7px;
+  font-weight: 700;
+  color: #828282;
+}
+
+
+.profile-section{
+  position:absolute;
+  top:0;
+  padding-bottom:7px;
+  border-bottom:4px solid #C1FF52;
+}
+.textbox0{
+  position:absolute;
+  top:10px;
+  left:30px;
+}
+.textbox0 img{
+  position:absolute;
+  top:-7px;
+}
+.textbox1{
+  width:215px;
+  position:absolute;
+  bottom:0;
+}
+.green_highlight{
+  color:#C1FF52;
+  margin-right:-3px;
+}
+.bigger_green_highlight{
+  color:#C1FF52;
+  margin-right:-3px;
+  font-size: 15.3px;;
+}
+.smaller-text{
+  font-size: 10.3px;
+  font-weight:700;
+}
+.modal-overlay{
+  position:absolute;
+}
+.modal-content{
+  top:177px;
+}

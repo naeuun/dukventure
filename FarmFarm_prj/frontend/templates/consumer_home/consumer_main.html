@@ -1,0 +1,544 @@
+{% extends "../base.html" %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/consumer_home/consumer_main.css' %}"
+/>
+
+{% endblock style %} {% block script %}
+<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
+{% endblock script %} {% block body %}
+<div class="big_hugger">
+  <div class="top-section">
+    <!-- 상단 프로필 영역 -->
+    <div class="profile-section">
+      <div class="logo">
+        <img src="{% static 'img/background.png' %}" alt="" />
+        <img src="{% static 'img/background2.png' %}" alt="" />
+      </div>
+      <div class="welcome-box">
+        <div class="backgroundimg">
+          <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+        </div>
+        <div class="profile-info">
+          <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
+          <div class="profile-text">
+            <div class="textbox">
+              <span class="nickname-highlight"
+                ><span class="nickname"> 바그바그</span></span
+              >
+              <span class="welcome-text">님 반가워요!</span>
+              <img src="{% static 'img/emo1.png' %}" alt="" />
+            </div>
+
+            <div class="textbox1">
+              <div class="firstmsg">
+                오늘 뭐 먹을까?
+                <img src="{% static 'img/emo2.png' %}" alt="" class="pic" />
+              </div>
+              <div class="desc-text">
+                근처 <span class="green_small">노점</span>에서
+                <span class="green_small">신선하게</span> 장봐봐요!
+              </div>
+              <div class="lastmsg">
+                <span class="desc-text"
+                  >지금 내 근처, 장보는 가장 따뜻한 방법 "</span
+                ><span class="farmfarm">팜팜</span>"
+                <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-box">
+          <img
+            src="{% static 'img/Union.png' %}"
+            alt=""
+            class="profile_hugger"
+          />
+          <div class="profile-edit">
+            <img
+              id="profileImage"
+              src="{% static 'img/dummy_egg.png' %}"
+              alt="프로필"
+            />
+          </div>
+          <div class="level-box">
+            <p class="nickname">
+              바그바그
+              <img
+                id="editProfileBtn"
+                src="{% static 'img/edit.png' %}"
+                alt="수정"
+                style="cursor: pointer"
+              />
+            </p>
+            <p class="level">
+              LV.3
+              <img src="{% static 'img/level.png' %}" alt="" />
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 모달 -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal-content">
+        <div class="modal-actions">
+          <button id="closeModalBtn">×</button>
+        </div>
+        <div class="nickname-row">
+          <input type="text" id="nicknameInput" value="바그바그" />
+          <img
+            class="nickname-edit-btn"
+            src="{% static 'img/edit.png' %}"
+            alt="닉네임 수정"
+          />
+        </div>
+
+        <div class="image-row">
+          <div class="image-preview">
+            <img
+              src="{% static 'img/dummy_egg.png' %}"
+              alt="프로필 미리보기"
+              class="preview_img"
+            />
+            <img
+              class="image-edit-btn"
+              src="{% static 'img/edit.png' %}"
+              alt="이미지 수정"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="line"></div>
+  </div>
+
+  <div class="bottom-section">
+    <section class="content_home">
+      <!--마이캐릭터 정보-->
+      <div class="cha_section">
+        <div class="character">
+          마이 캐릭터
+          <img
+            src="{% static 'img/character_icon.png' %}"
+            alt="마이캐릭터 아이콘"
+            class="cha_check"
+          />
+        </div>
+      </div>
+
+      <!--마이캐릭터 상세 내용-->
+      <div class="information_zone">
+        <div class="cha_res">
+          <div class="information-card">
+            <!-- 캐릭터 + 정보 영역 -->
+            <div class="info-wrapper">
+              <!-- 왼쪽 캐릭터 -->
+              <div class="information_cha">
+                <!-- 화살표 -->
+                <img
+                  src="{% static 'img/tra.png' %}"
+                  alt="마이캐릭터 화살표"
+                  class="cha_tra"
+                />
+                <!-- 상단 썸네일 -->
+                <div class="thumbnail-row">
+                  <img
+                    src="{% static 'img/1cha.png' %}"
+                    alt="마이캐릭터 뒷모습"
+                  />
+
+                  <img
+                    src="{% static 'img/3cha.png' %}"
+                    alt="마이캐릭터 앞모습"
+                  />
+                  <img
+                    src="{% static 'img/2cha.png' %}"
+                    alt="마이캐릭터 가운데"
+                  />
+                </div>
+                <div class="main-image-container">
+                  <!-- 메인 캐릭터 -->
+                  <img
+                    src="{% static 'img/cha1.png' %}"
+                    alt="마이캐릭터 메인"
+                    class="main-character"
+                  />
+                </div>
+              </div>
+
+              <!-- 오른쪽 정보 -->
+              <div class="information_detail">
+                <h3 class="cha_name">
+                  이름: <br /><span class="cha_nic">브로브로브로콜리</span>
+                </h3>
+                <h3 class="cha_growth">성장 퍼센트:</h3>
+                <div class="growth_chart">
+                  <svg width="80" height="80">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      stroke="#C1FF52"
+                      stroke-width="8"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      stroke="#37A446"
+                      stroke-width="8"
+                      fill="none"
+                      stroke-dasharray="220"
+                      stroke-dashoffset="77"
+                    />
+                  </svg>
+                  <span class="growth_percent">65%</span>
+                </div>
+              </div>
+              <a href="{% url 'characterhome' %}">
+                <img
+                  src="{% static 'img/more.png' %}"
+                  alt="마이캐릭터 더보기"
+                  class="cha_more"
+                />
+              </a>
+
+              <img
+                src="{% static 'img/cha_gra.png' %}"
+                alt="마이캐릭터 장식"
+                class="cha_gra"
+              />
+            </div>
+            <!-- 말풍선 모달 -->
+            <div class="speech-bubble-modal" aria-hidden="true">
+              <div class="speech-bubble">
+                <span class="line1">가게등록 또는 리뷰를 쓰면</span><br />
+                <span class="line2">리워드</span><span class="line1">가 주어지고<br />브로콜리가</span> <span class="line2">자라요!</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--리워드현황 정보-->
+      <div class="rew_section">
+        <div class="character">
+          리워드 현황
+          <img
+            src="{% static 'img/reward_icon.png' %}"
+            alt="리워드 현황 아이콘"
+            class="cha_check"
+          />
+        </div>
+      </div>
+      <!--리워드 현황 상세 내용-->
+      <div class="information_zone">
+        <div class="rew_res">
+          <div class="information2-card">
+            <img
+              src="{% static 'img/reward_total.png' %}"
+              alt="리워드 현황 아이콘"
+              class="rew_total"
+            />
+            <div class="more">
+                <img
+                  src="{% static 'img/rew_gra.png' %}"
+                  alt="리워드 현황 아이콘"
+                  class="rew_gra"
+                />
+
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!--예약현황 정보-->
+      <div class="res_section">
+        <div class="character">
+          예약 현황
+          <img
+            src="{% static 'img/res_icon.png' %}"
+            alt="예약 현황 아이콘"
+            class="res_check"
+          />
+        </div>
+      </div>
+      <!--예약 현황 상세 내용-->
+      <div class="information_zone">
+        <div class="res_res">
+          <div class="information3-card">
+            <div class="more">
+              <a href="{% url 'reservationhome' %}">
+                <img
+                  src="{% static 'img/res_more.png' %}"
+                  alt="예약 현황 더보기"
+                  class="res_more"
+                />
+              </a>
+
+            </div>
+            <div class="back_detail">
+              <div class="details_img">
+                <img
+                  src="{% static 'img/egg.png' %}"
+                  alt="예약 현황 "
+                  class="tomato"
+                />
+              </div>
+              <div class="details_txt">
+                <span>
+                판매자: 창동시장 달걀 할머니 위치: 덕성여대 후문 옆 판매 시간:
+                내일 오전 10시~12시 가격: 3,000원 상태: 예약 중 (픽업 알림 예정)
+                <span>
+              </div>
+            </div>
+            <div class="res_detial">
+              <div class="detail_img">
+                <img
+                  src="{% static 'img/tomato.png' %}"
+                  alt="예약 현황 "
+                  class="tomato"
+                />
+              </div>
+              <div class="detail_txt">
+                <span>
+                  판매자: 박미향 <br>
+                  위치: 수유역 4번 출구 앞 <br>
+                  판매 시간: 오늘 오후 4시~7시 <br>
+                  가격: 2,500원 <br>
+                  상태: 예약 완료<br>
+                   → [픽업 완료] 버튼 노출 예정
+              </div>
+            </div>
+            <div class="back_detail">
+              <div class="details_img">
+                <img
+                  src="{% static 'img/pota.png' %}"
+                  alt="예약 현황 "
+                  class="tomato"
+                />
+              </div>
+              <div class="details_txt">
+                판매자: 우이천 감자 아저씨 위치: 방학역 2번 출구 앞 판매 시간:
+                오늘 오후 2시~5시 가격: 1,000원 상태: 예약 완료 → 픽업 대기 중
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!--리뷰 정보-->
+      <div class="rev_section">
+        <div class="character1">
+          내가 쓴 리뷰
+          <img
+            src="{% static 'img/rev_icon.png' %}"
+            alt="리뷰 아이콘"
+            class="rev_icon"
+          />
+        </div>
+
+        <div class="review_hugger">
+          <img
+            src="{% static 'img/review_deco.png' %}"
+            alt="리뷰데코"
+            class="review_deco"
+          />
+
+          <div class="per_review">
+            <div class="reviewer_profile">
+              <img
+                src="{% static 'img/dummy_egg.png' %}"
+                alt="더미프로필"
+                class="r_profile_p"
+              />
+            </div>
+            <div class="stars">
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+            </div>
+            <div class="review_content">
+              여기 집 너무 신선해서 좋아요!! ^^ 저희 아이들도 잘 먹네요~
+            </div>
+            <div class="date">2025.01.06</div>
+          </div>
+
+          <div class="per_review">
+            <div class="reviewer_profile">
+              <img
+                src="{% static 'img/dummy_egg.png' %}"
+                alt="더미프로필"
+                class="r_profile_p"
+              />
+            </div>
+            <div class="stars">
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore_filled.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+              <img
+                src="{% static 'img/starscore.png' %}"
+                alt="별점"
+                class="per_star"
+              />
+            </div>
+            <div class="review_content">
+              여기 집 너무 신선해서 좋아요!! ^^ 저희 아이들도 잘 먹네요~
+            </div>
+            <div class="date">2025.01.06</div>
+          </div>
+        </div>
+      </div>
+
+      <!--구매 내역 정보-->
+      <div class="buy_section">
+        <div class="character1">
+          구매 내역
+          <img src="{% static 'img/buy_icon.png' %}" alt="구매 내역 아이콘" class="buy_icon" />
+        </div>
+
+        <div class="information_zone">
+          <div class="res_res">
+            <section class="information4-card">
+
+              <!-- 카드 스택 -->
+              <div class="history_container">
+                <!-- 카드 1 : 활성 -->
+                <article class="history_card card--1 active">
+                  <!-- 좌 이미지 -->
+                  <div class="card_img">
+                    <img src="{% static 'img/his_tomato.png' %}" alt="토마토" />
+                  </div>
+
+                  <!-- 우측 초록 패널 -->
+                  <div class="panel">
+                    <span class="date">2025.03.04</span>
+                    <h3>[도봉산 토마토 할아버지]</h3>
+                    <ul>
+                      <li>품목: 방울토마토 1팩</li>
+                      <li>위치: 도봉산역 1번 출구 인근</li>
+                      <li>판매 시간: 오전 11시 ~ 오후 2시</li>
+                      <li>가격: 2,000원</li>
+                    </ul>
+                  </div>
+                </article>
+
+                <!-- 카드 2 -->
+                <article class="history_card card--2">
+                  <div class="card_img">
+                    <img src="{% static 'img/his_po.png' %}" alt="감자" />
+                  </div>
+                  <div class="panel">
+                    <span class="date">2025.03.05</span>
+                    <h3>[우이천 감자 아저씨]</h3>
+                    <ul>
+                      <li>품목: 햇감자 1kg</li>
+                      <li>위치: 우이천 산책로 입구</li>
+                      <li>판매 시간: 오후 1시 ~ 4시</li>
+                      <li>가격: 2,500원</li>
+                    </ul>
+                  </div>
+                </article>
+
+                <!-- 카드 3 -->
+                <article class="history_card card--3">
+                  <div class="card_img">
+                    <img src="{% static 'img/his_egg.png' %}" alt="달걀" />
+                  </div>
+                  <div class="panel">
+                    <span class="date">2025.03.06</span>
+                    <h3>[창동시장 달걀 할머니]</h3>
+                    <ul>
+                      <li>품목: 신선한 달걀 10구</li>
+                      <li>위치: 덕성여대 후문 옆</li>
+                      <li>판매 시간: 오전 10시 ~ 12시</li>
+                      <li>가격: 3,000원</li>
+                    </ul>
+                  </div>
+                </article>
+
+                <!-- 반사 -->
+                <div class="card_reflection" aria-hidden="true"></div>
+              </div>
+
+              <!-- 더보기/리워드 (카드 위로 겹치지 않게 코너로) -->
+              <div class="more">
+                <a href="{% url 'historyhome' %}">
+                  <img src="{% static 'img/res_more.png' %}" alt="구매 내역 더보기" class="res_more" />
+                  <img src="{% static 'img/rew_gra.png' %}" alt="리워드 현황 아이콘" class="rew_gra" />
+                </a>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+
+
+    </section>
+    <!-- 네비게이션 바 -->
+    <div class="nav_box">
+      <nav class="bottom_nav">        
+        <div class="btn">
+          <a href="/storescustomer">
+            <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+          </a>
+        </div>
+        <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+        <div class="btn selected_nav">
+          <a href="/consumermain">
+            <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+          </a>
+        </div>
+        <div class="btn">
+          <a href="/shoppingpage">
+            <span class="shopping_page">AI</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+{% endblock body %}

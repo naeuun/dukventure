@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "frontend", # 프론트엔드에서 추가한 부분
     'stores',
     'items',
     'users',

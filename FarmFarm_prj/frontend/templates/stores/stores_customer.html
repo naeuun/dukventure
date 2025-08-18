@@ -1,0 +1,169 @@
+{% extends "../base.html" %}
+
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}" />
+{% endblock style %}
+
+{% block script %}
+<script>
+  const markerImageSrc = "{% static 'img/stores.png' %}";
+</script>
+<!-- 카카오맵 SDK -->
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
+
+<script src="{% static 'js/stores/stores_customer.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+  <div class="container">
+    <div class="search_box">
+      <img src="{% static 'img/map_deco.png' %}" alt="지도 검색창 위 데코" class="map_deco">
+      <div class="searching_">
+        <input type="text" id="searchInput" placeholder="입력하시오..." />
+        <button id="searchBtn">
+          <img src="{% static 'img/search.png' %}" alt="검색 아이콘">
+        </button>
+      </div>
+    </div>
+
+    <!-- 지도 영역 -->
+    <div id="map">
+      <div id="errorMessage"></div>
+    </div>
+    <div class="adding_zone">
+      <div class="add_store_msg msg">
+        <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox">
+        <div class="text">가게<span style="color:grey;">를 추가해주세요!</span></div>
+      </div>
+
+      <a href="/storesplus" class="add_store_btn">
+        <button type="button" value="가게 추가" id="add_store">+</button>
+      </a>
+    </div>
+
+    <!-- 바텀시트 -->
+    <div id="bottomSheet" class="bottom_sheet hidden">
+      <div class="sheet_content_v2">
+
+        <div class="per_stores">
+          <div class="modal_info_box">
+            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
+            <div class="detail_info">
+              <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
+              <p class="product_detail">음식: 계란 10개 3,000원</p>
+              <p class="product_detail">시간: 오전 10시 ~ 12시</p>
+              <p class="product_detail">위치: 4.19민주역 1번출구</p>
+            </div>
+          </div>
+
+          <!-- 수량 + 시간 조절 -->
+          <div class="reserve_controls">
+            <div class="quantity_box">
+              <button class="qty_btn minusBtn"><b>-</b></button>
+              <span class="quantity">0</span>
+              <button class="qty_btn plusBtn"><b>+</b></button>
+            </div>
+            <div class="time_box">
+              <input type="time" id="reserveTime" placeholder="00:00">
+            </div>
+          </div>
+
+
+          <!-- 예약 버튼 -->
+          <div class="resbuttonhugger">
+            <button class="reserve_btn">예약하기</button>
+          </div>
+        </div>
+
+        <div class="many_items_store">
+          <div class="many_items_store_name">4.19 민주역 달걀 할머니</div>
+
+          <!-- 반복되는 per_stores 아이템들 -->
+          <div class="per_stores">
+            <div class="modal_info_box">
+              <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
+              <div class="detail_info">
+                <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
+                <p class="product_detail">음식: 계란 10개 3,000원</p>
+                <p class="product_detail">시간: 오전 10시 ~ 12시</p>
+                <p class="product_detail">위치: 4.19민주역 1번출구</p>
+              </div>
+            </div>
+
+            <!-- 수량 + 시간 조절 -->
+            <div class="reserve_controls">
+              <div class="quantity_box">
+                <button class="qty_btn minusBtn"><b>-</b></button>
+                <span class="quantity">0</span>
+                <button class="qty_btn plusBtn"><b>+</b></button>
+              </div>
+              <div class="time_box">
+                <input type="time" id="reserveTime" placeholder="00:00">
+              </div>
+            </div>
+
+            <div class="resbuttonhugger">
+              <button class="reserve_btn">예약하기</button>
+            </div>
+          </div>
+
+          <div class="per_stores">
+            <div class="modal_info_box">
+              <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="modal_product_img">
+              <div class="detail_info">
+                <p class="store_name"><b>4.19민주역 달걀 할머니</b></p>
+                <p class="product_detail">음식: 계란 10개 3,000원</p>
+                <p class="product_detail">시간: 오전 10시 ~ 12시</p>
+                <p class="product_detail">위치: 4.19민주역 1번출구</p>
+              </div>
+            </div>
+
+            <!-- 수량 + 시간 조절 -->
+            <div class="reserve_controls">
+              <div class="quantity_box">
+                <button class="qty_btn minusBtn"><b>-</b></button>
+                <span class="quantity">0</span>
+                <button class="qty_btn plusBtn"><b>+</b></button>
+              </div>
+              <div class="time_box">
+                <input type="time" id="reserveTime" placeholder="00:00">
+              </div>
+            </div>
+
+            <div class="resbuttonhugger">
+              <button class="reserve_btn">예약하기</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 네비게이션 바 -->
+    <div class="nav_box">
+      <nav class="bottom_nav">
+        <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+        <div class="btn selected_nav">
+          <a href="/storescustomer">
+            <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+          </a>
+        </div>
+        <div class="btn">
+          <a href="/consumermain">
+            <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+          </a>
+        </div>
+        <div class="btn">
+          <a href="/shoppingpage">
+            <span class="shopping_page">AI</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+  </div>
+</div>
+{% endblock body %}

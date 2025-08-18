@@ -1,0 +1,55 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/signup_page.css' %}" />
+
+{% endblock style %}
+{% block script %}
+<script src="{% static 'js/seller_onboardings/signup_page.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+
+    <div class="container">
+        <div class="progress_bar">
+            <div class="now_step" style="width: 69px;"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content">
+                <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli">
+                <span class="title">회원가입 정보</span>
+            </p>
+            <div class="register_box">
+                <div class="scrollable_container">
+                    <form class="form_fields">
+                        <div class="form_row">
+                            <ol>
+                                <li><span class="lis">유저이름</span><input type="text" placeholder="입력하시오.."></li>
+                                <li><span class="lis">비밀번호 설정</span><input type="password" placeholder="입력하시오.."></li>
+                                <li><span class="lis">비밀번호 확인</span><input type="password" placeholder="입력하시오.."></li>
+                            </ol>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="button_hugger">
+                <button
+                type="button" 
+                value="가게 정보 등록" 
+                class="register_button"
+                onclick="location.href='selleronboarding1'"
+                >
+                    등록하기
+                </button>
+            </div>
+        </div>
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
