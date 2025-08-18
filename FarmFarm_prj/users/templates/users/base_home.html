@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+#profileEditModal {
+    position: absolute;
+    left: 0;
+    top: 60px;
+    width: 300px;
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 20px;
+    display: none;
+}
+</style>
+<header>
+    <div>
+        <span><b>{{ request.user.username }}</b>님 반가워요!</span>
+        {% if request.user.usertype == 'SELLER' %}
+            <p>이제 우리 동네 손님들과 연결될 준비가 끝났어요!<br> 
+                AI가 손님에게 가게 소식을 잘 전달해드릴게요!</p>
+        {% elif request.user.usertype == 'BUYER' %}
+            <p>오늘 뭐먹을까? 근처 노점에서 신선하게 장 봐요! <br> 
+                지금 내 근처, 팜팜!</p>
+        {% else %}
+            <p></p>
+        {% endif %}
+    </div>
+    <div style="position: relative;">
+        <img width="40" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 사진"> 
+        <br>
+        <span>{{ request.user.username }}</span>
+        <a href="#" id="profileEditBtn">프로필 편집</a>
+        <div id="profileEditModal">
+            <form id="profileEditForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div style="margin-top:10px;">
+                    <label>이름</label><br>
+                    <input type="text" name="username" value="{{ request.user.username }}">
+                    <button type="submit" name="edit_type" value="name">이름 편집</button>
+                </div>
+                <div>
+                    <label>프로필 사진</label><br>
+                    <img width="60" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 사진"><br>
+                    <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
+                    <button type="button" id="profileImageEditBtn">사진 편집</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</header>
+<main>
+    {% block role_content %}
+    {% endblock %}
+</main>
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.getElementById('profileEditBtn').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('profileEditModal').style.display = 'block';
+};
+
+// 사진 편집 버튼 클릭 시 파일 선택창 열기
+document.getElementById('profileImageEditBtn').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('profileImageInput').click();
+};
+
+// 파일 선택 후 자동 제출
+$('#profileImageInput').on('change', function(){
+    var formData = new FormData($('#profileEditForm')[0]);
+    formData.append('edit_type', 'image');
+    $.ajax({
+        url: "{% url 'users:profile_edit' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(){
+            alert("프로필 사진이 수정되었습니다.");
+            location.reload();
+        }
+    });
+});
+
+// 이름 편집 버튼 클릭 시 AJAX로 제출
+$('button[name="edit_type"][value="name"]').on('click', function(e){
+    e.preventDefault();
+    var formData = new FormData($('#profileEditForm')[0]);
+    formData.append('edit_type', 'name');
+    $.ajax({
+        url: "{% url 'users:profile_edit' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(){
+            alert("이름이 수정되었습니다.");
+            location.reload();
+        }
+    });
+});
+
+$(document).mouseup(function(e){
+    var modal = $("#profileEditModal");
+    if(modal.is(":visible") && !modal.is(e.target) && modal.has(e.target).length === 0){
+        modal.hide();
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

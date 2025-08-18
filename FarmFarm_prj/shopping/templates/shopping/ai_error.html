@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오류 발생</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #EF9A9A; /* Light Red */
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #A5D6A7;
+            color: #121212;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>오류 발생</h1>
+        <p>{{ error_message|default:"알 수 없는 오류가 발생했습니다. 다시 시도해주세요." }}</p>
+        <a href="{% url 'shopping:ai_shopping' %}" class="back-link">다시 시도하기</a>
+    </div>
+</body>
+</html>

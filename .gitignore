@@ -18,9 +18,14 @@ media/
 .newvenv
 env/
 venv/
+myvenv/
 newvenv/
 ENV/
 env.bak/
 venv.bak/
 newvenv.bak/
+
+
+### Keys
+keys/
 

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 리워드 - 팜팜</title>
+    <!-- 폰트나 공통 CSS가 있다면 여기에 링크 -->
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Pretendard', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .reward-container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #66ff66;
+            margin-bottom: 30px;
+        }
+
+        .reward-section {
+            background-color: #1a1a1a;
+            border: 2px solid #66ff66;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(102, 255, 102, 0.5);
+        }
+
+        .character-display {
+            background-color: #2a2a2a;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .character-display img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            transition: transform 0.3s ease-in-out;
+        }
+        .character-display img:hover {
+            transform: scale(1.1);
+        }
+
+        .reward-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .medals {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .medal {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a1a1a;
+            opacity: 0.3; /* 비활성화 상태 */
+            transition: all 0.3s;
+        }
+        .medal.gold { background-color: #ffd700; }
+        .medal.silver { background-color: #c0c0c0; }
+        .medal.bronze { background-color: #cd7f32; }
+        .medal.active {
+            opacity: 1;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .stamps {
+            display: flex;
+            gap: 15px;
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .stamp {
+            width: 50px;
+            height: 50px;
+            border: 2px dashed #66ff66;
+            border-radius: 50%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stamp.filled {
+            background-color: #66ff66;
+            border-style: solid;
+            color: #1a1a1a;
+            font-size: 24px;
+        }
+        .stamp.filled::before {
+            content: '✔';
+        }
+    </style>
+</head>
+<body>
+
+    <div class="reward-container">
+        <h1>나의 성장 기록</h1>
+        <div class="reward-section">
+            <div class="character-display">
+                <img id="character-image" src="https://placehold.co/120x120/2a2a2a/e0e0e0?text=Lv.1" alt="캐릭터">
+            </div>
+    
+            <div class="reward-status">
+                <div class="medals">
+                    <div id="medal-gold" class="medal gold">G</div>
+                    <div id="medal-silver" class="medal silver">S</div>
+                    <div id="medal-bronze" class="medal bronze">B</div>
+                </div>
+                <div class="stamps">
+                    <div class="stamp"></div>
+                    <div class="stamp"></div>
+                    <div class="stamp"></div>
+                    <div class="stamp"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const characterImages = {
+                1: 'https://placehold.co/120x120/4caf50/ffffff?text=Lv.1',
+                2: 'https://placehold.co/120x120/ff9800/ffffff?text=Lv.2',
+                3: 'https://placehold.co/120x120/f44336/ffffff?text=Lv.3',
+            };
+
+            async function fetchRewardStatus() {
+                try {
+                    // API 엔드포인트 호출
+                    const response = await fetch('/rewards/status/');
+                    if (!response.ok) {
+                        throw new Error('서버에서 리워드 정보를 가져오는데 실패했습니다.');
+                    }
+                    const data = await response.json();
+                    updateRewardUI(data);
+                } catch (error) {
+                    console.error('리워드 정보 로딩 오류:', error);
+                }
+            }
+
+            function updateRewardUI(data) {
+                const characterImage = document.getElementById('character-image');
+                characterImage.src = characterImages[data.character_level] || characterImages[1];
+
+                const goldMedal = document.getElementById('medal-gold');
+                const silverMedal = document.getElementById('medal-silver');
+                const bronzeMedal = document.getElementById('medal-bronze');
+
+                goldMedal.classList.remove('active');
+                silverMedal.classList.remove('active');
+                bronzeMedal.classList.remove('active');
+
+                if (data.medal_tier === 'GOLD') goldMedal.classList.add('active');
+                if (data.medal_tier === 'SILVER') silverMedal.classList.add('active');
+                if (data.medal_tier === 'BRONZE') bronzeMedal.classList.add('active');
+
+                const stamps = document.querySelectorAll('.stamps .stamp');
+                stamps.forEach((stamp, index) => {
+                    if (index < data.stamp_count) {
+                        stamp.classList.add('filled');
+                    } else {
+                        stamp.classList.remove('filled');
+                    }
+                });
+            }
+
+            fetchRewardStatus();
+        });
+    </script>
+</body>
+</html>
