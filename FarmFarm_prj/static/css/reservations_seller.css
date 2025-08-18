@@ -4,6 +4,7 @@ body {
 }
 
 .big_hugger {
+  overflow-x: hidden;
   margin: 0 auto;
   max-width: 402px;
   min-height: 100vh;
@@ -172,7 +173,7 @@ body {
   border-radius: 16px;
   overflow: hidden;
   width: 365px;
-  height: 281.6px;
+  height: 331.6px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   border: 1px solid #C1FF52;
   display: flex;
@@ -241,7 +242,7 @@ body {
   font-weight:700;
   color:black;
   width:291px;
-  height:102.6px;
+  height:152.6px;
   border: 0.7px solid #828282;
   border-radius:16px;
   padding:40px 20px 0 20px;
@@ -290,10 +291,16 @@ body {
   
 
 .completed{
+  padding: 8px 20px;
+  border: none;
+  border-radius: 27px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  width: 100%;
+  height:52px;
   background: #C1FF52;
-  color:black;
-  width:320px;
-  cursor: default;
+  color: black;
 }
 
 
@@ -378,7 +385,7 @@ body {
 }
 
 .confirm-btn{
-  width:66px;
+  width:99px;
   line-height:39px;
   border: 1px solid black;
   border-radius:27px;
@@ -445,4 +452,18 @@ body {
 }
 .modal-content{
   top:177px;
+}
+
+.edit_btns{
+  background-color: transparent;
+  border:none;
+}
+.nickname-row{
+  margin-top:10px;
+}
+
+.modal-actions{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

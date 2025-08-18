@@ -57,25 +57,30 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     profileImageInput.addEventListener('change', function(){
-        var formData = new FormData(profileEditForm);
-        formData.append('edit_type', 'image');
-        $.ajax({
-            url: "{% url 'users:profile_edit' %}",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: { 'X-CSRFToken': csrftoken },
-            success: function(){
-                alert("프로필 사진이 수정되었습니다.");
-                location.reload();
-            },
-            error: function(err){
-                console.log(err);
-                alert("사진 업로드 실패");
-            }
-        });
-    });
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              alert("프로필 사진이 수정되었습니다.");
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
+  });
+
 
     // 닉네임 수정
     const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');

@@ -8,132 +8,246 @@
 
 {% block script %}
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const csrftoken = '{{ csrf_token }}';
+document.addEventListener("DOMContentLoaded", function() {
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.getElementById('profileImageEditBtn');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
 
-  // ------------------------
-  // 1️⃣ 프로필 이미지 & 닉네임 로컬스토리지
-  // ------------------------
-  const profileImgDisplay = document.getElementById("profileImage");
-  const previewImgDisplay = document.querySelector(".preview_img");
-  const nameDisplay = document.querySelector(".nickname");
-  const nameInput = document.getElementById("nicknameInput");
-
-  const savedName = localStorage.getItem("profile_name");
-  const savedImg = localStorage.getItem("profile_image");
-
-  if (nameDisplay && savedName) nameDisplay.textContent = savedName;
-  if (profileImgDisplay && savedImg) {
-    profileImgDisplay.src = savedImg;
-    if (previewImgDisplay) previewImgDisplay.src = savedImg;
-  }
-
-  const profileImgInput = document.getElementById("profileImageInput");
-  if (profileImgInput) {
-    profileImgInput.addEventListener("change", () => {
-      if (profileImgInput.files && profileImgInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const imgUrl = e.target.result;
-          profileImgDisplay.src = imgUrl;
-          if (previewImgDisplay) previewImgDisplay.src = imgUrl;
-          localStorage.setItem("profile_image", imgUrl);
-        };
-        reader.readAsDataURL(profileImgInput.files[0]);
-      }
-    });
-  }
-
-  if (nameInput) {
-    nameInput.addEventListener("input", () => {
-      const newName = nameInput.value;
-      if (nameDisplay) nameDisplay.textContent = newName;
-      localStorage.setItem("profile_name", newName);
-    });
-  }
-
-  // ------------------------
-  // 2️⃣ 거절 모달 제어
-  // ------------------------
-  const rejectModal = document.getElementById('rejectModal');
-  const rejectForm = document.getElementById('rejectForm');
-
-  // 전역 함수로 선언 -> HTML onclick에서 사용 가능
-  window.openRejectModal = (reservationId) => {
-    rejectForm.action = `/reservations/${reservationId}/change-status/`;
-    rejectModal.style.display = 'block';
-  };
-  window.closeRejectModal = () => rejectModal.style.display = 'none';
-
-  // ------------------------
-  // 3️⃣ 수락 버튼 AJAX 처리
-  // ------------------------
-  document.querySelectorAll('.accept-btn').forEach(button => {
-    button.addEventListener('click', async function() {
-      const reservationId = this.dataset.pk;
-      const url = `/reservations/${reservationId}/change-status/`;
-      const formData = new FormData();
-      formData.append('to_status', 'ACCEPTED');
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
-          body: formData
-        });
-        const result = await response.json();
-        if (response.ok) {
-          const card = document.getElementById(`res-card-seller-${reservationId}`);
-          card.querySelector('.status').textContent = result.new_status;
-          card.querySelector('.button-group').innerHTML = '<span>수락 완료</span>';
-        } else {
-          alert('오류: ' + result.message);
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
         }
-      } catch (error) {
-      }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // 모달 열기
+    profileEditBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'block';
     });
+
+    // 모달 닫기
+    closeModalBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === profileEditModal) profileEditModal.style.display = 'none';
+    });
+
+    // 이미지 선택
+    profileImageEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        profileImageInput.click();
+    });
+
+    profileImageInput.addEventListener('change', function(){
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              alert("프로필 사진이 수정되었습니다.");
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
   });
 
-  // ------------------------
-  // 4️⃣ 거절 폼 AJAX 처리
-  // ------------------------
-  // ------------------------
-// 4️⃣ 거절 폼 처리 (새로고침)
-// ------------------------
-rejectForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const formData = new FormData(rejectForm);
-    if (!formData.get('rejected_reason')) {
-      alert("거절 사유를 선택해주세요.");
-      return;
-    }
-
-    try {
-      const response = await fetch(rejectForm.action, {
-        method: "POST",
-        headers: { 
-          "X-CSRFToken": csrftoken, 
-          "X-Requested-With": "XMLHttpRequest" 
-        },
-        body: formData
-      });
-
-      if (response.ok) {
-        // 성공하면 모달 닫고 페이지 새로고침
-        closeRejectModal();
-        location.reload();
-      } else {
-        const result = await response.json();
-        alert("오류: " + result.message);
-      }
-    } catch (error) {
+    // 닉네임 수정
+    const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
     }
 });
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // ------------------------
+    // CSRF 토큰 가져오기
+    // ------------------------
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // ------------------------
+    // 모달 관련 함수
+    // ------------------------
+    const rejectModal = document.getElementById("rejectModal");
+    const rejectForm = document.getElementById("rejectForm");
+
+    window.openRejectModal = function(reservationId) {
+        rejectForm.action = `/reservations/${reservationId}/change-status/`;
+        rejectModal.style.display = "block";
+        const selectField = rejectForm.querySelector("select[name='reason']");
+        if (selectField) {
+            selectField.setAttribute("id", "id_reason");
+            selectField.setAttribute("autocomplete", "off");
+            if (!rejectForm.querySelector("label[for='id_reason']")) {
+                const label = document.createElement("label");
+                label.setAttribute("for", "id_reason");
+                label.textContent = "거절 사유";
+                selectField.parentNode.insertBefore(label, selectField);
+            }
+        }
+    };
+
+    window.closeRejectModal = function() {
+        rejectModal.style.display = "none";
+    };
+
+    const rejectCloseBtn = rejectModal.querySelector(".close-btn");
+    if (rejectCloseBtn) rejectCloseBtn.addEventListener("click", closeRejectModal);
+    window.addEventListener("click", function(e){
+        if(e.target === rejectModal) closeRejectModal();
+    });
+
+    // ------------------------
+    // 수락/거절 버튼 AJAX 처리 (이벤트 위임)
+    // ------------------------
+    const resZone = document.querySelector(".reservation_zone");
+
+    resZone.addEventListener("click", function(e) {
+        const target = e.target.closest("button");
+
+        if (!target) return;
+
+        const card = target.closest(".per_res");
+        const reservationId = card?.id.split("-").pop();
+        if (!reservationId) return;
+
+        // ------------------------
+        // 수락 버튼
+        // ------------------------
+        if (target.classList.contains("accept-btn")) {
+            const url = `/reservations/${reservationId}/change-status/`;
+            const formData = new FormData();
+            formData.append("to_status", "ACCEPTED");
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(result => {
+                card.querySelector(".status").textContent = result.new_status;
+                card.querySelector(".button-group").innerHTML = '<button class="completed">수락 완료</button>';
+            })
+            .catch(err => { console.error(err); alert("요청 중 오류 발생"); });
+        }
+
+        // ------------------------
+        // 거절 버튼
+        // ------------------------
+        if (target.classList.contains("reject-btn")) {
+            openRejectModal(reservationId);
+            if (!rejectForm.dataset.bound) {
+                rejectForm.dataset.bound = true; // 한 번만 바인딩
+                rejectForm.addEventListener("submit", async function(ev){
+                    ev.preventDefault();
+                    const reasonField = rejectForm.querySelector("select[name='reason']");
+                    if(!reasonField || !reasonField.value){
+                        alert("거절 사유를 선택해주세요.");
+                        return;
+                    }
+
+                    const formData = new FormData(rejectForm);
+
+                    try {
+                        const url = rejectForm.action;
+                        const response = await fetch(url, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": csrftoken,
+                                "X-Requested-With": "XMLHttpRequest"
+                            },
+                            body: formData
+                        });
+                        const result = await response.json();
+                        if(response.ok){
+                            card.querySelector(".status").textContent = result.new_status;
+                            card.querySelector(".button-group").innerHTML = '<button style="color:red;">거절됨</button>';
+                            closeRejectModal();
+                        } else {
+                            alert("오류: " + (result.message || "알 수 없는 오류"));
+                        }
+                    } catch(err){
+                        console.error(err);
+                        alert("요청 중 오류 발생");
+                    }
+                });
+            }
+        }
+    });
+
 
 });
 </script>
-<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
+
+
 {% endblock script %}
 
 {% block body %}
@@ -206,25 +320,25 @@ rejectForm.addEventListener("submit", async (e) => {
       </div>
     </div>
     <!-- 모달 -->
-    <div class="modal-overlay" id="editModal">
+    <div class="modal-overlay" id="profileEditModal">
       <div class="modal-content">
         <form id="profileEditForm" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="modal-actions">
             <button id="closeModalBtn">×</button>
           </div>
-          <div class="nickname-row">
+          <div class="nickname-row" style="margin-top:10px;">
             <input type="text" name="username" id="nicknameInput" value="{{ request.user.username }}" />
-            <button type="submit" name="edit_type" value="name">
+            <button type="submit" name="edit_type" value="name" class="edit_btns" style="margin-top:-10px;">
               <img
                 class="nickname-edit-btn"
                 src="{% static 'img/edit.png' %}"
                 alt="닉네임 수정"
               />
-            <button>
+            </button>
           </div>
 
-          <div class="image-row">
+          <div class="image-row" style="margin-top:10px;">
             <div class="image-preview">
               <img
                 src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
@@ -232,12 +346,14 @@ rejectForm.addEventListener("submit", async (e) => {
                 class="preview_img"
               />
               <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-              <img
+              
+              <button type="button" id="profileImageEditBtn" class="edit_btns" style="margin-top:-5px;">
+                <img
                 class="image-edit-btn"
                 src="{% static 'img/edit.png' %}"
-                id="profileImageEditBtn"
                 alt="이미지 수정"
-              />
+                />
+              </button>
             </div>
           </div>
         </form>
@@ -250,9 +366,9 @@ rejectForm.addEventListener("submit", async (e) => {
     <div class="res_section">
       <div class="reservation_">
         예약확인
-        <img 
-        src="{{ item.image.url }}"
-        alt="예약확인 아이콘" class="res_check" 
+        <img src="{% static 'img/res_icon.png' %}"
+        alt="예약확인 아이콘"
+        class="res_check" 
         />
       </div>
     </div>
@@ -300,11 +416,11 @@ rejectForm.addEventListener("submit", async (e) => {
           <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
           <button type="button" class="btn btn-reject reject-btn" onclick="openRejectModal('{{ r.pk }}')">거절</button>
           {% elif r.status == 'ACCEPTED' %}
-          <button>수락 완료</button>
+          <button class="completed">수락 완료</button>
           {% elif r.status == 'PICKED_UP' %}
-          <button style="color: green; font-weight: bold;">픽업 완료</button>
+          <button class="completed">픽업 완료</button>
           {% elif r.status == 'REJECTED' %}
-          <button style="color: red;">거절됨</button>
+          <button class="completed">거절됨</button>
           {% endif %}
         </div>
 
@@ -319,12 +435,14 @@ rejectForm.addEventListener("submit", async (e) => {
           <div class="modal-content0">
             <div class="modal_title">거절 사유</div>
             <form id="rejectForm" method="post">
+              <input type="hidden" id="rejectReservationId" name="reservation_id" value="">
+
               {% csrf_token %}
               <input type="hidden" name="to_status" value="REJECTED">
               {{ reject_form.as_p }}
               <div class="modal-actions">
                 <button type="submit" class="confirm-btn">거절 확정</button>
-                <button type="button" class="close-btn" onclick="closeRejectModal()">×</button>
+                <button type="button" class="close-btn">×</button>
               </div>
             </form>
           </div>
@@ -354,7 +472,7 @@ rejectForm.addEventListener("submit", async (e) => {
         </nav>
         {% elif user.usertype == 'SELLER' %}
         <nav class="bottom_nav">
-            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
             <div class="btn">
             <a href="{% url 'stores:map' %}">
                 <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
