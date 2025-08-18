@@ -1,6 +1,6 @@
 .brocoli{
-    top:-50px;
-    left:-150px;
+    top:-10px;
+    left:-100px;
 }
 .form_row input[type="password"]{
     width: 100%;
@@ -34,7 +34,7 @@
     display:flex;
     align-items: center;
     counter-increment: item;
-    margin:10px 0 45px -30px;
+    margin:17px 0 25px -30px;
 }
 .form_row li:last-child{
     margin-bottom:10px;
@@ -42,4 +42,16 @@
 .form_row li::before {
     content: counter(item) ".";
     user-select: none;
+}
+
+.form_row {
+    flex-direction :column;
+}
+
+.error_message {
+    color: white;
+    font-size: 11px;
+    margin-left: 12px;
+    margin-block-start: 0px;
+    margin-block-end: 3px;
 }

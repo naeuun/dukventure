@@ -25,16 +25,22 @@
             </p>
             <div class="register_box">
                 <div class="scrollable_container">
-                    <form method="post" action="{% url 'users:login' %}" class="form_fields">
+                    <form method="post" action="{% url 'users:login' %}" class="form_fields" id="loginForm">
                         {% csrf_token %}
                         <div class="form_row">
                             <ol>
                                 <li><span class="lis">유저이름</span><input name="username" type="text" placeholder="입력하시오.." required></li>
                                 <li><span class="lis">비밀번호</span><input name="password" type="password" placeholder="입력하시오.." required></li>
                             </ol>
-                        </div>
-                    
+                            {% if error_message %}                        
+                            <div class="error_message" style="color: white;" class="lis">
+                                {{ error_message|linebreaksbr }}
+                            </div>
+                            {% endif %}
+                        </div>                
+
                 </div>
+
             </div>
             <div class="button_hugger">
                 <button
