@@ -71,9 +71,11 @@ def signup(request):
 
 
 def login(request):
+    error_message = None
     if request.method == 'GET':
         return render(request, 'users/login.html', {'form': AuthenticationForm()})
     form = AuthenticationForm(request, request.POST)
+    
     if form.is_valid():
         auth_login(request, form.user_cache)
         usertype = form.user_cache.usertype
@@ -83,7 +85,9 @@ def login(request):
             return redirect('users:buyer_home')
         else:
             return redirect('users:onboarding')
-    return render(request, 'users/login.html', {'form': form})
+    else:
+        error_message = "아이디 또는 비밀번호가 잘못 되었습니다.\n아이디와 비밀번호를 정확히 입력해 주세요."
+    return render(request, 'users/login.html', {'form': form, 'error_message': error_message})
 
 def logout(request):
     if request.user.is_authenticated:

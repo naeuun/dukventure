@@ -28,10 +28,22 @@
                         {% csrf_token %}
                         <div class="form_row">
                             <ol>
-                                <li><span class="lis">유저이름</span><input name="username" type="text" placeholder="입력하시오.."></li>
-                                <li><span class="lis">전화번호</span><input name="phone" type="text" placeholder="입력하시오.."></li>
-                                <li><span class="lis">비밀번호 설정</span><input name="password1" type="password" placeholder="입력하시오.."></li>
-                                <li><span class="lis">비밀번호 확인</span><input name="password2" type="password" placeholder="입력하시오.."></li>
+                                <li><span class="lis">유저이름</span><input name="username" type="text" placeholder="입력하시오.." required></li>
+                                <li><span class="lis">전화번호</span><input name="phone" type="text" placeholder="000-0000-0000" required></li>
+                                <li>
+                                    <span class="lis">비밀번호 설정</span>
+                                    <input name="password1" type="password" placeholder="입력하시오.." required>
+                                </li>
+                                {% for error in form.password1.errors %}
+                                    <p class="error_message">{{ error }}</p>
+                                {% endfor %}
+                                <li>
+                                    <span class="lis">비밀번호 확인</span>
+                                    <input name="password2" type="password" placeholder="입력하시오.." required>
+                                </li>
+                                {% for error in form.password2.errors %}
+                                    <p class="error_message">{{ error }}</p>
+                                {% endfor %}
                             </ol>
                         </div>
                 </div>

@@ -32,7 +32,7 @@
                         <span id="text">인증하기</span>
                     </button>
                 </form>
-                <div id="result-message"></div>
+                <div class="result_message" id="result-message"></div>
                 <div class="welcome_content" id="welcome-message" style="display:none;">
                     <p class="welcoming">
                         <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli">
@@ -92,7 +92,7 @@
             },
             success: function(response) {
                 if (response.is_valid) {
-                    $("#result-message").text("✅ 인증 성공: 영업 중인 사업자입니다.");
+                    $("#result-message").html("✅ 영업중인 사업자입니다.<br> 인증 완료 버튼을 눌러주세요.");
                     $("#submit-btn").text("인증완료").prop("disabled", false);
 
                     // 진행률 바 늘리기
@@ -106,7 +106,7 @@
                         $(".now_step").addClass("completed");
                     });
                 } else {
-                    $("#result-message").text("❌ 인증 실패");
+                    $("#result-message").html("❌ 인증 실패<br> 영업중이지 않거나 등록되지 않은 사업자입니다.");
                 }
             },
             error: function() {
