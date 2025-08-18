@@ -153,28 +153,26 @@ function placeReportMarker(coords, report){
                         </div>
                         {% if request.user.is_authenticated and request.user.usertype == 'BUYER' %}
 
+                        </div>
+                    </div>
                         <div class="reservation-form">
                             <div class="reserve_controls">
-                                <div class="quantity_box">
-                                    <label>수량</label>
-                                    <div>
-                                        <button type="button" class="qty_btn minusBtn">-</button>
-                                        <input type="number" class="qty-input quantity" value="1" min="1" style="width:50px; text-align:center;">
-                                        <button type="button" class="qty_btn plusBtn">+</button>
+                                    <div class="quantity_box">
+                                    <div class="qty-box" style="display: flex; align-items: center; gap: 8px;">
+                                        <button type="button" class="qty_btn minus-btn">-</button>
+                                        <input type="number" class="qty-input quantity" value="1" min="1" style="width: 50px; text-align: center;">
+                                        <button type="button" class="qty_btn plus-btn">+</button>
                                     </div>
-                                    <label>픽업 시간</label>
+                                    </div>
                                     <div class="time_box">
                                         <input type="time" class="pickup-time-input" step="600" required style="margin-bottom:10px;">
                                     </div>
-                                    <div class="resbuttonhugger">
-                                        <button type="button" class="reserve_btn reserve-now-btn" style="width:100%; padding:10px; background:#A5D6A7; border:none; border-radius:8px; font-weight:bold;">예약하기</button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                        {% endif %}
+                        <div class="resbuttonhugger">
+                            <button type="button" class="reserve_btn reserve-now-btn" style="width:100%; padding:10px; background:#A5D6A7; border:none; border-radius:8px; font-weight:bold;">예약하기</button>
                         </div>
-                    </div>
+                        {% endif %}
                     `;
                     modalItemListEl.appendChild(card);
                 });

@@ -408,7 +408,15 @@ body {
   font-weight: 700;
   font-size: 20px;
 }
-
+.quantity{
+  background-color: transparent;
+  border:none;
+  width:10px;
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-right:-10px;
+}
 .qty_btn {
   background: none;
   border: none;
@@ -493,6 +501,7 @@ body {
   background: linear-gradient(#f4f5ef9d, #A4FF00);
   border-radius: 23px;
   padding:10px 5px;
+  margin-bottom: 100px;
 }
 .many_items_store_name{
    display: inline-flex;
