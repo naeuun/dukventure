@@ -4,6 +4,7 @@ body {
 }
 
 .big_hugger {
+  overflow-x: hidden;
   margin: 0 auto;
   max-width: 402px;
   min-height: 100vh;
@@ -55,6 +56,24 @@ body {
     cursor: pointer;
   }
   
+  .review_{
+    background: #C1FF52;
+    width: 130px;
+    height:46px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color: black;
+    font-weight: 700;
+    font-size: 15px;
+    border: 1px solid black;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    position:absolute;
+    left:-115px;
+
+  }
   .res_check{
     width:30px;
     margin-left:10px;
@@ -172,6 +191,7 @@ body {
     border-radius: 16px;
     overflow: hidden;
     width: 365px;
+    min-height:380px;
     height: auto;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     border: 1px solid black;
@@ -237,8 +257,11 @@ body {
     border-radius:16px;
     padding:40px 10px 0 10px;
     background-color:rgba(255, 255, 255, 0.8);
+    position:relative;
   }
-  
+  .product-info ul{
+    margin-top:-15px;
+  }
   .product-info li{
     margin: -5px 0;
   }
@@ -394,15 +417,15 @@ body {
   }
   
 .brocoli{
-  width:326px;
+  width:300px;
   position:absolute;
-  top:50px;
+  top:40px;
   opacity: 30%;
 }
 .smalltext{
   position:absolute;
   white-space: nowrap;
-  top:146px;
+  top:106px;
   left:115px;
   font-size: 13px;
   font-weight:700;
@@ -410,11 +433,11 @@ body {
 .small_brocoli{
   position:absolute;
   width:217px;
-  top:120px;
+  top:80px;
 }
 .textbox_small{
   position:absolute;
-  top:140px;
+  top:100px;
   left:105px;
   width:162px;
 }
@@ -426,7 +449,8 @@ body {
   cursor: pointer;
   border-radius: 28px;
   position:absolute;
-  bottom:105px;
+  bottom:85px;
+  left:110px;
   background-color: black;
   color: #C1FF52;
   border: 1px solid #C1FF52;
@@ -437,14 +461,14 @@ body {
   border: none;
 }
 .review_section{
-    margin: 20px 0; /* 위 아래 간격 */
-
-  position: relative;    width: 100%; 
-    display: flex;
-    justify-content: center;
+  margin: 20px; /* 위 아래 간격 */
+  position: relative;
+  width: 132px; 
+  left:0;
 }
 
 .review_hugger {
+  margin-top:40px;
   position: relative; /* 절대 위치 제거 */
   top: 0;
   width: 366.6px;
@@ -563,4 +587,43 @@ body {
 }
 .modal-content{
   top:177px;
+}
+.edit_btn{
+  width:20px;
+  margin-left:-3px;
+}
+.edit-item-btn{
+  width: 35px;
+  height: 35px;
+  border:1px solid black;
+  border-radius: 50%;
+  background-color: #C1FF52;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  position:absolute;
+  bottom:10px;
+  right:10px;
+}
+.edit_store_info{
+  text-decoration: none;
+  width:200px;
+  height:30px;
+  background-color: black;
+  margin:10px;
+  color:white;
+  font-size: 14px;
+  font-weight:700;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  border:1px solid #C1FF52;
+  border-radius: 20px;
+}
+.edit_btns{
+  background-color: transparent;
+  border:none;
+}
+.nickname-row{
+  margin-top:10px;
 }
