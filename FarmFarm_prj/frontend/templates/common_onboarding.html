@@ -9,24 +9,31 @@
     <div class="progress_bar"></div>
     <div class="content">
       <p class="bigger_content">당신은 무엇인가요?</p>
-      <div class="buttons">
-        <button
-          type="button"
-          value="판매자"
-          onclick="location.href='signuppage'"
-          class="button_"
-        >
-          판매자
-        </button>
-        <button
-          type="button"
-          value="구매자"
-          onclick="location.href='consumermain'"
-          class="button_"
-        >
-          구매자
-        </button>
-      </div>
+      <form action="{% url 'users:auto_login' %}" method="post">
+        {% csrf_token %}
+        <div class="buttons">
+          <button
+            type="submit"
+            name="role"
+            value="seller"
+            onclick="location.href='signuppage'"
+            class="button_"
+          >
+            판매자 박OO
+          </button>
+          <button
+            type="submit"
+            name="role"
+            value="buyer"
+            onclick="location.href='consumermain'"
+            class="button_"
+          >
+            구매자 김사자
+          </button>
+        </div>
+      </form>
+      <a href="{% url 'users:login' %}">로그인</a>
+      <a href="{% url 'users:signup_type' %}">회원가입</a>
     </div>
   </div>
 </div>

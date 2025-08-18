@@ -1,17 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h2>회원가입</h2>
-    <form method="post" action="{% url 'users:signup' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">회원가입</button>
-    </form>
-    <p>이미 계정이 있으신가요? <a href="{% url 'users:login' %}">로그인</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/seller_onboardings/signup_page.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<!-- signup_page.html ✅-->
+{% block content %}
+<div class="big_hugger">
+    <div class="container">
+        <div class="progress_bar">
+            <div class="now_step" style="width: 69px;"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content">
+                <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli">
+                <span class="title">회원가입 정보</span>
+            </p>
+            <div class="register_box">
+                <div class="scrollable_container">
+                    <form method="post" action="{% url 'users:signup' %}"class="form_fields">
+                        {% csrf_token %}
+                        <div class="form_row">
+                            <ol>
+                                <li><span class="lis">유저이름</span><input name="username" type="text" placeholder="입력하시오.."></li>
+                                <li><span class="lis">전화번호</span><input name="phone" type="text" placeholder="입력하시오.."></li>
+                                <li><span class="lis">비밀번호 설정</span><input name="password1" type="password" placeholder="입력하시오.."></li>
+                                <li><span class="lis">비밀번호 확인</span><input name="password2" type="password" placeholder="입력하시오.."></li>
+                            </ol>
+                        </div>
+                </div>
+            </div>
+            <div class="button_hugger">
+                <button
+                type="submit" 
+                class="register_button"
+                >
+                    등록하기
+                </button>
+                    </form>
+            </div>
+        </div>
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% endblock body %}

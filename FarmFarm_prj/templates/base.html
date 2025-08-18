@@ -1,42 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+    <title>
+        {% block title %}{% endblock title %}
+    </title>
+    {% block style %}{% endblock style %}
+    {% block script %}{% endblock script %}
 </head>
 <body>
-    {% if messages %}
-        <ul class="messages" style="list-style: none; padding: 10px; margin: 10px; background-color: #f0f0f0; border: 1px solid #ccc;">
-            {% for message in messages %}
-                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    {{ message }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <!-- frontend/templates/base.html ✅ -->
+    {% block body %}
+        {% if messages %}
+            <ul class="messages" style="list-style: none; padding: 10px; margin: 10px; background-color: #f0f0f0; border: 1px solid #ccc;">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
     {% block content %}
     {% endblock %}
 
-    {% if request.user.is_authenticated and not request.resolver_match.url_name|slice:":11" == "seller_step" and request.resolver_match.url_name != "onboarding" %}
-        <footer>
-            <hr>
-            <a href="{% url 'stores:map' %}">지도</a>
-            {% if user.usertype == 'BUYER' %}
-                <a href="{% url 'users:buyer_home' %}">홈</a>
-                <a href="{% url 'shopping:ai_shopping' %}">AI</a>
-            {% elif user.usertype == 'SELLER' %}
-                <a href="{% url 'users:seller_home' %}">홈</a>
-                <a href="{% url 'reservations:seller_list' %}">예약관리</a>
-            {% endif %}
-            <hr>
-            <a href="{% url 'users:onboarding' %}">초기 온보딩 화면</a>
-            <!-- 개발용 로그인 상태 정보 표시 -->
-            <small>
-                [ 로그인됨: {{ request.user.username }} ({{ request.user.usertype }}) ]
-            </small>
-        </footer>
-    {% endif %}
+        {% if request.user.is_authenticated and not request.resolver_match.url_name|slice:":11" == "seller_step" and request.resolver_match.url_name != "onboarding" %}
+            <footer>
+                <hr>
+                <a href="{% url 'stores:map' %}">지도</a>
+                {% if user.usertype == 'BUYER' %}
+                    <a href="{% url 'users:buyer_home' %}">홈</a>
+                    <a href="{% url 'shopping:ai_shopping' %}">AI</a>
+                {% elif user.usertype == 'SELLER' %}
+                    <a href="{% url 'users:seller_home' %}">홈</a>
+                    <a href="{% url 'reservations:seller_list' %}">예약관리</a>
+                {% endif %}
+                <hr>
+                <a href="{% url 'users:onboarding' %}">초기 온보딩 화면</a>
+                <!-- 개발용 로그인 상태 정보 표시 -->
+                <small>
+                    [ 로그인됨: {{ request.user.username }} ({{ request.user.usertype }}) ]
+                    <a href="{% url 'users:logout' %}">로그아웃</a>
+                </small>
+            </footer>
+        {% endif %}
+    {% endblock body %}
 </body>
 </html>

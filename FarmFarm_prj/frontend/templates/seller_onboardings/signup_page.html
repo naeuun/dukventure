@@ -7,12 +7,10 @@
 
 {% endblock style %}
 {% block script %}
-<script src="{% static 'js/seller_onboardings/signup_page.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
 <div class="big_hugger">
-
     <div class="container">
         <div class="progress_bar">
             <div class="now_step" style="width: 69px;"></div>
@@ -24,26 +22,25 @@
             </p>
             <div class="register_box">
                 <div class="scrollable_container">
-                    <form class="form_fields">
+                    <form method="post" action="{% url 'users:login' %}" class="form_fields">
+                        {% csrf_token %}
                         <div class="form_row">
                             <ol>
-                                <li><span class="lis">유저이름</span><input type="text" placeholder="입력하시오.."></li>
-                                <li><span class="lis">비밀번호 설정</span><input type="password" placeholder="입력하시오.."></li>
-                                <li><span class="lis">비밀번호 확인</span><input type="password" placeholder="입력하시오.."></li>
+                                <li><span class="lis">유저이름</span><input name="username" type="text" placeholder="입력하시오.." required></li>
+                                <li><span class="lis">비밀번호</span><input name="password" type="password" placeholder="입력하시오.." required></li>
                             </ol>
                         </div>
-                    </form>
+                    
                 </div>
             </div>
             <div class="button_hugger">
                 <button
-                type="button" 
-                value="가게 정보 등록" 
+                type="submit" 
                 class="register_button"
-                onclick="location.href='selleronboarding1'"
                 >
                     등록하기
                 </button>
+                    </form>
             </div>
         </div>
         <div class="prev_page" onclick="history.back()">
