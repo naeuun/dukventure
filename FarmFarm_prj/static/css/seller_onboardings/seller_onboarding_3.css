@@ -6,7 +6,8 @@ body {
   margin: 0 auto;
   max-width: 402px;
   background-color: black;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto; 
 }
 
 .container {
@@ -118,6 +119,7 @@ body {
   border: 1px solid #C1FF52;
   border-radius: 27px;
   position:relative;
+  padding-top:10px;
   top:0;
 }
 
@@ -138,15 +140,14 @@ body {
   justify-content: center;
   align-items: center;
 }
+.last{
+  border-bottom: none;
 
+}
 .form_row:nth-child(9) {
   display: flex;
   justify-content: space-between;
   height: 25px;
-}
-
-.form_row:last-child {
-  border-bottom: none;
 }
 
 .form_row label {
@@ -468,3 +469,4 @@ body {
 .voice_recognition_btn img {
   width: 19px;
 }
+
