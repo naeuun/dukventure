@@ -552,19 +552,22 @@ body {
   height:370px;
   margin-bottom:10px;
 }
+.report-item-card{
+  justify-content: flex-start;
+  align-items: center;
+  padding-top:15px;
+  height:280px;
+}
 .many_items_store .item-card{
   height:400px;
 }
-#reportModal .report-item-card:nth-child(2){
-  margin-top:-130px;
-}
 .report-item-card:nth-child(2){
-  margin-top:-180px;
+  margin-top:-80px;
   padding-top: 50px ;
   z-index:1;
   position:relative;
   width: 267px;
-  height:89px;
+  height:69px;
   top:-100px;
   left:30px;
   display:flex;

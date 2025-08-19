@@ -108,15 +108,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 report.items?.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'report-item-card';
-                    card.innerHTML = `<div><strong>품목:</strong> ${item.name} (${item.unit||''})</div><div><strong>설명:</strong> ${item.description||''}</div>`;
+                    card.innerHTML = `
+                    <div>
+                    <strong>품목:</strong> ${item.name} (${item.unit||''})
+                    </div>
+                    <div>
+                    <strong>설명:</strong> ${item.description||''}
+                    </div>
+                    ${report.keywords && report.keywords.length>0 ? `<div><strong>키워드:</strong> ${report.keywords.join(', ')}</div>` : ''}
+
+                    `;
                     reportItemListEl.appendChild(card);
                 });
-                if(report.keywords && report.keywords.length>0){
-                    const card = document.createElement('div');
-                    card.className = 'report-item-card';
-                    card.innerHTML = `<div><strong>키워드:</strong> ${report.keywords.join(', ')}</div>`;
-                    reportItemListEl.appendChild(card);
-                }
+                
             } else {
                 const card = document.createElement('div');
                 card.className = 'report-item-card';
