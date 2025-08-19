@@ -466,3 +466,20 @@ body {
   justify-content: center;
   align-items: center;
 }
+.logoutbtn{
+  width:35px;
+  height:35px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #C1FF52;
+  border:none;
+  border-radius: 50%;
+  position:absolute;
+  top:-90px;
+  left: 0;
+
+}
+.logoutbtn img{
+  width:27px;
+}

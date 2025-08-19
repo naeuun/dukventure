@@ -709,11 +709,6 @@ body {
   vertical-align: middle;
 }
 .logoutbtn{
-  background-color: #D9D9D9;
-  z-index:1000;
-  position:absolute;
-}
-.logoutbtn{
   width:35px;
   height:35px;
   display:flex;
