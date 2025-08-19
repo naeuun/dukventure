@@ -243,19 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
             mediaRecorder.start();
         } catch(err){ console.error(err); voiceStatus.textContent="❌ 마이크 접근 거부됨"; }
     });
-
-    // ------------------------- 폼 제출 -------------------------
-    document.getElementById('storeForm').addEventListener('submit', function(e){
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch(this.action||window.location.href,{
-            method:'POST',
-            body:formData
-        })
-        .then(r=>r.text())
-        .then(html=>{ document.body.innerHTML=html; })
-        .catch(err=>{ console.error(err); });
-    });
 });
 </script>
 
