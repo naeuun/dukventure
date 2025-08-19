@@ -550,6 +550,7 @@ body {
   align-items: center;
   padding:10px;
   height:370px;
+  margin-bottom:10px;
 }
 .many_items_store .item-card{
   height:400px;
