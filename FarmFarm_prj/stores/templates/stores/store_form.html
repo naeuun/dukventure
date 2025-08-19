@@ -317,15 +317,20 @@ const textbox = document.querySelector('.textbox');
 
 
 let hideTimeout = null;
+let isProcessing = false;  
 
-// 숨기기 함수
 function hideElementsAfterDelay(delay=3000) {
     clearTimeout(hideTimeout);
+
+    // 녹음 중이면 숨기지 않음
+    if(mediaRecorder?.state === "recording" || isProcessing) return;
+
     hideTimeout = setTimeout(() => {
         voiceStatus.style.opacity = 0;
         textbox.style.opacity = 0;
     }, delay);
 }
+
 
 // 페이지 로드 시 3초 표시 후 숨기기
 voiceStatus.style.opacity = 1;

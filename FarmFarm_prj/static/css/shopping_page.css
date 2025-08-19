@@ -697,6 +697,7 @@ body {
 }
 .many_items_store .item-card{
   height:400px;
+  margin:10px;
 }
 #reportModal .report-item-card:nth-child(2){
   margin-top:-130px;
