@@ -7,48 +7,110 @@
 {% endblock style %}
 
 {% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.getElementById('profileImageEditBtn');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // 모달 열기
+    profileEditBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'block';
+    });
+
+    // 모달 닫기
+    closeModalBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === profileEditModal) profileEditModal.style.display = 'none';
+    });
+
+    // 이미지 선택
+    profileImageEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        profileImageInput.click();
+    });
+
+    profileImageInput.addEventListener('change', function(){
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              location.reload(); // ✅ 새로고침
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
+  });
+
+
+    // 닉네임 수정
+    const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
+    }
+});
+
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // ------------------------
-  // 1️⃣ 프로필 이미지 & 닉네임 로컬스토리지
-  // ------------------------
-  const profileImgDisplay = document.getElementById("profileImage");
-  const previewImgDisplay = document.querySelector(".preview_img");
-  const nameDisplay = document.querySelector(".nickname");
-  const nameInput = document.getElementById("nicknameInput");
-
-  const savedName = localStorage.getItem("profile_name");
-  const savedImg = localStorage.getItem("profile_image");
-
-  if (nameDisplay && savedName) nameDisplay.textContent = savedName;
-  if (profileImgDisplay && savedImg) {
-    profileImgDisplay.src = savedImg;
-    if (previewImgDisplay) previewImgDisplay.src = savedImg;
-  }
-
-  const profileImgInput = document.getElementById("profileImageInput");
-  if (profileImgInput) {
-    profileImgInput.addEventListener("change", () => {
-      if (profileImgInput.files && profileImgInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const imgUrl = e.target.result;
-          profileImgDisplay.src = imgUrl;
-          if (previewImgDisplay) previewImgDisplay.src = imgUrl;
-          localStorage.setItem("profile_image", imgUrl);
-        };
-        reader.readAsDataURL(profileImgInput.files[0]);
-      }
-    });
-  }
-
-  if (nameInput) {
-    nameInput.addEventListener("input", () => {
-      const newName = nameInput.value;
-      if (nameDisplay) nameDisplay.textContent = newName;
-      localStorage.setItem("profile_name", newName);
-    });
-  }
 
   // ------------------------
   // 2️⃣ 해시태그 검색 함수
@@ -135,7 +197,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <!-- 카카오맵 SDK -->
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
-<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
@@ -200,16 +261,16 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     </div>
     <!-- 모달 -->
-    <div class="modal-overlay" id="editModal">
+    <div class="modal-overlay" id="profileEditModal">
       <div class="modal-content">
         <form id="profileEditForm" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="modal-actions">
             <button id="closeModalBtn">×</button>
           </div>
-          <div class="nickname-row">
+          <div class="nickname-row" style="margin-top:10px;">
             <input type="text" name="username" id="nicknameInput" value="{{ request.user.username }}" />
-            <button type="submit" name="edit_type" value="name">
+            <button type="submit" name="edit_type" value="name" class="edit_btns" style="margin-top:-10px;">
               <img
                 class="nickname-edit-btn"
                 src="{% static 'img/edit.png' %}"
@@ -218,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </button>
           </div>
 
-          <div class="image-row">
+          <div class="image-row" style="margin-top:10px;">
             <div class="image-preview">
               <img
                 src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
@@ -226,17 +287,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 class="preview_img"
               />
               <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-              <img
+              
+              <button type="button" id="profileImageEditBtn" class="edit_btns" style="margin-top:-5px;">
+                <img
                 class="image-edit-btn"
                 src="{% static 'img/edit.png' %}"
-                id="profileImageEditBtn"
                 alt="이미지 수정"
-              />
+                />
+              </button>
             </div>
           </div>
         </form>
       </div>
     </div>
+
 
     <!-- 첫 화면 브로콜리 -->
     <div class="firstsight">
@@ -279,7 +343,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
             <div class="btn">
             <a href="{% url 'stores:map' %}">
-                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+                <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
             </a>
             </div>
             <div class="btn">
