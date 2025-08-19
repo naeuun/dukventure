@@ -627,3 +627,83 @@ body {
 .nickname-row{
   margin-top:10px;
 }
+#editItemModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  background: rgba(255, 255, 255, 0.151);
+  backdrop-filter: blur(6px);
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  padding: 18px;
+  border-radius: 12px;
+  font-family: 'Arial', sans-serif;
+  color:black;
+  z-index: 1000;
+}
+
+#editItemForm {
+  display: flex;
+  flex-direction: column;
+  gap:5px;
+}
+#editItemForm .form-row {
+  display: flex;
+  align-items: center; /* 세로 가운데 정렬 */
+  gap: 8px; /* 라벨-인풋 간격 */
+}
+#editItemForm .form-row label {
+  flex: 0 0 60px; /* 라벨 너비 고정 */
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+#editItemForm .form-row input {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#editItemForm input:focus {
+  border-color: #C1FF52;
+}
+
+#editItemForm button {
+  padding: 8px;
+  font-size: 13px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  width:50%;
+  margin-top:10px;
+}
+
+#editItemForm button[type="submit"] {
+  background: #C1FF52;
+  color: black;
+}
+
+#editItemForm button#closeEditItemModal {
+  background: white;
+  color: black;
+}
+.photo{
+  width:20px;
+}
+
+.file-preview {
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 긴 파일명 ... 처리 */
+  max-width: 150px;
+  display: inline-block;
+  vertical-align: middle;
+}
