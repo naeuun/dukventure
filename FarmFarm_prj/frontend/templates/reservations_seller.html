@@ -7,8 +7,152 @@
 {% endblock style %}
 
 {% block script %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.getElementById('profileImageEditBtn');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // 모달 열기
+    profileEditBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'block';
+    });
+
+    // 모달 닫기
+    closeModalBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === profileEditModal) profileEditModal.style.display = 'none';
+    });
+
+    // 이미지 선택
+    profileImageEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        profileImageInput.click();
+    });
+
+    profileImageInput.addEventListener('change', function(){
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              alert("프로필 사진이 수정되었습니다.");
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
+  });
+
+
+    // 닉네임 수정
+    const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
+    }
+});
+
+</script>
+<script>
+const csrftoken = '{{ csrf_token }}';
+
+// 거절 모달 제어
+const rejectModal = document.getElementById('rejectModal');
+const rejectForm = document.getElementById('rejectForm');
+function openRejectModal(reservationId) {
+    rejectForm.action = `/reservations/${reservationId}/change-status/`;
+    rejectModal.style.display = 'block';
+}
+function closeRejectModal() {
+    rejectModal.style.display = 'none';
+}
+
+// '수락' 버튼 AJAX 처리
+document.querySelectorAll('.accept-btn').forEach(button => {
+    button.addEventListener('click', async function() {
+        const reservationId = this.dataset.pk;
+        const url = `/reservations/${reservationId}/change-status/`;
+        const formData = new FormData();
+        formData.append('to_status', 'ACCEPTED');
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+             if (response.ok) {
+                const card = document.getElementById(`res-card-seller-${reservationId}`);
+                // 이제 .status 요소가 존재하므로 정상적으로 텍스트를 바꿀 수 있습니다.
+                card.querySelector('.status').textContent = result.new_status;
+                // action-buttons 영역 전체를 바꾸면 '수락 완료' 텍스트만 남습니다.
+                card.querySelector('.action-buttons').innerHTML = '<span>수락 완료</span>';
+            } else {
+                alert('오류: ' + result.message);
+            }
+        } catch (error) {
+            alert('요청 중 오류가 발생했습니다.');
+        }
+    });
+});
+</script>
 <script src="{% static 'js/reservations_seller.js' %}"></script>
-<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
@@ -17,92 +161,109 @@
 
     <!-- 인사 섹션 -->
     <!-- 상단 프로필 영역 -->
-  <div class="profile-section">
-    <div class="logo">
-      <img src="{% static 'img/background.png' %}" alt="" />
-      <img src="{% static 'img/background2.png' %}" alt="" />
-    </div>
-    <div class="welcome-box">
-      <div class="backgroundimg">
-        <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+    <div class="profile-section">
+      <div class="logo">
+        <img src="{% static 'img/background.png' %}" alt="" />
+        <img src="{% static 'img/background2.png' %}" alt="" />
       </div>
-      <div class="profile-info">
-        <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
-        <div class="profile-text">
-          <div class="textbox0">
-            <span class="nickname-highlight"
-              ><span class="nickname"> 김말선</span
-            ></span>
-            <span class="welcome-text">님 반가워요!</span>
-            <img src="{% static 'img/emo1.png' %}" alt="" />
-          </div>
+      <div class="welcome-box">
+        <div class="backgroundimg">
+          <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+        </div>
+        <div class="profile-info">
+          <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
+          <div class="profile-text">
+            <div class="textbox0">
+              <span class="nickname-highlight"
+                ><span class="nickname">{{ request.user.username }}</span></span
+              >
+              <span class="welcome-text">
+                님 반가워요!
+                <img src="{% static 'img/emo1.png' %}" alt="" class="boom" />
+              </span>
+            </div>
 
-          <div class="textbox1">
+            <div class="textbox1">
               <div class="smaller-text">
-                이제 
-                <span class="green_highlight">
-                  우리 동네 손님들과 연결
-                </span>
+                이제
+                <span class="green_highlight"> 우리 동네 손님들과 연결 </span>
                 될 준비가 끝났어요.
               </div>
               <div class="smaller-text">
-                <span class="bigger_green_highlight">
-                  AI
-                </span>
+                <span class="bigger_green_highlight"> AI </span>
                 가 손님에게 가게 소식을 잘 전해드릴게요!
-                <img src="{% static 'img/emo3.png' %}" alt=""  class="pic"/>
+                <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
               </div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-box">
+          <img
+            src="{% static 'img/Union.png' %}"
+            alt=""
+            class="profile_hugger"
+          />
+          <div class="profile-edit">
+            <img
+              id="profileImage"
+              src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+              alt="프로필"
+            />
+          </div>
+          <div class="level-box">
+            <p class="nickname">
+              {{ request.user.username }}
+              <img
+                id="editProfileBtn"
+                src="{% static 'img/edit.png' %}"
+                alt="수정"
+                style="cursor: pointer"
+              />
+            </p>
           </div>
         </div>
       </div>
-      <div class="profile-box">
-        <img src="{% static 'img/Union.png' %}" alt="" class="profile_hugger"/>
-        <div class="profile-edit">
-          <img
-            id="profileImage"
-            src="{% static 'img/dummy_egg.png' %}"
-            alt="프로필"
-          />
-        </div>
-        <div class="level-box">
-          <p class="nickname">
-            김말선
-            <img
-              id="editProfileBtn"
-              src="{% static 'img/edit.png' %}"
-              alt="수정"
-              style="cursor: pointer"
-            />
-          </p>
-          <p class="level">
-            LV.3
-            <img src="{% static 'img/level.png' %}" alt="" />
-          </p>
-        </div>
+    </div>
+    <!-- 모달 -->
+    <div class="modal-overlay" id="profileEditModal">
+      <div class="modal-content">
+        <form id="profileEditForm" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-actions">
+            <button id="closeModalBtn">×</button>
+          </div>
+          <div class="nickname-row" style="margin-top:10px;">
+            <input type="text" name="username" id="nicknameInput" value="{{ request.user.username }}" />
+            <button type="submit" name="edit_type" value="name" class="edit_btns" style="margin-top:-10px;">
+              <img
+                class="nickname-edit-btn"
+                src="{% static 'img/edit.png' %}"
+                alt="닉네임 수정"
+              />
+            </button>
+          </div>
+
+          <div class="image-row" style="margin-top:10px;">
+            <div class="image-preview">
+              <img
+                src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+                alt="프로필 미리보기"
+                class="preview_img"
+              />
+              <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
+              
+              <button type="button" id="profileImageEditBtn" class="edit_btns" style="margin-top:-5px;">
+                <img
+                class="image-edit-btn"
+                src="{% static 'img/edit.png' %}"
+                alt="이미지 수정"
+                />
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-  <!-- 모달 -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal-content">
-      
-      <div class="modal-actions">
-        <button id="closeModalBtn">×</button>
-      </div>
-      <div class="nickname-row">
-        <input type="text" id="nicknameInput" value="김말선" />
-        <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
-      </div>
-
-      <div class="image-row">
-        <div class="image-preview">
-          <img src="{% static 'img/dummy_egg.png' %}" alt="프로필 미리보기" class="preview_img">
-          <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정">
-        </div>
-      </div>
-
-    </div>
-  </div>
 
     <div class="line_"></div>
 
@@ -110,7 +271,10 @@
     <div class="res_section">
       <div class="reservation_">
         예약확인
-        <img src="{% static 'img/reservation_icon.png' %}" alt="예약확인 아이콘" class="res_check" />
+        <img src="{% static 'img/res_icon.png' %}"
+        alt="예약확인 아이콘"
+        class="res_check" 
+        />
       </div>
     </div>
 
@@ -120,91 +284,70 @@
 
     <!-- 예약 카드 영역 -->
     <div class="reservation_zone">
-
+      {% for r in page_obj %}
       <!-- 예약 카드 1 -->
-      <div class="per_res">
+      <div class="per_res" id="res-card-seller-{{ r.pk }}">
         <div class="reservation-card">
           <div class="product-img-wrap">
-            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="product-img">
+            {% for item in r.items.all %}
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.item_name }}" class="product-img">
+            {% else %}
+            <img src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}" class="product-img">
+            {% endif %}
+            {% endfor %}
             <div class="profile-circle">
-              <img src="{% static 'img/logo_leaves.png' %}" alt="프로필 이미지">
+              <img 
+              src="{% if r.buyer.profile_image %}{{ r.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" 
+              alt="프로필 이미지"
+              >
             </div>
             <div class="profile-hugger-circle"></div>
           </div>
 
           <div class="product-info">
-            <p>이름: 김지은</p>
-            <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
+            <p>이름: {{ r.buyer.user.username }}</p>
+            <p>예약 품목: {{ item.item_name }} <span class="highlight-text">{{ item.quantity }}</span></p>
             <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
-            <p>연락처: 010-1234-5678</p>
+            <p>연락처: {{ r.buyer.user.phone }}</p>
+            <p>예약코드: {{ r.reservation_code }}</p>
+            <p>요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+            <p>상태: <span class="status">{{ r.get_status_display }}</span></p>
           </div>
         </div>
 
         <div class="button-group">
-          <button class="accept-btn">수락</button>
-          <button class="reject-btn">거절</button>
+          {% if r.status == 'PENDING' %}
+          <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
+          <button type="button" class="btn btn-reject reject-btn" onclick="openRejectModal('{{ r.pk }}')">거절</button>
+          {% elif r.status == 'ACCEPTED' %}
+          <button>수락 완료</button>
+          {% elif r.status == 'PICKED_UP' %}
+          <button style="color: green; font-weight: bold;">픽업 완료</button>
+          {% elif r.status == 'REJECTED' %}
+          <button style="color: red;">거절됨</button>
+          {% endif %}
         </div>
 
         <!-- 거절 사유 모달 -->
         <div id="rejectModal" class="modal">
           <div class="modal-content0">
             <div class="modal_title">거절 사유</div>
-            <button class="reason-btn">재고소진</button>
-            <button class="reason-btn">판매 시간 종료</button>
-            <button class="reason-btn">예약 시간 불가</button>
-            <button class="reason-btn">임시적 휴무</button>
-            <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
-            <button class="reason-btn">기타 사유</button>
-            <div class="modal-actions">
-              <button class="confirm-btn">확인</button>
-              <button class="close-btn">×</button>
-            </div>
+            <form id="rejectForm" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="to_status" value="REJECTED">
+              {{ reject_form.as_p }}
+              <div class="modal-actions">
+                <button type="submit" class="confirm-btn">거절 확정</button>
+                <button class="close-btn">×</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-
-      <!-- 예약 카드 2 -->
-      <div class="per_res">
-        <div class="reservation-card">
-          <div class="product-img-wrap">
-            <img src="{% static 'img/dummy_egg.png' %}" alt="상품 이미지" class="product-img">
-            <div class="profile-circle">
-              <img src="{% static 'img/logo_leaves.png' %}" alt="프로필 이미지">
-            </div>
-            <div class="profile-hugger-circle"></div>
-          </div>
-
-          <div class="product-info">
-            <p>이름: 김지은</p>
-            <p>예약 품목: 계란 <span class="highlight-text">5알</span></p>
-            <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
-            <p>연락처: 010-1234-5678</p>
-          </div>
-        </div>
-
-        <div class="button-group">
-          <button class="accept-btn">수락</button>
-          <button class="reject-btn">거절</button>
-        </div>
-
-        <!-- 거절 사유 모달 -->
-        <div id="rejectModal" class="modal">
-          <div class="modal-content">
-            <div class="modal_title">거절 사유</div>
-            <button class="reason-btn">재고소진</button>
-            <button class="reason-btn">판매 시간 종료</button>
-            <button class="reason-btn">예약 시간 불가</button>
-            <button class="reason-btn">임시적 휴무</button>
-            <button class="reason-btn">날씨/현장상황으로 판매 불가</button>
-            <button class="reason-btn">기타 사유</button>
-            <div class="modal-actions">
-              <button class="confirm-btn">확인</button>
-              <button id="closeModal" class="close-btn">×</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {% empty %}
+          <p>예약이 없습니다.</p>
+      {% endfor %}
     </div> <!-- reservation_zone 끝 -->
 
   </div> <!-- container 끝 -->

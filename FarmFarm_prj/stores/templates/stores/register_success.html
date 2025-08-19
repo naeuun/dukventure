@@ -1,8 +1,33 @@
-{% extends "base.html" %}
+{% extends "base_2.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/stores_plus.css' %}" />
+{% endblock style %}
+
+{% block script %}
+<script src="{% static 'js/stores_plus.js' %}"></script>
+{% endblock script %}
 
 {% block content %}
-<h2>가게 등록 성공</h2>
-<p>가게가 성공적으로 등록되었습니다!</p>
+<!-- 환영 메시지 -->
+<div class="welcome_content">
+  <p class="welcoming">
+    <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli">
+    가게를
+    <span class="green_highlight"> 등록</span>
+    해주셔서
+    <img src="{% static 'img/tongue_face.png' %}" alt="혀내민 표정" class="face">
+    <br>
+    <span class="green_highlight_">감사합니다!</span>
+    <img src="{% static 'img/welcome_boom.png' %}" alt="축하 폭죽" class="welcome_boom">
+  </p>
+  <p class="under_texts">
+    <span class="sub_text">
+      우리 동네 손님들과의 만남이 곧 시작됩니다.
+    </span>
+  </p>
+</div>
 <a href="{% url 'users:seller_home' %}">홈으로</a>
 
 {% endblock %}

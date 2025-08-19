@@ -1,102 +1,450 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</h2>
-<hr>
-<form method="post" enctype="multipart/form-data" id="storeForm">
-<form method="post" enctype="multipart/form-data" id="storeForm">
-    {% csrf_token %}
-    <input type="hidden" id="latitudeInput" name="latitude" value="{{ form.latitude.value|default_if_none:'' }}">
-    <input type="hidden" id="longitudeInput" name="longitude" value="{{ form.longitude.value|default_if_none:'' }}">
+{% extends "base_2.html" %}
 
-    <div>
-        1. <label>가게 이름</label>
-        <input type="text" name="name" id="nameInput" value="{{ form.name.value|default_if_none:'' }}">
-    </div>
-    <div>
-        2. <label>사업자 등록 번호</label>
-        <input type="text" name="business_number" id="businessNumberInput" value="{{ request.user.seller.business_number }}" readonly>
-    </div>
-    <div>
-        3. <label>가게 위치 등록</label>
-        <button type="button" id="mapBtn">지도에서 위치 선택</button>
-        <span style="font-size:0.9em;color:#888;">(지도에서 마커를 찍어 위치를 등록하세요)</span>
-        <br>
-        <input type="text" id="addressSearch" placeholder="장소, 상호, 주소 등으로 검색">
-        <button type="button" id="searchBtn">검색</button>
-        <div id="searchModal" style="display:none; position:fixed; top:20%; left:30%; width:40%; background:#fff; z-index:2000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
-            <div style="text-align:right; padding:5px;">
-                <button id="closeSearchModal">닫기</button>
-            </div>
-            <ul id="searchResult" style="list-style:none; padding:10px; margin:0; max-height:250px; overflow-y:auto;"></ul>
-        </div>
-        <br>
-        <input type="text" id="addressInput" name="address"
-               value="{{ form.address.value|default_if_none:'' }}"
-               placeholder="주소를 직접 입력하거나, 지도에서 선택하세요">
-        <span style="font-size:0.9em;color:#888;">(주소 검색은 카카오 지도에서 가능합니다)</span>
-    </div>
-    <div id="itemList">
-        <p>4. 판매 품목 및 가격/사진/설명</p>
-        {% if store and store.store_items.all %}
-            {% for store_item in store.store_items.all %}
-                <div>
-                    <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
-                    <input type="text" name="item_name_{{ forloop.counter0 }}" id="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
-                    <input type="text" name="item_unit_{{ forloop.counter0 }}" id="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위">
-                    <input type="number" name="item_price_{{ forloop.counter0 }}" id="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
-                    <input type="text" name="item_desc_{{ forloop.counter0 }}" id="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
-                    <input type="file" name="item_photo_{{ forloop.counter0 }}" accept="image/*">
-                    <button type="button" onclick="removeItem(this)">제거</button>
-                </div>
-            {% endfor %}
-        {% else %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
+
+{% endblock style %}
+{% block script %}
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 삭제된 기존 아이템 ID를 저장할 히든 필드 컨테이너
+    const itemList = document.getElementById('itemList');
+    const deletedItemsContainer = document.createElement('div');
+    deletedItemsContainer.id = 'deletedItemsContainer';
+    deletedItemsContainer.style.display = 'none';
+    itemList.appendChild(deletedItemsContainer);
+
+    // 아이템 제거
+    function removeItem(btn) {
+        const div = btn.closest('.item_detail_hugger');
+        if (!div) return;
+
+        // 기존 아이템이면 삭제 목록에 추가
+        const itemIdInput = div.querySelector('input[name^="item_id_"]');
+        if (itemIdInput) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'deleted_items';
+            input.value = itemIdInput.value;
+            deletedItemsContainer.appendChild(input);
+        }
+
+        div.remove();
+    }
+    window.removeItem = removeItem;
+
+    // 추가 버튼 클릭
+    document.getElementById('addItemBtn').onclick = function() {
+        const existingItems = document.querySelectorAll('#itemList .per_row .item_detail_hugger');
+        const idx = existingItems.length;
+        const div = document.createElement('div');
+        div.className = 'item_detail_hugger';
+        div.innerHTML = `
             <div>
-                <input type="text" name="item_name_0" id="item_name_0" placeholder="품목명">
-                <input type="text" name="item_unit_0" id="item_unit_0" placeholder="단위">
-                <input type="number" name="item_price_0" id="item_price_0" placeholder="가격">
-                <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명">
-                <input type="file" name="item_photo_0" accept="image/*">
-                <button type="button" onclick="removeItem(this)">제거</button>
+                <input type="text" name="item_name_${idx}" id="item_name_${idx}" placeholder="품목명">
+                <input type="text" name="item_unit_${idx}" id="item_unit_${idx}" placeholder="단위">
             </div>
-        {% endif %}
-    </div>
-    <button type="button" id="addItemBtn">추가</button>
+            <div>
+                <input type="number" name="item_price_${idx}" id="item_price_${idx}" placeholder="가격">
+                <input type="text" name="item_desc_${idx}" id="item_desc_${idx}" placeholder="설명">
+            </div>
+            <div>
+                <input type="file" id="itemPhoto"  name="photo" accept="image/*" style="display: none;">
+                <label for="itemPhoto">
+                    <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
+                </label>
+                <button class="deleteitem" type="button" onclick="removeItem(this)">×</button>
+            </div>
+        `;
+        document.querySelector('#itemList .per_row').appendChild(div);
+    };
 
-    <div>
-        5. <label>판매 요일</label>
-        <input type="text" name="sale_days" id="saleDaysInput" value="{{ form.sale_days.value|default_if_none:'' }}" placeholder="예: 월,수,금">
-    </div>
-    <div>
-        6. <label>판매 시간대</label>
-        <input type="text" name="sale_hours" id="saleHoursInput" value="{{ form.sale_hours.value|default_if_none:'' }}" placeholder="예: 10:00~18:00">
-    </div>
-    <div>
-        7. <label>결제 수단</label>
-        <input type="text" name="payment_methods" id="paymentMethodsInput" value="{{ form.payment_methods.value|default_if_none:'' }}" placeholder="예: 현금, 카드">
-    </div>
-    <div>
-        8. <label>연락처</label>
-        <input type="text" name="contact" id="contactInput" value="{{ form.contact.value|default_if_none:'' }}" placeholder="예: 010-1234-5678">
-    </div>
-    <div>
-        9. <label>가게 사진</label>
-        <input type="file" name="photo" accept="image/*">
-    </div>
-    <div>
-        10. <label>특이 사항/판매 메시지</label>
-        <textarea name="description" id="descriptionInput" rows="2" cols="40" placeholder="간단한 메시지를 입력하세요">{{ form.description.value|default_if_none:'' }}</textarea>
-    </div>
-    <hr>
-    <button type="submit">{% if mode == 'edit' %}수정 완료{% else %}등록하기{% endif %}</button>
-</form>
+    // ------------------------- 지도/주소 관련 -------------------------
+    const addressInput = document.getElementById('addressInput');
+    const latitudeInput = document.getElementById('latitudeInput');
+    const longitudeInput = document.getElementById('longitudeInput');
+    const geocoder = new kakao.maps.services.Geocoder();
+    const ps = new kakao.maps.services.Places();
+    const searchModal = document.getElementById('searchModal');
+    const searchResult = document.getElementById('searchResult');
+    const closeSearchModal = document.getElementById('closeSearchModal');
 
-<!-- 가게 등록 폼용 음성 인식 버튼 -->
-<div>
-    <button type="button" id="voiceBtn" data-form-type="register">🎤 음성 인식</button>
-    <span id="voiceStatus" style="margin-left:10px;color:#555;">(녹음 상태 표시)</span>
+    let map, marker;
+
+    function updateCoordsFromAddress() {
+        const address = addressInput.value.trim();
+        if (!address) return;
+        geocoder.addressSearch(address, function(result, status) {
+            if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                const lat = result[0].y;
+                const lng = result[0].x;
+                latitudeInput.value = lat;
+                longitudeInput.value = lng;
+                setMarkerAndCenter(lat, lng);
+            } else {
+                latitudeInput.value = "";
+                longitudeInput.value = "";
+                alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
+            }
+        });
+    }
+
+    function initMap(lat, lng) {
+        const center = new kakao.maps.LatLng(lat, lng);
+        if (!map) map = new kakao.maps.Map(document.getElementById('mapContainer'), { center, level: 3 });
+        else map.setCenter(center);
+
+        if (!marker) marker = new kakao.maps.Marker({ position: center, map });
+        else marker.setPosition(center);
+
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            latitudeInput.value = latlng.getLat();
+            longitudeInput.value = latlng.getLng();
+            geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+                addressInput.value = (status === kakao.maps.services.Status.OK && result[0].address.address_name)
+                    ? result[0].address.address_name
+                    : "";
+                setMarkerAndCenter(latlng.getLat(), latlng.getLng());
+            });
+        });
+    }
+
+    function setMarkerAndCenter(lat, lng) {
+        const loc = new kakao.maps.LatLng(lat, lng);
+        if (!map) initMap(lat, lng);
+        if (!marker) marker = new kakao.maps.Marker({ position: loc, map });
+        else marker.setPosition(loc);
+        map.setCenter(loc);
+    }
+
+    addressInput.addEventListener('blur', updateCoordsFromAddress);
+    addressInput.addEventListener('keydown', function(e) { if (e.key==='Enter') { e.preventDefault(); updateCoordsFromAddress(); } });
+
+    document.getElementById('mapBtn').onclick = function() {
+        document.getElementById('mapModal').style.display='block';
+        const lat = parseFloat(latitudeInput.value)||37.6509;
+        const lng = parseFloat(longitudeInput.value)||127.0164;
+        setTimeout(()=>{ initMap(lat,lng); },100);
+    };
+    document.getElementById('closeModal').onclick = function(){ document.getElementById('mapModal').style.display='none'; };
+
+    document.getElementById('searchBtn').onclick = function() {
+        const query = addressInput.value.trim();
+        if (!query) return;
+        ps.keywordSearch(query, function(data, status) {
+            searchResult.innerHTML = '';
+            if (status === kakao.maps.services.Status.OK) {
+                data.forEach(place => {
+                    const li = document.createElement('li');
+                    li.textContent = place.place_name+' ('+place.address_name+')';
+                    li.style.cursor='pointer';
+                    li.style.padding='5px 0';
+                    li.onclick = function() {
+                        addressInput.value = place.address_name;
+                        latitudeInput.value = place.y;
+                        longitudeInput.value = place.x;
+                        setMarkerAndCenter(place.y, place.x);
+                        searchModal.style.display='none';
+                    };
+                    searchResult.appendChild(li);
+                });
+            } else searchResult.innerHTML='<li>검색 결과가 없습니다.</li>';
+            searchModal.style.display='block';
+        });
+    };
+    closeSearchModal.onclick = function(){ searchModal.style.display='none'; };
+
+    document.getElementById('storePhoto').addEventListener('change', function(e){
+        const file = e.target.files[0];
+        document.getElementById('storePhotoName').textContent = file?file.name:'선택된 파일 없음';
+    });
+
+    // ------------------------- 음성 인식 -------------------------
+    const voiceBtn = document.getElementById('voiceBtn');
+    const voiceStatus = document.getElementById('voiceStatus');
+    let mediaRecorder = null, audioChunks=[], currentStream=null;
+
+    voiceBtn.addEventListener('click', async () => {
+        if (!navigator.mediaDevices?.getUserMedia) { alert("브라우저가 음성 입력을 지원하지 않습니다."); return; }
+
+        if (mediaRecorder?.state === "recording") {
+            mediaRecorder.stop();
+            currentStream?.getTracks().forEach(t=>t.stop());
+            currentStream=null;
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+            currentStream = stream;
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+            mediaRecorder.onstart = ()=>{ voiceStatus.textContent="🎤 녹음 중..."; };
+
+            mediaRecorder.onstop = async ()=>{
+                currentStream?.getTracks().forEach(t=>t.stop());
+                currentStream=null;
+                const audioBlob = new Blob(audioChunks);
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = async ()=>{
+                    const base64Audio = reader.result;
+                    voiceStatus.textContent="⏳ 서버 처리 중...";
+                    try {
+                        const response = await fetch("{% url 'stores:voice_input' %}", {
+                            method:"POST",
+                            headers:{"Content-Type":"application/json"},
+                            body:JSON.stringify({ audio: base64Audio, form_type:'register' })
+                        });
+                        const data = await response.json();
+                        if(!data.form_data){ voiceStatus.textContent="⚠️ 음성 처리 실패"; return; }
+                        const formData = data.form_data;
+
+                        // 각 필드 업데이트
+                        ['name','address','contact','sale_days','sale_hours','payment_methods','description'].forEach(f=>{
+                            if(formData[f]){
+                                const el = document.getElementById(f==='name'?'nameInput': f==='address'?'addressInput':
+                                    f==='contact'?'contactInput': f==='sale_days'?'saleDaysInput':
+                                    f==='sale_hours'?'saleHoursInput': f==='payment_methods'?'paymentMethodsInput':'descriptionInput');
+                                if(el) el.value = formData[f];
+                            }
+                        });
+
+                        // 판매 품목
+                        if(formData.items?.length>0){
+                            const perRow = document.querySelector('#itemList .per_row');
+                            perRow.querySelectorAll('div').forEach(div=>div.remove());
+                            formData.items.forEach((item,idx)=>{
+                                const div = document.createElement('div');
+                                div.className='item_detail_hugger';
+                                div.innerHTML=`
+                                    <input type="text" name="item_name_${idx}" placeholder="품목명" value="${item.name||''}">
+                                    <input type="text" name="item_unit_${idx}" placeholder="단위" value="${item.unit||''}">
+                                    <input type="number" name="item_price_${idx}" placeholder="가격" value="${item.price||''}">
+                                    <input type="text" name="item_desc_${idx}" placeholder="설명" value="${item.description||''}">
+                                    <input type="file" name="item_photo_${idx}" accept="image/*">
+                                    <button type="button" onclick="removeItem(this)">제거</button>
+                                `;
+                                perRow.appendChild(div);
+                            });
+                        }
+
+                        voiceStatus.textContent="✅ 음성 입력 완료";
+                    } catch(err){ console.error(err); voiceStatus.textContent="❌ 서버 오류"; }
+                };
+            };
+
+            mediaRecorder.start();
+        } catch(err){ console.error(err); voiceStatus.textContent="❌ 마이크 접근 거부됨"; }
+    });
+
+    // ------------------------- 폼 제출 -------------------------
+    document.getElementById('storeForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch(this.action||window.location.href,{
+            method:'POST',
+            body:formData
+        })
+        .then(r=>r.text())
+        .then(html=>{ document.body.innerHTML=html; })
+        .catch(err=>{ console.error(err); });
+    });
+});
+</script>
+
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+    <div class="container">
+        <div class="progress_bar">
+            <div class="now_step" style="width: 270px;"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content">
+                <div class="textboxarea">
+                    <img src="{% static 'img/textbox/side_vertical_text_box.png' %}" alt="말풍선" class="brocoli_says">
+                    <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli">
+                    <div class="text">음성녹음 <span style="color:grey;">등록이 가능해요!</span></div>
+                </div>
+                <span class="title">{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</span>
+            </p>
+            <div class="register_box">
+            <div class="scrollable_container">
+                <form method="post" enctype="multipart/form-data" id="storeForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="latitudeInput" name="latitude" value="{{ form.latitude.value|default_if_none:'' }}">
+                    <input type="hidden" id="longitudeInput" name="longitude" value="{{ form.longitude.value|default_if_none:'' }}">
+
+                    <!-- 1. 가게 이름 -->
+                    <div class="form_row">
+                        <label for="nameInput">1. 가게 이름</label>
+                        <input type="text" name="name" id="nameInput" value="{{ form.name.value|default_if_none:'' }}" placeholder="입력하시오..." />
+                    </div>
+
+                    <!-- 2. 사업자 등록번호 -->
+                    <div class="form_row">
+                        <label for="businessNumberInput">2. 사업자 등록번호</label>
+                        <input type="text" name="business_number" id="businessNumberInput" value="{{ request.user.seller.business_number }}" readonly placeholder="입력하시오..." />
+                    </div>
+
+                    <!-- 판매 장소 -->
+                    <div class="form_row ">
+                        <label for="addressInput">3. 판매 장소</label>
+                        <div class="place">
+                            <input type="text" id="addressInput" name="address"
+                                value="{{ form.address.value|default_if_none:'' }}"
+                                placeholder="주소를 입력하거나, 검색/지도에서 선택하세요">
+                            <button type="button" id="searchBtn">
+                                <img src="{% static 'img/search.png' %}" alt="upload" class="search" />
+                            </button>
+                            <button type="button" id="mapBtn">🗺</button>
+
+                            <!-- 검색 결과 모달 -->
+                            <div id="searchModal" style="display:none; position:fixed; top:20%; left:30%; width:40%; background:#fff; z-index:2000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+                                <div style="text-align:right; padding:5px;">
+                                    <button id="closeSearchModal">닫기</button>
+                                </div>
+                                <ul id="searchResult" style="list-style:none; padding:10px; margin:0; max-height:250px; overflow-y:auto;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                        <!-- 4. 판매 품목 -->
+                        <div class="form_row" id="itemList">
+                            <label for="">3. 판매 품목</label>
+                            <div class="per_row">
+                                {% if store and store.store_items.all %}
+                                {% for store_item in store.store_items.all %}
+                                <div class="item_detail_hugger existing_items">
+                                    <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
+
+                                    <div>
+                                        <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
+                                        <input type="text" name="item_name_{{ forloop.counter0 }}" id="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
+                                        <input type="text" name="item_unit_{{ forloop.counter0 }}" id="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위">
+                                    </div>
+                                    <div>
+                                        <input type="number" name="item_price_{{ forloop.counter0 }}" id="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
+                                        <input type="text" name="item_desc_{{ forloop.counter0 }}" id="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
+                                    </div>
+                                    <div>
+                                        <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
+                                        <label for="itemPhoto_{{ forloop.counter0 }}">
+                                            <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
+                                        </label>
+                                        <button class="deleteitem" type="button" onclick="removeItem(this)">×</button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="item_detail_hugger">
+                                    <div>
+                                        <input type="text" name="item_name_0" id="item_name_0" placeholder="품목명">
+                                        <input type="text" name="item_unit_0" id="item_unit_0" placeholder="단위">
+                                    </div>
+                                    <div>
+                                        <input type="number" name="item_price_0" id="item_price_0" placeholder="가격">
+                                        <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명">
+                                    </div>
+                                    <div>
+                                        <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
+                                        <label for="itemPhoto_{{ forloop.counter0 }}">
+                                            <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
+                                        </label>
+                                        <button class="deleteitem" type="button" onclick="removeItem(this)">×</button>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        <button type="button" id="addItemBtn">+</button>                    
+                        </div>
+                    
+                    <!-- 5. 판매 요일 -->
+                    <div class="form_row">
+                        <label for="field4">5. 판매 요일</label>
+                        <input type="text"  name="sale_days" id="saleDaysInput" value="{{ form.sale_days.value|default_if_none:'' }}" placeholder="예: 월,수,금" />
+                    </div>
+
+                    <!-- 6. 판매 시간대 -->
+                    <div class="form_row">
+                        <label for="saleHoursInput">6. 판매 시간대</label>
+                        <input type="text" name="sale_hours" id="saleHoursInput" value="{{ form.sale_hours.value|default_if_none:'' }}" placeholder="예: 10:00~18:00" />
+                    </div>
+
+                    <!-- 7. 결제 수단 -->
+                    <div class="form_row">
+                        <label for="paymentMethodsInput">7. 결제 수단</label>
+                        <input type="text" name="payment_methods" id="paymentMethodsInput" value="{{ form.payment_methods.value|default_if_none:'' }}" placeholder="예: 현금, 카드" />
+                    </div>
+
+                    <!-- 8. 판매자 연락 수단 -->
+                    <div class="form_row">
+                        <label for="contactInput">8. 판매자 연락 수단</label>
+                        <input  type="text" name="contact" id="contactInput" value="{{ form.contact.value|default_if_none:'' }}" placeholder="예: 010-1234-5678" />
+                    </div>
+
+                    <!-- 9. 가게 사진 업로드 -->
+                    <div class="form_row photo_zone">
+                        <label for="storePhoto">9. 가게 사진 업로드</label>
+                        <div class="file_upload">
+                            <input type="file" id="storePhoto" name="photo" style="display:none;">
+                            <span id="storePhotoName">선택된 파일 없음</span>
+                            <label for="storePhoto">
+                                <img src="{% static 'img/add_photo.png' %}" class="upload_icon"/>
+                            </label>
+
+
+                        </div>
+                    </div>
+
+                    <!-- 10. 특이사항 또는 판매 메시지 (선택) -->
+                    <div class="form_row">
+                        <label for="descriptionInput">10. 가게설명</label>
+                        <input type=text name="description" id="descriptionInput" placeholder="간단한 메시지를 입력하세요">{{ form.description.value|default_if_none:'' }}</input>
+                    </div>
+
+                    <div class="button_hugger">
+            <button
+            type="button"
+            value="음성 인식 버튼"
+            class="voice_recognition_btn"
+            id="voiceBtn"
+            data-form-type="register"
+            >
+                <img src="{% static 'img/mic.png' %}" alt="음성 인식 버튼">
+            </button>
+            <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="textbox">
+
+            <span id="voiceStatus">
+                음성녹음 <span style="color:gray;">등록이 가능해요!</span>
+            </span>
+            <button
+            type="submit"
+            value="가게 정보 등록" 
+            class="register_button"
+            >
+                {% if mode == 'edit' %}수정 완료{% else %}등록하기{% endif %}
+            </button>
+        </div>
+
+                </form>
+            </div>
+        </div> 
+        
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        </div>
+    </div>
 </div>
-
-<a href="{% url 'users:seller_home' %}">판매자 홈으로 돌아가기</a>
 
 <div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
     <div style="text-align:right; padding:5px;">
@@ -105,306 +453,19 @@
     <div id="mapContainer" style="width:100%; height:90%;"></div>
 </div>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
-<script>
+<!-- 음성 인식 모달 -->
+<div class="voice_modal hidden">
+    <div class="voice_modal_overlay"></div>
+    <div class="voice_modal_content">
+        <button class="voice_modal_close">✕</button>
+        <div class="text_box_area">
+        <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="voice_modal_ann">
+        <div class="ann_text">버튼을 누르고, 말하세요!</div>
+        </div>
+        <div class="voice_recognizing_btn">
+        <img src="{% static 'img/mic_neon.png' %}" alt="음성 인식 버튼" class="voice_modal_mic">
+        </div>
+    </div>
+</div>
 
-// 아이템 추가/제거 버튼 동작 
-function removeItem(btn) {
-    const div = btn.closest('div');
-    if (div) div.remove();
-}
-
-document.getElementById('addItemBtn').onclick = function() {
-    const itemList = document.getElementById('itemList');
-    // p 태그 제외하고 div 개수 세기
-    const idx = itemList.querySelectorAll('div').length;
-    const div = document.createElement('div');
-    div.innerHTML = `
-        <input type="text" name="item_name_${idx}" id="item_name_${idx}" placeholder="품목명">
-        <input type="text" name="item_unit_${idx}" id="item_unit_${idx}" placeholder="단위">
-        <input type="number" name="item_price_${idx}" id="item_price_${idx}" placeholder="가격">
-        <input type="text" name="item_desc_${idx}" id="item_desc_${idx}" placeholder="설명">
-        <input type="file" name="item_photo_${idx}" accept="image/*">
-        <button type="button" onclick="removeItem(this)">제거</button>
-    `;
-    itemList.appendChild(div);
-};
-
-
-
-const addressInput = document.getElementById('addressInput');
-const latitudeInput = document.getElementById('latitudeInput');
-const longitudeInput = document.getElementById('longitudeInput');
-const geocoder = new kakao.maps.services.Geocoder();
-const addressSearch = document.getElementById('addressSearch');
-const searchResult = document.getElementById('searchResult');
-const searchModal = document.getElementById('searchModal');
-const closeSearchModal = document.getElementById('closeSearchModal');
-const ps = new kakao.maps.services.Places();
-
-let map, marker;
-
-// 좌표 업데이트 함수
-function updateCoordsFromAddress() {
-    const address = addressInput.value.trim();
-    if (!address) return;
-    geocoder.addressSearch(address, function(result, status) {
-        if (status === kakao.maps.services.Status.OK && result.length > 0) {
-            const lat = result[0].y;
-            const lng = result[0].x;
-            latitudeInput.value = lat;
-            longitudeInput.value = lng;
-            setMarkerAndCenter(lat, lng);
-        } else {
-            latitudeInput.value = "";
-            longitudeInput.value = "";
-            alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
-        }
-    });
-}
-
-// 지도 초기화 및 마커 세팅
-function initMap(lat, lng) {
-    const center = new kakao.maps.LatLng(lat, lng);
-    if (!map) {
-        map = new kakao.maps.Map(document.getElementById('mapContainer'), {
-            center: center,
-            level: 3
-        });
-    } else {
-        map.setCenter(center);
-    }
-    if (!marker) {
-        marker = new kakao.maps.Marker({ position: center });
-        marker.setMap(map);
-    } else {
-        marker.setPosition(center);
-    }
-
-    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-        const latlng = mouseEvent.latLng;
-        latitudeInput.value = latlng.getLat();
-        longitudeInput.value = latlng.getLng();
-        geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
-            if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
-                addressInput.value = result[0].address.address_name;
-            } else {
-                addressInput.value = "";
-            }
-            setMarkerAndCenter(latlng.getLat(), latlng.getLng());
-        });
-    });
-}
-
-// 마커와 지도 center 이동
-function setMarkerAndCenter(lat, lng) {
-    const loc = new kakao.maps.LatLng(lat, lng);
-    if (!map) initMap(lat, lng);
-    if (!marker) {
-        marker = new kakao.maps.Marker({ position: loc, map: map });
-    } else {
-        marker.setPosition(loc);
-    }
-    map.setCenter(loc);
-}
-
-// 이벤트 바인딩
-addressInput.addEventListener('blur', updateCoordsFromAddress);
-addressInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); updateCoordsFromAddress(); }
-});
-
-// 지도 모달 열기
-document.getElementById('mapBtn').onclick = function() {
-    document.getElementById('mapModal').style.display = 'block';
-    let lat = parseFloat(latitudeInput.value) || 37.6509;
-    let lng = parseFloat(longitudeInput.value) || 127.0164;
-    setTimeout(()=>{ initMap(lat, lng); }, 100);
-};
-
-// 지도 모달 닫기
-document.getElementById('closeModal').onclick = function() {
-    document.getElementById('mapModal').style.display = 'none';
-};
-
-// 장소 검색
-document.getElementById('searchBtn').onclick = function() {
-    const query = addressSearch.value.trim();
-    if (!query) return;
-    ps.keywordSearch(query, function(data, status) {
-        searchResult.innerHTML = '';
-        if (status === kakao.maps.services.Status.OK) {
-            data.forEach(place => {
-                const li = document.createElement('li');
-                li.textContent = place.place_name + ' (' + place.address_name + ')';
-                li.style.cursor = 'pointer';
-                li.style.padding = '5px 0';
-                li.onclick = function() {
-                    latitudeInput.value = place.y;
-                    longitudeInput.value = place.x;
-                    addressInput.value = place.address_name;
-                    setMarkerAndCenter(place.y, place.x);
-                    searchModal.style.display = 'none';
-                };
-                searchResult.appendChild(li);
-            });
-        } else {
-            searchResult.innerHTML = '<li>검색 결과가 없습니다.</li>';
-        }
-        searchModal.style.display = 'block';
-    });
-};
-
-// 장소 검색 모달 닫기
-closeSearchModal.onclick = function() { searchModal.style.display = 'none'; };
-
-
-// 음성 인식 기능
-const voiceBtn = document.getElementById('voiceBtn');
-const voiceStatus = document.getElementById('voiceStatus');
-let mediaRecorder = null;
-let audioChunks = [];
-let currentStream = null;
-
-voiceBtn.addEventListener('click', async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("브라우저가 음성 입력을 지원하지 않습니다.");
-        return;
-    }
-
-    // 녹음 중이면 중지
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        // 마이크 스트림 종료
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-            currentStream = null;
-        }
-        return;
-    }
-
-    // 녹음 시작
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        currentStream = stream; 
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-
-        mediaRecorder.onstart = () => {
-            voiceStatus.textContent = "🎤 녹음 중...";
-            voiceBtn.textContent = "⏹️ 녹음 중지";
-        };
-
-        mediaRecorder.onstop = async () => {
-            // 녹음 끝나면 마이크 스트림 종료
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-                currentStream = null;
-            }
-            const audioBlob = new Blob(audioChunks);
-            console.log(audioBlob.type);
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-
-            reader.onloadend = async () => {
-                const base64Audio = reader.result;
-                voiceStatus.textContent = "⏳ 서버 처리 중...";
-                voiceBtn.textContent = "🎤 음성 입력";
-
-                try {
-                    const response = await fetch("{% url 'stores:voice_input' %}", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ audio: base64Audio, form_type: 'register' })
-                    });
-
-                    const data = await response.json();
-                    if (!data.form_data) {
-                        voiceStatus.textContent = "⚠️ 음성 처리 실패";
-                        return;
-                    }
-
-                    const formData = data.form_data;
-
-                    // name
-                    if (formData.name) {
-                        const nameInput = document.getElementById('nameInput');
-                        if (nameInput) nameInput.value = formData.name;
-                    }
-
-                    // address
-                    if (formData.address) {
-                        const addressInput = document.getElementById('addressInput');
-                        if (addressInput) addressInput.value = formData.address;
-                    }
-
-                    // contact
-                    if (formData.contact) {
-                        const contactInput = document.getElementById('contactInput');
-                        if (contactInput) contactInput.value = formData.contact;
-                    }
-
-                    // sale_days (select or input)
-                    if (formData.sale_days) {
-                        const saleDaysInput = document.getElementById('saleDaysInput');
-                        if (saleDaysInput) saleDaysInput.value = formData.sale_days;
-                    }
-
-                    // sale_hours
-                    if (formData.sale_hours) {
-                        const saleHoursInput =document.getElementById('saleHoursInput');
-                        if (saleHoursInput) saleHoursInput.value = formData.sale_hours;
-                    }
-
-                    // payment_methods
-                    if (formData.payment_methods) {
-                        const paymentInput = document.getElementById('paymentMethodsInput');
-                        if (paymentInput) paymentInput.value = formData.payment_methods;
-                    }
-
-                    // description (textarea or input)
-                    if (formData.description) {
-                        const descInput = document.getElementById('descriptionInput');
-                        if (descInput) descInput.value = formData.description;
-                    }
-
-                    // 판매 품목 채우기
-                    if (formData.items && formData.items.length > 0) {
-                        const itemList = document.getElementById('itemList');
-                        // 기존 item div 제거 (p 태그는 유지)
-                        itemList.querySelectorAll('div').forEach(div => div.remove());
-
-                        formData.items.forEach((item, idx) => {
-                            const div = document.createElement('div');
-
-                            div.innerHTML = `
-                                <input type="text" name="item_name_${idx}" id="item_name_${idx}" placeholder="품목명" value="${item.name || ''}">
-                                <input type="text" name="item_unit_${idx}" id="item_unit_${idx}" placeholder="단위" value="${item.unit || ''}">
-                                <input type="number" name="item_price_${idx}" id="item_price_${idx}" placeholder="가격" value="${item.price || ''}">
-                                <input type="text" name="item_desc_${idx}" id="item_desc_${idx}" placeholder="설명" value="${item.description || ''}">
-                                <input type="file" name="item_photo_${idx}" accept="image/*">
-                                <button type="button" onclick="removeItem(this)">제거</button>
-                            `;
-                            itemList.appendChild(div);
-                        });
-                    }
-                    
-
-                    voiceStatus.textContent = "✅ 음성 입력 완료";
-                } catch (err) {
-                    console.error(err);
-                    voiceStatus.textContent = "❌ 서버 오류";
-                }
-            };
-        };
-
-        mediaRecorder.start();
-    } catch (err) {
-        console.error(err);
-        voiceStatus.textContent = "❌ 마이크 접근 거부됨";
-    }
-});
-</script>
-{% endblock %}
+{% endblock body %}

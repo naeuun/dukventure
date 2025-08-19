@@ -13,16 +13,18 @@ body {
   align-items: center;
   justify-content: center;
   position:relative;
+  overflow: hidden;
   }
   .container{
   height:90vh;
-  padding-top: 10vh;
+  padding: 10vh;
   }
 
 .deco{
   position:absolute;
   width:329px;
   top:10px;
+  left:40px;
 }
 .section {
   display:flex;
@@ -47,6 +49,7 @@ body {
   font-weight: 700;
   left:30px;
   margin: 10px 0;
+  margin-right:40px;
 }
 .keyword_section{
   display:flex;
@@ -57,7 +60,7 @@ body {
   align-items: center;
   gap: 8px;
   position: absolute;
-  right:40px;
+  right:30px;
 }
 
 .upload_label {
@@ -150,20 +153,6 @@ body {
   gap: 8px;
 }
 
-.keyword-option {
-  padding: 8px 14px;
-  border: 1px solid #C1FF52;
-  border-radius: 50px;
-  font-size: 14px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease;
-}
-
-.keyword-option.selected {
-  background-color: #C1FF52;
-  color: black;
-}
 
 .register_btn {
   width: 152.8px;
@@ -191,7 +180,7 @@ body {
 
 .voice_recognization{
   position:absolute;
-  bottom: 130px;
+  bottom: 120px;
   right:10px;
   display: flex;
   display:flex;
@@ -434,24 +423,43 @@ body {
   width:8px;
 }
 
-
-
-
-
+#mapBtn{
+  position:absolute;
+  width:30px;
+  height:30px;
+  background-color: transparent;
+  border:none;
+  color:black;
+  right:25px;
+  font-size: 20px;
+  background-color: #C1FF52;
+  border-radius: 50%;
+}
+#addressInput{
+  width:95px;
+  margin-right:33px;
+}
 .keyword-option {
-  padding: 8px 14px;
-  border: 1px solid #C1FF52;
-  border-radius: 50px;
-  font-size: 14px;
+  display: inline-block;
+  padding: 6px;
+  margin: 4px;
+  border-radius: 22px;
+  border: 2px solid #C1FF52;
   cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease;
   user-select: none;
+  transition: 0.2s;
+  width:85px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 체크박스 선택 시 스타일 */
-.keyword-option input[type="checkbox"]:checked + span,
-.keyword-option:has(input[type="checkbox"]:checked) {
+.keyword-option.selected {
   background-color: #C1FF52;
   color: black;
+  border-color: #C1FF52;
+}
+
+.keyword-option input[type="checkbox"] {
+  display: none; /* 체크박스 숨기기 */
 }
