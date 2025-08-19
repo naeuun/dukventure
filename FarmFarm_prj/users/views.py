@@ -252,6 +252,7 @@ def seller_home(request):
         return redirect('users:onboarding')
     seller = request.user.seller
     store = getattr(seller, 'store', None)
+    reviews = Review.objects.none() 
 
     reservations = Reservation.objects.none()
     if store:
@@ -259,10 +260,12 @@ def seller_home(request):
                         .filter(store=store)
                         .select_related('buyer__user')
                         .prefetch_related('items'))
+        reviews = store.reviews.all()  
 
     return render(request, 'users/seller-home.html', {
         'reservations': reservations,
         'store': store,
+        'reviews': reviews,
     })
 
 @login_required

@@ -432,8 +432,8 @@ body {
 }
 .small_brocoli{
   position:absolute;
-  width:217px;
-  top:80px;
+  width:100px;
+  top:140px;
 }
 .textbox_small{
   position:absolute;
@@ -479,6 +479,7 @@ body {
   display:flex;
   flex-direction: column;
   padding: 10px;
+  padding-bottom: 90px;
 }
 
 .review_deco{
@@ -522,8 +523,8 @@ body {
   margin:0 2.2px;
 }
 .review_content{
-  width:150px;
-  height:54px;
+  width:180px;
+  height:43px;
   display:flex;
   justify-content: center;
   align-items: center;
@@ -633,7 +634,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 30%;
+  width: 310px;
   background: rgba(255, 255, 255, 0.151);
   backdrop-filter: blur(6px);
   border: 1px solid #e0e0e0;

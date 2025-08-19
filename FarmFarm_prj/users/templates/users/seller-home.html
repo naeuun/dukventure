@@ -562,11 +562,15 @@ document.addEventListener("DOMContentLoaded", function () {
       {% for review in reviews %}
       <div class="per_review">
         <div class="reviewer_profile">
+          {% if review.photo %}
+          <img src="{{ review.photo.url }}" alt="리뷰 사진" class="r_profile_p">
+          {% else %}
           <img
             src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ review.author.user.username|first }}"
             alt="리뷰어 프로필"
             class="r_profile_p"
           />
+          {% endif %}
         </div>
         <div class="stars">
           {% for i in "12345" %}
@@ -589,11 +593,6 @@ document.addEventListener("DOMContentLoaded", function () {
           {{ review.content }}
         </div>
         <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
-        {% if review.photo %}
-        <div class="review-photo">
-          <img src="{{ review.photo.url }}" alt="리뷰 사진">
-        </div>
-        {% endif %}
         <div class="keywords">
         {% for keyword in review.get_keywords_as_list %}
           <span>{{ keyword }}</span>
