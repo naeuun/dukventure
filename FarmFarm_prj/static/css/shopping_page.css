@@ -4,6 +4,7 @@ body {
 }
 
 .big_hugger {
+  overflow-x: hidden;
   margin: 0 auto;
   max-width: 402px;
   min-height: 100vh;

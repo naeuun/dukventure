@@ -7,6 +7,101 @@
 {% endblock style %}
 
 {% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const csrftoken = '{{ csrf_token }}';
+
+    // 모달 & 폼 요소
+    const rejectModal = document.getElementById('rejectModal');
+    const rejectForm = document.getElementById('rejectForm');
+    const closeRejectBtn = rejectForm.querySelector('button[type="button"]'); // 취소 버튼
+
+    let currentReservationId = null;
+
+    // 모달 열기
+    window.openRejectModal = function(reservationId) {
+        currentReservationId = reservationId;
+        rejectForm.action = `/reservations/${reservationId}/change-status/`;
+        rejectModal.style.display = 'block';
+    }
+
+    // 모달 닫기
+    window.closeRejectModal = function() {
+        rejectModal.style.display = 'none';
+    }
+
+    // 모달 취소 버튼
+    closeRejectBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        closeRejectModal();
+    });
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', function(e) {
+        if (e.target === rejectModal) closeRejectModal();
+    });
+
+    // 거절 제출 AJAX
+    rejectForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        if (!currentReservationId) return;
+        const url = rejectForm.action;
+        const formData = new FormData(rejectForm);
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+            if (response.ok) {
+                // 상태 변경 후 새로고침
+                location.reload();
+            } else {
+                alert('거절 실패: ' + (result.message || '알 수 없는 오류'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('요청 중 오류 발생');
+        }
+    });
+
+    // ------------------------
+    // 수락 버튼 AJAX 처리
+    // ------------------------
+    document.querySelectorAll('.accept-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const reservationId = this.dataset.pk;
+            const url = `/reservations/${reservationId}/change-status/`;
+            const formData = new FormData();
+            formData.append('to_status', 'ACCEPTED');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    const card = document.getElementById(`res-card-seller-${reservationId}`);
+                    card.querySelector('.status').textContent = result.new_status;
+                    card.querySelector('.button-group').innerHTML = '<span>수락 완료</span>';
+                } else {
+                    alert('오류: ' + (result.message || '알 수 없는 오류'));
+                }
+            } catch (error) {
+                alert('요청 중 오류가 발생했습니다.');
+            }
+        });
+    });
+
+});
+</script>
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const profileEditModal = document.getElementById('profileEditModal');
@@ -70,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
               // response.new_image_url
               document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
               document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
-              alert("프로필 사진이 수정되었습니다.");
+              location.reload(); // ✅ 새로고침
           },
           error: function(err){
               console.log(err);
@@ -108,146 +203,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // ------------------------
-    // CSRF 토큰 가져오기
-    // ------------------------
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken');
-
-    // ------------------------
-    // 모달 관련 함수
-    // ------------------------
-    const rejectModal = document.getElementById("rejectModal");
-    const rejectForm = document.getElementById("rejectForm");
-
-    window.openRejectModal = function(reservationId) {
-        rejectForm.action = `/reservations/${reservationId}/change-status/`;
-        rejectModal.style.display = "block";
-        const selectField = rejectForm.querySelector("select[name='reason']");
-        if (selectField) {
-            selectField.setAttribute("id", "id_reason");
-            selectField.setAttribute("autocomplete", "off");
-            if (!rejectForm.querySelector("label[for='id_reason']")) {
-                const label = document.createElement("label");
-                label.setAttribute("for", "id_reason");
-                label.textContent = "거절 사유";
-                selectField.parentNode.insertBefore(label, selectField);
-            }
-        }
-    };
-
-    window.closeRejectModal = function() {
-        rejectModal.style.display = "none";
-    };
-
-    const rejectCloseBtn = rejectModal.querySelector(".close-btn");
-    if (rejectCloseBtn) rejectCloseBtn.addEventListener("click", closeRejectModal);
-    window.addEventListener("click", function(e){
-        if(e.target === rejectModal) closeRejectModal();
-    });
-
-    // ------------------------
-    // 수락/거절 버튼 AJAX 처리 (이벤트 위임)
-    // ------------------------
-    const resZone = document.querySelector(".reservation_zone");
-
-    resZone.addEventListener("click", function(e) {
-        const target = e.target.closest("button");
-
-        if (!target) return;
-
-        const card = target.closest(".per_res");
-        const reservationId = card?.id.split("-").pop();
-        if (!reservationId) return;
-
-        // ------------------------
-        // 수락 버튼
-        // ------------------------
-        if (target.classList.contains("accept-btn")) {
-            const url = `/reservations/${reservationId}/change-status/`;
-            const formData = new FormData();
-            formData.append("to_status", "ACCEPTED");
-
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(result => {
-                card.querySelector(".status").textContent = result.new_status;
-                card.querySelector(".button-group").innerHTML = '<button class="completed">수락 완료</button>';
-            })
-            .catch(err => { console.error(err); alert("요청 중 오류 발생"); });
-        }
-
-        // ------------------------
-        // 거절 버튼
-        // ------------------------
-        if (target.classList.contains("reject-btn")) {
-            openRejectModal(reservationId);
-            if (!rejectForm.dataset.bound) {
-                rejectForm.dataset.bound = true; // 한 번만 바인딩
-                rejectForm.addEventListener("submit", async function(ev){
-                    ev.preventDefault();
-                    const reasonField = rejectForm.querySelector("select[name='reason']");
-                    if(!reasonField || !reasonField.value){
-                        alert("거절 사유를 선택해주세요.");
-                        return;
-                    }
-
-                    const formData = new FormData(rejectForm);
-
-                    try {
-                        const url = rejectForm.action;
-                        const response = await fetch(url, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRFToken": csrftoken,
-                                "X-Requested-With": "XMLHttpRequest"
-                            },
-                            body: formData
-                        });
-                        const result = await response.json();
-                        if(response.ok){
-                            card.querySelector(".status").textContent = result.new_status;
-                            card.querySelector(".button-group").innerHTML = '<button style="color:red;">거절됨</button>';
-                            closeRejectModal();
-                        } else {
-                            alert("오류: " + (result.message || "알 수 없는 오류"));
-                        }
-                    } catch(err){
-                        console.error(err);
-                        alert("요청 중 오류 발생");
-                    }
-                });
-            }
-        }
-    });
-
-
-});
-</script>
-
-
 {% endblock script %}
 
 {% block body %}
@@ -363,21 +318,20 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="line_"></div>
 
     <!-- 예약 확인 섹션 -->
-    <div class="res_section">
-      <div class="reservation_">
-        예약확인
-        <img src="{% static 'img/res_icon.png' %}"
-        alt="예약확인 아이콘"
-        class="res_check" 
-        />
+      <div class="res_section">
+        <div class="reservation_">
+          예약확인
+          <img src="{% static 'img/res_icon.png' %}"
+          alt="예약확인 아이콘"
+          class="res_check" 
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="decoration_right">
-      <img src="{% static 'img/res_deco.png' %}" alt="장식" class="side_deco" />
-    </div>
-
-    <!-- 예약 카드 영역 -->
+      <div class="decoration_right">
+        <img src="{% static 'img/res_deco.png' %}" alt="장식" class="side_deco" />
+      </div>
+      <!-- 예약 카드 영역 -->
     <div class="reservation_zone">
       {% for r in page_obj %}
       <!-- 예약 카드 1 -->
@@ -430,13 +384,13 @@ document.addEventListener("DOMContentLoaded", function() {
           <p>예약이 없습니다.</p>
       {% endfor %}
     </div> <!-- reservation_zone 끝 -->
+
+<!-- 거절 사유 선택 모달 -->
 <!-- 거절 사유 모달 -->
         <div id="rejectModal" class="modal">
           <div class="modal-content0">
             <div class="modal_title">거절 사유</div>
             <form id="rejectForm" method="post">
-              <input type="hidden" id="rejectReservationId" name="reservation_id" value="">
-
               {% csrf_token %}
               <input type="hidden" name="to_status" value="REJECTED">
               {{ reject_form.as_p }}
@@ -447,6 +401,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </form>
           </div>
         </div>
+
   </div> <!-- container 끝 -->
 
   <!-- 네비게이션 바 -->
@@ -491,6 +446,5 @@ document.addEventListener("DOMContentLoaded", function() {
         </nav>
         {% endif %}
         </div>
-
 </div>
 {% endblock body %}

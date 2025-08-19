@@ -8,7 +8,6 @@ body {
   margin: 0 auto;
   max-width: 402px;
   min-height: 100vh;
-  overflow-y: auto;
   background-color: black;
   
 }
@@ -185,8 +184,7 @@ body {
   .reservation_zone{
   display:flex;
   flex-direction:column;
-  position:absolute;
-  top:350px;
+  margin-top: 350px; 
   }
 
   .product-img-wrap {
