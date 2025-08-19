@@ -427,7 +427,7 @@ body {
   transform: rotate(180deg);
   width:150px;
   position: absolute;
-  top:20px;
+  top:17px;
   opacity: 0;           /* 초기 숨김 */
   transition: opacity 0.3s ease;
   pointer-events: none; /* 마우스 이벤트 무시 */
@@ -436,8 +436,8 @@ body {
 #voiceStatus {
   color: black;
   position: absolute;
-  top: 25px;
-  left: 85px;
+  top: 22px;
+  left: 83px;
   font-size: 11.5px;
   font-weight: 700;
   opacity: 0;           /* 초기 숨김 */
