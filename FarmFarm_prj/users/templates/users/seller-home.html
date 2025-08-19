@@ -17,29 +17,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const profileImageEditBtn = document.getElementById('profileImageEditBtn');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileEditForm = document.getElementById('profileEditForm');
-    const fileInput = document.getElementById('modal_item_photo');
-    const fileNamePreview = document.getElementById('fileNamePreview');
-
-    fileInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if(file) {
-            // 파일명 표시
-            fileNamePreview.textContent = file.name;
-
-            // 이미지 미리보기
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
-                const parent = btn.closest('.information_hugger');
-                const imgTag = parent.querySelector('.product-img');
-                imgTag.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        } else {
-            fileNamePreview.textContent = "선택된 파일 없음";
-        }
-    });
-
 
     function getCookie(name) {
         let cookieValue = null;
@@ -135,6 +112,9 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  // ------------------------
+  // 품목 수정 모달 + 로컬스토리지
+  // ------------------------
   const editItemModal = document.getElementById('editItemModal');
   const closeEditBtn = document.getElementById('closeEditItemModal');
 
@@ -143,27 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const modalUnit = document.getElementById('modal_item_unit');
   const modalPrice = document.getElementById('modal_item_price');
   const modalDesc = document.getElementById('modal_item_desc');
-  const modalPhotoInput = document.getElementById('modal_item_photo');
-  const editForm = document.getElementById('editItemForm');
 
-  // CSRF 토큰 가져오기
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-  const csrftoken = getCookie('csrftoken');
-
-  // 모달 열기
   function openEditModal(btn) {
     modalId.value = btn.dataset.id;
     modalName.value = btn.dataset.name;
@@ -173,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     editItemModal.style.display = 'block';
   }
 
-  // 로컬스토리지 불러오기 & 버튼 이벤트 연결
+  // 페이지 로드 시 로컬스토리지에서 데이터 불러오기
   document.querySelectorAll('.edit-item-btn').forEach(btn => {
     const stored = localStorage.getItem("item_" + btn.dataset.id);
     if (stored) {
@@ -192,96 +152,57 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
+
     btn.addEventListener('click', () => openEditModal(btn));
   });
 
-  // 모달 닫기
   if (closeEditBtn) {
     closeEditBtn.addEventListener('click', e => {
       e.preventDefault();
       editItemModal.style.display = 'none';
     });
   }
+
   window.addEventListener('click', e => {
     if (e.target === editItemModal) editItemModal.style.display = 'none';
   });
 
-  // 이미지 미리보기
-  modalPhotoInput.addEventListener('change', function(){
-    const file = this.files[0];
-    if(file){
-      const reader = new FileReader();
-      reader.onload = function(e){
-        const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
-        const parent = btn.closest('.information_hugger');
-        const imgTag = parent.querySelector('.product-img');
-        imgTag.src = e.target.result;
-      }
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // 모달 저장 (AJAX + 로컬스토리지)
+  // 모달 저장 (로컬스토리지)
+  const editForm = document.getElementById('editItemForm');
   if (editForm) {
     editForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const id = modalId.value;
-
-      const formData = new FormData(editForm);
-      formData.append('item_id', id);
-
-      // 로컬스토리지 업데이트
-      const localData = {
+      const data = {
         name: modalName.value,
         unit: modalUnit.value,
         price: modalPrice.value,
         desc: modalDesc.value
       };
-      localStorage.setItem("item_" + id, JSON.stringify(localData));
+      localStorage.setItem("item_" + id, JSON.stringify(data));
 
-      $.ajax({
-        url: `/stores/edit_item/${id}/`,  // item_id 포함
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: { 'X-CSRFToken': csrftoken },
-        success: function(response){
+      const btn = document.querySelector('.edit-item-btn[data-id="'+id+'"]');
+      if (btn) {
+        btn.dataset.name = data.name;
+        btn.dataset.unit = data.unit;
+        btn.dataset.price = data.price;
+        btn.dataset.desc = data.desc;
 
-          // dataset 업데이트
-          const btn = document.querySelector('.edit-item-btn[data-id="'+id+'"]');
-          btn.dataset.name = modalName.value;
-          btn.dataset.unit = modalUnit.value;
-          btn.dataset.price = modalPrice.value;
-          btn.dataset.desc = modalDesc.value;
-
-          // UI 업데이트
-          const parent = btn.closest('.information_hugger');
-          if (parent) {
-            const infoLis = parent.querySelectorAll('ul li');
-            if (infoLis.length >= 5) {
-              infoLis[3].textContent = "가격: " + modalName.value + " " + modalUnit.value + " / " + modalPrice.value + "원";
-              infoLis[4].textContent = modalDesc.value;
-            }
-            // 서버에서 새 이미지 URL이 있을 경우
-            if(response.new_image_url){
-              const imgTag = parent.querySelector('.product-img');
-              imgTag.src = response.new_image_url + "?t=" + new Date().getTime();
-            }
+        const parent = btn.closest('.information_hugger');
+        if (parent) {
+          const infoLis = parent.querySelectorAll('ul li');
+          if (infoLis.length >= 5) {
+            infoLis[3].textContent = "가격: " + data.name + " " + data.unit + " / " + data.price + "원";
+            infoLis[4].textContent = data.desc;
           }
-
-          editItemModal.style.display = 'none';
-        },
-        error: function(err){
-          console.log(err);
-          alert('품목 수정 실패');
         }
-      });
+      }
+
+      editItemModal.style.display = 'none';
     });
   }
 });
 </script>
-
 
 
 
@@ -495,53 +416,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     <!-- 품목 수정 모달 -->
-    <div id="editItemModal">
-    <form id="editItemForm" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="item_id" id="modal_item_id">
-
-          <div class="form-row">
-              <label for="modal_item_name">품목명</label>
-              <input type="text" name="item_name" id="modal_item_name">
-          </div>
-
-          <div class="form-row">
-              <label for="modal_item_unit">단위</label>
-              <input type="text" name="item_unit" id="modal_item_unit">
-          </div>
-
-          <div class="form-row">
-              <label for="modal_item_price">가격</label>
-              <input type="number" name="item_price" id="modal_item_price">
-          </div>
-
-          <div class="form-row">
-              <label for="modal_item_desc">설명</label>
-              <input type="text" name="item_desc" id="modal_item_desc">
-          </div>
-
-          <div class="form-row">
-            <label for="modal_item_photo">사진</label>
-            
-            <!-- 실제 파일 입력은 숨김 -->
-            <input type="file" name="item_photo" id="modal_item_photo" accept="image/*" hidden>
-
-            <!-- 파일 선택용 아이콘 -->
-            <label for="modal_item_photo" class="file-icon">
-              <img src="{% static 'img/add_photo.png' %}" alt="사진수정" class="photo" />
-            </label>
-            <!-- 파일명 미리보기 -->
-            <span id="fileNamePreview" class="file-preview">선택된 파일 없음</span>
-          </div>
-
-
-          <div class="form-row buttons">
-              <button type="submit">저장</button>
-              <button type="button" id="closeEditItemModal">닫기</button>
-          </div>
-    </form>
+    <div id="editItemModal" style="display:none; position:fixed; top:20%; left:35%; width:30%; background:#fff; z-index:3000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:20px;">
+        <form id="editItemForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" id="modal_item_id">
+            <label>품목명</label>
+            <input type="text" name="item_name" id="modal_item_name"><br>
+            <label>단위</label>
+            <input type="text" name="item_unit" id="modal_item_unit"><br>
+            <label>가격</label>
+            <input type="number" name="item_price" id="modal_item_price"><br>
+            <label>설명</label>
+            <input type="text" name="item_desc" id="modal_item_desc"><br>
+            <label>사진</label>
+            <input type="file" name="item_photo" id="modal_item_photo" accept="image/*"><br>
+            <button type="submit">저장</button>
+            <button type="button" id="closeEditItemModal">닫기</button>
+        </form>
     </div>
-
     
     <!-- 리뷰 섹션 -->
     <div class="review_section">

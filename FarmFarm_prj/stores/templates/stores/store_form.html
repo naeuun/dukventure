@@ -407,9 +407,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
 
                     <!-- 10. 특이사항 또는 판매 메시지 (선택) -->
-                    <div class="form_row">
+                    <div class="form_row last">
                         <label for="descriptionInput">10. 가게설명</label>
-                        <input type=text name="description" id="descriptionInput" placeholder="간단한 메시지를 입력하세요">{{ form.description.value|default_if_none:'' }}</input>
+                        <input type="text" name="description" id="descriptionInput" placeholder="간단한 메시지를 입력하세요" value={{ form.description.value|default_if_none:'' }}>
                     </div>
 
                     <div class="button_hugger">
