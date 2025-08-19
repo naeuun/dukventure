@@ -234,6 +234,7 @@ body {
 .modal_product_img {
   width: 287.6px;
   height:129px;
+  border:1px solid black;
   border-radius: 17px;
   object-fit: cover;
   position:absolute;
@@ -264,6 +265,10 @@ body {
   position:absolute;
   top:30px;
   padding:110px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .store_name {
   font-size: 16px;

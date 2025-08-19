@@ -272,3 +272,16 @@ body {
   font-size: 15px;
   margin-top: 10px;
 }
+.newb{
+  font-size: 14px;
+  position:absolute;
+  bottom:100px;
+}
+.newb a{
+  text-decoration: none;
+  color:#ccc;
+}
+.newb a:hover{
+  color:#C1FF52;
+  font-weight:700;
+}
