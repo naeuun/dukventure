@@ -51,9 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
             marker.setPosition(center);
         }
 
-        map.relayout(); // 모달에서 열릴 때 지도 갱신
+        map.relayout();
 
-        // 지도 클릭 시 주소/좌표 반영
         kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
             const latlng = mouseEvent.latLng;
             marker.setPosition(latlng);
@@ -72,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 음성 인식 관련 코드는 그대로
+    // 음성 인식 관련 코드
     const reportVoiceBtn = document.getElementById('voiceBtn');
     const reportVoiceStatus = document.getElementById('voiceStatus');
     let mediaRecorderReport = null;
@@ -104,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             mediaRecorderReport.onstart = () => {
                 reportVoiceStatus.textContent = "🎤 녹음 중...";
-                reportVoiceBtn.textContent = "⏹️ 녹음 중지";
             };
 
             mediaRecorderReport.onstop = async () => {
@@ -119,7 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 reader.onloadend = async () => {
                     const base64Audio = reader.result;
                     reportVoiceStatus.textContent = "⏳ 서버 처리 중...";
-                    reportVoiceBtn.textContent = "🎤 음성 인식";
 
                     try {
                         const response = await fetch("{% url 'stores:voice_input' %}", {
@@ -136,36 +133,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         const formData = data.form_data;
 
-                        if (formData.store_name) {
-                            const storeNameInput = document.getElementById('id_store_name');
-                            if (storeNameInput) storeNameInput.value = formData.store_name;
-                        }
-
-                        if (formData.report_items) {
-                            const reportItemsInput = document.getElementById('id_report_items');
-                            if (reportItemsInput) reportItemsInput.value = formData.report_items;
-                        }
-
-                        if (formData.time) {
-                            const timeInput = document.getElementById('id_time');
-                            if (timeInput) timeInput.value = formData.time;
-                        }
+                        if (formData.store_name) document.getElementById('id_store_name').value = formData.store_name;
+                        if (formData.report_items) document.getElementById('id_report_items').value = formData.report_items;
+                        if (formData.time) document.getElementById('id_time').value = formData.time;
 
                         if (formData.address) {
-                            const addressInput = document.getElementById('addressInput');
-                            if (addressInput) addressInput.value = formData.address;
-                        }
-
-                        if (formData.address) {
+                            document.getElementById('addressInput').value = formData.address;
                             const geocoder = new kakao.maps.services.Geocoder();
                             geocoder.addressSearch(formData.address, function(result, status) {
                                 if (status === kakao.maps.services.Status.OK && result.length > 0) {
                                     document.getElementById('latitudeInput').value = result[0].y;
                                     document.getElementById('longitudeInput').value = result[0].x;
-                                } else {
-                                    alert("주소를 좌표로 변환할 수 없습니다. 지도에서 직접 선택해주세요.");
-                                    document.getElementById('latitudeInput').value = "";
-                                    document.getElementById('longitudeInput').value = "";
                                 }
                             });
                         }
@@ -178,13 +156,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             keywordsArr.forEach(keywordText => {
                                 document.querySelectorAll('input[name="keywords"]').forEach(checkbox => {
                                     const label = checkbox.parentElement;
-                                    if (
-                                        label &&
-                                        label.textContent.replace(/\s/g, '').toLowerCase().includes(
-                                            keywordText.replace(/\s/g, '').toLowerCase()
-                                        )
-                                    ) {
+                                    const labelText = label.textContent.trim().toLowerCase();
+                                    if (labelText.includes(keywordText.toLowerCase())) {
                                         checkbox.checked = true;
+                                        label.classList.add('selected');
                                     }
                                 });
                             });
@@ -204,10 +179,59 @@ document.addEventListener("DOMContentLoaded", function () {
             reportVoiceStatus.textContent = "❌ 마이크 접근 거부됨";
         }
     });
+
+    // ★ 키워드 선택 처리 ★
+    const keywordLabels = document.querySelectorAll('.keyword-option');
+    keywordLabels.forEach(label => {
+        const checkbox = label.querySelector('input[type="checkbox"]');
+
+        // 초기 체크 상태 반영
+        if (checkbox.checked) label.classList.add('selected');
+
+        // 라벨 클릭 시 체크박스 토글
+        label.addEventListener('click', e => {
+            checkbox.checked = !checkbox.checked;
+            label.classList.toggle('selected', checkbox.checked);
+        });
+        const fileInput = document.getElementById('id_image');
+const fileInfoWrap = document.querySelector('.file_info_wrap');
+const fileNameSpan = document.querySelector('.file_name');
+const uploadIcon = document.querySelector('.upload_icon');
+const textBoxText = document.querySelector('.text_box_text');
+const deleteFileBtn = document.querySelector('.delete_file_btn');
+
+fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) {
+        // 파일명 표시
+        fileNameSpan.textContent = fileInput.files[0].name;
+
+        // 업로드 아이콘과 말풍선 숨기기
+        uploadIcon.style.display = 'none';
+        textBoxText.style.display = 'none';
+
+        // 파일 정보 영역 표시
+        fileInfoWrap.style.display = 'flex';
+    }
+});
+
+// 삭제 버튼 클릭 시 초기화
+deleteFileBtn.addEventListener('click', function() {
+    fileInput.value = ''; // 파일 초기화
+    fileNameSpan.textContent = '';
+
+    // 업로드 아이콘과 말풍선 다시 표시
+    uploadIcon.style.display = 'inline-block';
+    textBoxText.style.display = 'block';
+
+    // 파일 정보 영역 숨기기
+    fileInfoWrap.style.display = 'none';
+});
+
+    });
+
 });
 </script>
 
-<script src="{% static 'js/stores_plus.js' %}"></script>
 
 {% endblock script %}
 
@@ -221,8 +245,15 @@ document.addEventListener("DOMContentLoaded", function () {
     <img src="{% static 'img/map_deco.png' %}" alt="위 데코" class="deco" />
     <img src="{% static 'img/left_back_neon.png' %}" alt="뒤로가기" class="before_page" onclick="history.back()" />
 
-    <!-- 이미지 업로드 -->
+
+    <!-- 가게 이름 -->
     <div class="gapsection">
+      <label class="section-title">가게이름</label>
+      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." />
+    </div>
+
+    <!-- 이미지 업로드 -->
+    <div class="section">
       <label class="section-title">이미지</label>
       <div class="file_upload">
         <!-- 파일 업로드 input -->
@@ -247,11 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     </div>
 
-    <!-- 가게 이름 -->
-    <div class="section">
-      <label class="section-title">가게이름</label>
-      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." />
-    </div>
 
     <!-- 음식 종류 -->
     <div class="section">
@@ -263,8 +289,10 @@ document.addEventListener("DOMContentLoaded", function () {
       <label class="section-title">장소</label>
       <input type="hidden" id="latitudeInput" name="latitude" value="">
       <input type="hidden" id="longitudeInput" name="longitude" value="">
-      <input type="text" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
-      <button type="button" id="mapBtn">지도에서 위치 선택</button>    
+      <input type="text" class="text-input" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
+      <button type="button" id="mapBtn">
+        +
+      </button>    
     </div>
 
     <!-- 시간 -->
@@ -279,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="keyword-list">
         {% for keyword in form.keywords.field.queryset %}
         <label class="keyword-option">
-            <input type="checkbox" name="keywords" value="{{ keyword.id }}"
+            <input type="checkbox" name="keywords" value="{{ keyword.id }}" style="display:none;"
             {% if form.keywords.value %}
                 {% if keyword.id|stringformat:"s" in form.keywords.value %}
                 checked
@@ -296,9 +324,9 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="voice_recognization">
         <div class="voice_texts">
           <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
-          <span class="texts">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
+          <span id="voiceStatus" class="texts">음성녹음 <span style="color:gray;">등록이 가능해요!</span></span>
         </div>
-        <button class="circle_btn">
+        <button class="circle_btn" type="button" id="voiceBtn" data-form-type="report">
           <img src="{% static 'img/mic.png' %}" alt="음성인식버튼" class="voice_recognization_btn" />
         </button>
       </div>
