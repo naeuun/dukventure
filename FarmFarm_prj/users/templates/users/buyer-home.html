@@ -57,31 +57,33 @@
                             </div>
                         {% endfor %}
                         <!-- 예약 카드 내 버튼/상태 영역 -->
-                        <div class="res-card-actions">
-                            {% if r.status == 'PENDING' %}
-                                <span class="btn btn-dark">수락 대기중</span>
-                            {% elif r.status == 'ACCEPTED' %}
-                                {% if r.remaining_minutes > 0 %}
-                                    <span class="btn btn-dark time-info">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</span>
-                                {% else %}
-                                    <button type="button" class="btn btn-success pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
-                                {% endif %}
-                            {% elif r.status == 'PICKED_UP' %}
-                                <span style="color: green; font-weight: bold;">픽업 완료</span>
-                                {% if not r.review %}
-                                    <button type="button" class="btn btn-light write-review-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">리뷰쓰기</button>
-                                {% endif %}
-                            {% else %}
-                                <span class="btn btn-dark time-info">
-                                {% if r.remaining_minutes > 0 %}
-                                    {{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능
-                                {% else %}
-                                    픽업 시간입니다
-                                {% endif %}
-                                </span>
-                                <button type="button" class="btn btn-light pickup-before-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">픽업 전</button>
-                            {% endif %}
-                        </div>
+                       <div class="res-card-actions">
+    {% if r.status == 'PENDING' %}
+        <span class="btn btn-dark">수락 대기중</span>
+
+    {% elif r.status == 'ACCEPTED' %}
+        {# '수락' 상태일 때 #}
+        {% if r.remaining_minutes > 0 %}
+            <span class="btn btn-dark time-info">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</span>
+        {% else %}
+            <button type="button" class="btn btn-success pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
+        {% endif %}
+
+    {% elif r.status == 'PICKED_UP' %}
+        {# '픽업 완료' 상태일 때 #}
+        <span style="color: green; font-weight: bold;">픽업 완료</span>
+        {% if not r.review %}
+            <button type="button" class="btn btn-light write-review-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">리뷰쓰기</button>
+        {% else %}
+            <span class="btn btn-light" style="cursor: not-allowed; background-color: #e9ecef;">리뷰 작성 완료</span>
+        {% endif %}
+
+    {% elif r.status == 'REJECTED' %}
+        {# '거절됨' 상태일 때 #}
+        <span style="color: red; font-weight: bold;">거절됨</span>
+        
+    {% endif %}
+</div>
                     </div>
                 {% empty %}
                     <p id="no-active-reservations" style="text-align:center; color: #aaa;">진행 중인 예약이 없습니다.</p>
@@ -171,7 +173,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const csrftoken = '{{ csrf_token }}';
-    // ★★★ review-modal 관련 변수 선언이 이제 정상적으로 동작합니다. ★★★
+
     const reviewModal = document.getElementById('review-modal');
     const reviewModalContent = document.getElementById('review-modal-content');
 
@@ -240,14 +242,29 @@ function updateRewardUI(data) {
     fetchRewardStatus(); // 페이지 로드 시 실행
 
     
-// --- 모든 클릭 이벤트를 한 곳에서 처리 ---
-    document.body.addEventListener('click', async function(event) {
+ document.body.addEventListener('click', async function(event) {
         const target = event.target;
 
         // '픽업 완료' 버튼 클릭 처리
         if (target.classList.contains('pickup-complete-btn')) {
             const reservationId = target.dataset.pk;
-            // ... (픽업 완료 로직) ...
+            if (!confirm('픽업을 완료하시겠습니까?')) return;
+
+            const url = `/reservations/${reservationId}/change-status/`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    window.location.reload();
+                } else {
+                    alert(data.message || '상태 변경 실패');
+                }
+            } catch(error) {
+                alert('상태 변경 중 오류가 발생했습니다.');
+            }
         }
 
         // '리뷰쓰기' 버튼 클릭 처리
@@ -266,7 +283,7 @@ function updateRewardUI(data) {
         }
 
         // 모달 닫기 버튼 또는 모달 바깥 영역 클릭 처리
-        if (target.classList.contains('close-modal') || target === reviewModal) {
+        if (target.classList.contains('close-modal-btn') || target === reviewModal) {
             closeReviewModal();
         }
     });
@@ -291,7 +308,6 @@ function updateRewardUI(data) {
             alert('리뷰 삭제 중 오류가 발생했습니다.');
         }
     }
-
     // --- 3. 리뷰 관련 함수들 ---
     async function openReviewModal(reservationId, storeName) {
         try {

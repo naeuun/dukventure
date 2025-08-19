@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block style %}
+<link rel="stylesheet" href="{% static 'css/stores_report.css' %}" />
 <link rel="stylesheet" href="{% static 'css/stores_plus.css' %}" />
 {% endblock style %}
 
@@ -74,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 음성 인식 관련 코드
     const reportVoiceBtn = document.getElementById('voiceBtn');
     const reportVoiceStatus = document.getElementById('voiceStatus');
+    const reportVoiceTexts = document.querySelector('.voice_texts');
     let mediaRecorderReport = null;
     let audioChunksReport = [];
     let currentStreamReport = null;
@@ -83,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("브라우저가 음성 입력을 지원하지 않습니다.");
             return;
         }
-
+        // 녹음 중이면 종료 
         if (mediaRecorderReport && mediaRecorderReport.state === "recording") {
             mediaRecorderReport.stop();
             if (currentStreamReport) {
@@ -102,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
             mediaRecorderReport.ondataavailable = e => audioChunksReport.push(e.data);
 
             mediaRecorderReport.onstart = () => {
+                reportVoiceTexts.classList.add('show'); // 녹음 중 항상 표시
                 reportVoiceStatus.textContent = "🎤 녹음 중...";
             };
 
@@ -132,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
 
                         const formData = data.form_data;
-
                         if (formData.store_name) document.getElementById('id_store_name').value = formData.store_name;
                         if (formData.report_items) document.getElementById('id_report_items').value = formData.report_items;
                         if (formData.time) document.getElementById('id_time').value = formData.time;
@@ -166,9 +168,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
 
                         reportVoiceStatus.textContent = "✅ 음성 입력 완료";
+                        // 녹음/서버 처리 완료 후 3초 후 숨김
+                        setTimeout(() => reportVoiceTexts.classList.remove('show'), 3000);
+
                     } catch (err) {
                         console.error(err);
                         reportVoiceStatus.textContent = "❌ 서버 오류";
+                        setTimeout(() => reportVoiceTexts.classList.remove('show'), 3000);
                     }
                 };
             };
@@ -177,6 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (err) {
             console.error(err);
             reportVoiceStatus.textContent = "❌ 마이크 접근 거부됨";
+            reportVoiceTexts.classList.remove('show'); // 오류 시 숨김
         }
     });
 
@@ -230,6 +237,28 @@ deleteFileBtn.addEventListener('click', function() {
     });
 
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 페이지 로드 시 말풍선 div 전체 선택
+  const tooltips = document.querySelectorAll(".text_box_text, .voice_texts");
+
+  // 3초 동안 동시에 보이기
+  tooltips.forEach(t => t.classList.add("show"));
+
+  setTimeout(() => {
+    tooltips.forEach(t => t.classList.remove("show"));
+  }, 3000);
+
+  // 호버 시 다시 보이도록 (voice_texts는 제외)
+  tooltips.forEach(t => {
+    if (t.classList.contains('voice_texts')) return; // ★ 제외
+
+    const parent = t.parentElement;
+    parent.addEventListener("mouseenter", () => t.classList.add("show"));
+    parent.addEventListener("mouseleave", () => t.classList.remove("show"));
+  });
+});
+
 </script>
 
 
@@ -249,12 +278,12 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 가게 이름 -->
     <div class="gapsection">
       <label class="section-title">가게이름</label>
-      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." />
+      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." required/>
     </div>
 
     <!-- 이미지 업로드 -->
     <div class="section">
-      <label class="section-title">이미지</label>
+      <p class="section-title">이미지</p>
       <div class="file_upload">
         <!-- 파일 업로드 input -->
         <input type="file" name="image" id="id_image" accept="image/*" style="display: none;" />
@@ -282,14 +311,14 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 음식 종류 -->
     <div class="section">
       <label class="section-title">음식종류</label>
-      <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." />
+      <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." required />
     </div>
     <!-- 장소 -->
     <div class="section">
       <label class="section-title">장소</label>
       <input type="hidden" id="latitudeInput" name="latitude" value="">
       <input type="hidden" id="longitudeInput" name="longitude" value="">
-      <input type="text" class="text-input" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
+      <input type="text" class="text-input" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택" required>
       <button type="button" id="mapBtn">
         +
       </button>    
@@ -298,7 +327,7 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 시간 -->
     <div class="gapsection">
       <label class="section-title">시간</label>
-      <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." />
+      <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." required />
     </div>
 
     <!-- 키워드 -->
@@ -306,7 +335,7 @@ deleteFileBtn.addEventListener('click', function() {
       <label class="section-title">#키워드</label>
       <div class="keyword-list">
         {% for keyword in form.keywords.field.queryset %}
-        <label class="keyword-option">
+        <p class="keyword-option">
             <input type="checkbox" name="keywords" value="{{ keyword.id }}" style="display:none;"
             {% if form.keywords.value %}
                 {% if keyword.id|stringformat:"s" in form.keywords.value %}
@@ -314,7 +343,7 @@ deleteFileBtn.addEventListener('click', function() {
                 {% endif %}
             {% endif %}>
             {{ keyword.keyword }}
-        </label>
+        </p>
         {% endfor %}
 
       </div>
@@ -322,10 +351,12 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 등록 버튼 -->
     <div class="btn_hugger">
       <div class="voice_recognization">
+
         <div class="voice_texts">
           <img src="{% static 'img/textbox/text_box.png' %}" alt="말풍선" class="voice_textbox" />
           <span id="voiceStatus" class="texts">음성녹음 <span style="color:gray;">등록이 가능해요!</span></span>
         </div>
+
         <button class="circle_btn" type="button" id="voiceBtn" data-form-type="report">
           <img src="{% static 'img/mic.png' %}" alt="음성인식버튼" class="voice_recognization_btn" />
         </button>
@@ -338,7 +369,7 @@ deleteFileBtn.addEventListener('click', function() {
   
 </div>
 
-<!-- 음성 인식 모달 -->
+<!-- 음성 인식 모달
 <div class="voice_modal hidden">
   <div class="voice_modal_overlay"></div>
   <div class="voice_modal_content">
@@ -354,7 +385,7 @@ deleteFileBtn.addEventListener('click', function() {
       <span id="voiceStatus" style="margin-left:10px;color:#555;">(녹음 상태 표시)</span>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- 지도 모달 -->
 <div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
