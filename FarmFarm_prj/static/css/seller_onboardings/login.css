@@ -1,0 +1,13 @@
+.register_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 303px; 
+  height: 225px !important;
+  border: 1px solid #C1FF52;
+  border-radius: 27px;
+}
+
+.form_row {
+  flex-direction :column;
+}

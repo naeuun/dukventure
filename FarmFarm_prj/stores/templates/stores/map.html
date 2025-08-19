@@ -9,6 +9,7 @@
 {% block script %}
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const markerImage = new kakao.maps.MarkerImage(markerImageSrc, new kakao.maps.Size(20,20), { offset: new kakao.maps.Point(20, 40) });
 
         const marker = new kakao.maps.Marker({ map: map, position: coords, title: store.name, image: markerImage });
+
         markers.push(marker);
 
         kakao.maps.event.addListener(marker, 'click', () => fetchStoreItems(store.id, store.name));

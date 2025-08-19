@@ -266,3 +266,9 @@ body {
   width:17.5px;
   margin-left:5px;
   }
+
+  .result_message {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 10px;
+}
