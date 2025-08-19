@@ -3,9 +3,7 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/stores.css' %}" />
-<style>
-    .item-card { background: #c5d2bc; color: #000; padding: 1rem; border-radius: 15px; margin-bottom: 1rem; }
-</style>
+
 {% endblock style %}
 
 {% block script %}
@@ -33,11 +31,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const sellerLng = "{{ request.user.store.longitude|default:'127.0164' }}";
         map.setCenter(new kakao.maps.LatLng(Number(sellerLat), Number(sellerLng)));
     {% elif request.user.is_authenticated and request.user.usertype == 'BUYER' %}
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(pos){
-                map.setCenter(new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-            });
-        }
+        {% if request.user.is_authenticated and request.user.store %}
+            const centerLat = "{{ request.user.store.latitude|default:'37.6509' }}";
+            const centerLng = "{{ request.user.store.longitude|default:'127.0164' }}";
+            map.setCenter(new kakao.maps.LatLng(Number(centerLat), Number(centerLng)));
+        {% else %}
+            // 기본 위치
+            map.setCenter(new kakao.maps.LatLng(37.6509, 127.0164));
+        {% endif %}
+
     {% endif %}
 
     // --- 모달 열기/닫기 ---
@@ -87,38 +89,50 @@ function placeReportMarker(coords, report){
         reportItemListEl.innerHTML = ''; // 초기화
 
         // 모달 상단 이름
-        document.getElementById('reportName').textContent = report.store_name;
+        const reportNameEl = document.getElementById('reportName');
+        reportNameEl.innerHTML = `<span class="many_items_store_name">${report.store_name}</span>`;
 
         // 이미지 카드
-        if(report.image){
-            const imgCard = document.createElement('div');
-            imgCard.className = 'item-card';
-            imgCard.innerHTML = `<img src="${report.image}" alt="${report.store_name}" class="modal_product_img">`;
-            reportItemListEl.appendChild(imgCard);
+        const imgCard = document.createElement('div');
+        imgCard.className = 'report-item-card';
+        imgCard.innerHTML = `
+            <div class="modal_info_box">
+                <img src="${report.image || 'https://placehold.co/200x150?text=No+Image'}" 
+                    alt="${report.store_name}" 
+                    class="report_modal_img">
+            </div>`;
+        reportItemListEl.appendChild(imgCard);
+
+
+
+        // 품목 + 키워드 카드
+        if ((report.items && report.items.length > 0) || (report.keywords && report.keywords.length > 0)) {
+            const card = document.createElement('div');
+            card.className = 'report-item-card';
+
+            let html = '';
+
+            // 품목들
+            if (report.items && report.items.length > 0) {
+                report.items.forEach(item => {
+                    html += `
+                        <div><strong>품목:</strong> ${item.name} (${item.unit || ''})</div>
+                        <div><strong>설명:</strong> ${item.description || ''}</div>
+                    `;
+                });
+            } else {
+                html += '<div>등록된 품목이 없습니다.</div>';
+            }
+
+            // 키워드
+            if (report.keywords && report.keywords.length > 0) {
+                html += `<div><strong>키워드:</strong> ${report.keywords.join(', ')}</div>`;
+            }
+
+            card.innerHTML = html;
+            reportItemListEl.appendChild(card);
         }
 
-        // 품목 카드
-        if(report.items && report.items.length > 0){
-            report.items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                card.innerHTML = `
-                    <p><strong>품목:</strong> ${item.name} (${item.unit || ''})</p>
-                    <p><strong>설명:</strong> ${item.description || ''}</p>
-                `;
-                reportItemListEl.appendChild(card);
-            });
-        } else {
-            reportItemListEl.innerHTML += '<div class="item-card"><p>등록된 품목이 없습니다.</p></div>';
-        }
-
-        // 키워드 카드
-        if(report.keywords && report.keywords.length > 0){
-            const kwCard = document.createElement('div');
-            kwCard.className = 'item-card';
-            kwCard.innerHTML = `<p><strong>키워드:</strong> ${report.keywords.join(', ')}</p>`;
-            reportItemListEl.appendChild(kwCard);
-        }
 
         openReportModal();
     });
@@ -135,7 +149,8 @@ function placeReportMarker(coords, report){
             if (!resp.ok) throw new Error('API response not OK');
             const data = await resp.json();
 
-            document.getElementById('modalStoreName').textContent = storeName;
+            const modalStoreNameEl = document.getElementById('modalStoreName');
+            modalStoreNameEl.innerHTML = `<span class="many_items_store_name">${storeName}</span>`;
             modalItemListEl.innerHTML = '';
 
             if (data.items && data.items.length > 0) {
@@ -170,7 +185,7 @@ function placeReportMarker(coords, report){
                             </div>
                         </div>
                         <div class="resbuttonhugger">
-                            <button type="button" class="reserve_btn reserve-now-btn" style="width:100%; padding:10px; background:#A5D6A7; border:none; border-radius:8px; font-weight:bold;">예약하기</button>
+                            <button type="button" class="reserve_btn reserve-now-btn">예약하기</button>
                         </div>
                         {% endif %}
                     `;
@@ -310,7 +325,7 @@ function placeReportMarker(coords, report){
         <!-- 제보 모달 -->
         <div id="reportModal" class="bottom_sheet" style="display:none;">
             <div class="sheet_content_v2">
-                <div class="many_items_store">
+                <div class="many_items_store_r">
                     <h3 id="reportName"></h3>
                     <button onclick="closeReportModal()" class="closingbtn">×</button>
                     <div id="reportItemList"></div>

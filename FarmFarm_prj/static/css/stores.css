@@ -259,10 +259,10 @@ body {
   width: 267px;
   height:109px;
   border: 0.7px solid #828282;
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 16px;
   position:absolute;
   top:30px;
-  background: rgba(255, 255, 255, 0.7);
   padding:110px 10px 10px 10px;
 }
 .store_name {
@@ -498,10 +498,19 @@ body {
 }
 
 .many_items_store{
+  width:347px;
   background: linear-gradient(#f4f5ef9d, #A4FF00);
   border-radius: 23px;
   padding:10px 5px;
-  margin-bottom: 100px;
+  margin-bottom: 200px;
+  height:auto;
+}
+.many_items_store_r{
+  width:347px;
+  background: linear-gradient(#f4f5ef9d, #A4FF00);
+  border-radius: 23px;
+  padding:10px 5px;
+  padding-bottom: 40px;
 }
 .many_items_store_name{
    display: inline-flex;
@@ -515,6 +524,7 @@ body {
    font-weight:700;
    padding: 0 12px; /* 글자 좌우 여백 */
    width: auto; /* 너비 자동 */
+   margin-left:10px;
 }
 .closingbtn{
   background-color: transparent;
@@ -523,6 +533,48 @@ body {
   cursor: pointer;
   color:white;
   position:absolute;
-  right:20px;
+  right:30px;
   top:30px;
+}
+.report-item-card, .item-card{
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding:10px;
+  height:370px;
+}
+.many_items_store .item-card{
+  height:400px;
+}
+#reportModal .report-item-card:nth-child(2){
+  margin-top:-130px;
+}
+.report-item-card:nth-child(2){
+  margin-top:-180px;
+  padding-top: 50px ;
+  z-index:1;
+  position:relative;
+  width: 267px;
+  height:89px;
+  top:-100px;
+  left:30px;
+  display:flex;
+  flex-direction: column;
+  font-size: 14px;
+  border: 0.7px solid #828282;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+}
+.report_modal_img{
+  width: 287.6px;
+  height:129px;
+  border-radius: 17px;
+  border:1px solid black;
+  object-fit: cover;
+  z-index:2;
+  background-color: white;
+  margin-top:-100px;
 }
