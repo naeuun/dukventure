@@ -347,8 +347,12 @@ body {
     max-height: 120px; /* 이 높이 이상이면 스크롤 */
     overflow-y: auto;  /* 세로 스크롤 활성화 */
     padding-right: 5px; /* 스크롤 때문에 내용이 잘리는 걸 방지 */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
+#itemList .per_row::-webkit-scrollbar {
+  display: none;
+}
 
 /* 각 아이템 박스 */
 .item_detail_hugger {
