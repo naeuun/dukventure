@@ -285,9 +285,11 @@ document.addEventListener('DOMContentLoaded', function() {
 {% block body %}
 <div class="big_hugger">
     <div class="container_2">
+        {% if mode == 'register' %}
         <div class="progress_bar">
             <div class="now_step" style="width: 270px;"></div>
         </div>
+        {% endif %}
         <div class="content">
             <p class="bigger_content">
                 <div class="textboxarea">
