@@ -249,7 +249,7 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 가게 이름 -->
     <div class="gapsection">
       <label class="section-title">가게이름</label>
-      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." />
+      <input type="text" name="store_name" id="id_store_name" class="text-input" value="{{ form.store_name.value|default_if_none:'' }}" placeholder="입력하시오..." required/>
     </div>
 
     <!-- 이미지 업로드 -->
@@ -282,14 +282,14 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 음식 종류 -->
     <div class="section">
       <label class="section-title">음식종류</label>
-      <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." />
+      <input type="text" name="report_items" id="id_report_items" value="{{ form.report_items.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." required />
     </div>
     <!-- 장소 -->
     <div class="section">
       <label class="section-title">장소</label>
       <input type="hidden" id="latitudeInput" name="latitude" value="">
       <input type="hidden" id="longitudeInput" name="longitude" value="">
-      <input type="text" class="text-input" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택">
+      <input type="text" class="text-input" id="addressInput" name="address" placeholder="주소를 입력하거나 지도에서 선택" required>
       <button type="button" id="mapBtn">
         +
       </button>    
@@ -298,7 +298,7 @@ deleteFileBtn.addEventListener('click', function() {
     <!-- 시간 -->
     <div class="gapsection">
       <label class="section-title">시간</label>
-      <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." />
+      <input type="text" name="time" id="id_time" value="{{ form.time.value|default_if_none:'' }}" class="text-input" placeholder="입력하시오..." required />
     </div>
 
     <!-- 키워드 -->
