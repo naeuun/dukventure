@@ -378,6 +378,7 @@ body {
   border:none;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 #addItemBtn{
   font-size:20px;
@@ -392,6 +393,7 @@ body {
   align-items: center;
   position:absolute;
   right:-35px;
+  cursor: pointer;
 }
 .place{
   display: flex;
@@ -408,6 +410,7 @@ body {
   align-items: center;
   justify-content: center;
   margin-left:5px;
+  cursor: pointer;
 }
 #mapBtn{
   width:25px;
@@ -417,6 +420,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 
 }
 .textbox{
@@ -455,6 +459,7 @@ body {
   color: white;
   position:absolute;
   top:80px;
+  cursor: pointer;
 }
 
 .voice_recognition_btn {
@@ -468,6 +473,7 @@ body {
   justify-content: center;
   align-items: center;
   top:10px;
+  cursor: pointer;
 }
 
 .voice_recognition_btn img {
