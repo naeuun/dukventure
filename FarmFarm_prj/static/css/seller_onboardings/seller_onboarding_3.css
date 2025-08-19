@@ -13,12 +13,18 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* 위에서부터 시작 */
+  justify-content: center; /* 위에서부터 시작 */
   align-items: center;         /* 가로 중앙 정렬만 유지 */
   position: relative;          /* 상단 여백 */
-  padding-bottom:30px;
 }
-
+.container_2{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 위에서부터 시작 */
+  align-items: center;         /* 가로 중앙 정렬만 유지 */
+  position: relative;   
+}
 
 .progress_bar {
   background-color: #F4F5EF;
@@ -66,7 +72,13 @@ body {
   left:-20px;
   top: 50px;
 }
+.brocoli_2{
+  width: 100px;
+  position: absolute;
+  left:40px;
+  top: 110px;
 
+}
 .brocoli_says {
   position: absolute;
   width: 162px;
@@ -327,6 +339,15 @@ body {
     flex-direction: column;
     gap: 10px; /* 아이템 사이 간격 */
 }
+#itemList .per_row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;        /* 아이템 사이 간격 */
+    max-height: 120px; /* 이 높이 이상이면 스크롤 */
+    overflow-y: auto;  /* 세로 스크롤 활성화 */
+    padding-right: 5px; /* 스크롤 때문에 내용이 잘리는 걸 방지 */
+}
+
 
 /* 각 아이템 박스 */
 .item_detail_hugger {
