@@ -443,6 +443,15 @@ body {
   font-weight: 700;
   font-size: 20px;
 }
+.quantity{
+  background-color: transparent;
+  border:none;
+  width:10px;
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-right:-10px;
+}
 
 .qty_btn {
   background: none;
@@ -535,13 +544,15 @@ body {
 
 #map {
   position: absolute;
-  bottom:0;
+  top: 360px; /* 검색 박스 바로 아래 */
   left: 50%;
   transform: translateX(-50%);
   width: 390px;
-  height: 513px;
+  bottom: 0; /* 하단 네비바 높이만큼 띄움 */
   border-radius: 32px 32px 0 0;
 }
+
+
   .toggle_hugger {
   position: relative;
   z-index: 999;
@@ -561,7 +572,6 @@ body {
 }
 
 .many_items_store{
-  background: linear-gradient(#f4f5ef9d, #A4FF00);
   border-radius: 23px;
   padding:10px 5px;
 }
@@ -636,4 +646,84 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.many_items_store{
+  width:347px;
+  border-radius: 23px;
+  padding:10px 5px;
+  margin-bottom: 200px;
+  height:auto;
+}
+.many_items_store_r{
+  width:347px;
+  background: linear-gradient(#f4f5ef9d, #A4FF00);
+  border-radius: 23px;
+  padding:10px 5px;
+  padding-bottom: 40px;
+}
+.many_items_store_name{
+   display: inline-flex;
+   height:41px;
+   justify-content: center;
+   align-items: center;
+   background-color: #C1FF52;
+   border:1px solid black;
+   border-radius: 27px;
+   font-size: 16px;
+   font-weight:700;
+   padding: 0 12px; /* 글자 좌우 여백 */
+   width: auto; /* 너비 자동 */
+   margin-left:10px;
+}
+.closingbtn{
+  background-color: transparent;
+  font-size: 30px;
+  border:none;
+  cursor: pointer;
+  color:white;
+  position:absolute;
+  right:30px;
+  top:30px;
+}
+.report-item-card, .item-card{
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding:10px;
+  height:370px;
+}
+.many_items_store .item-card{
+  height:400px;
+}
+#reportModal .report-item-card:nth-child(2){
+  margin-top:-130px;
+}
+.report-item-card:nth-child(2){
+  margin-top:-180px;
+  padding-top: 50px ;
+  z-index:1;
+  position:relative;
+  width: 267px;
+  height:89px;
+  top:-100px;
+  left:30px;
+  display:flex;
+  flex-direction: column;
+  font-size: 14px;
+  border: 0.7px solid #828282;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+}
+.report_modal_img{
+  width: 287.6px;
+  height:129px;
+  border-radius: 17px;
+  border:1px solid black;
+  object-fit: cover;
+  z-index:2;
+  background-color: white;
+  margin-top:-100px;
 }

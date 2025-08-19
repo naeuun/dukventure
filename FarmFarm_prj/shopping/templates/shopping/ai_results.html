@@ -40,10 +40,19 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // 모달 닫기
-    closeModalBtn.addEventListener('click', function(e) {
+    if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', function(e){
         e.preventDefault();
         profileEditModal.style.display = 'none';
     });
+}
+const storeModalCloseBtn = document.querySelector('#storeModal .closingbtn');
+if (storeModalCloseBtn && storeModal) {
+    storeModalCloseBtn.addEventListener('click', function(){
+        storeModal.style.display = 'none';
+    });
+}
+
 
     window.addEventListener('click', function(e) {
         if (e.target === profileEditModal) profileEditModal.style.display = 'none';
@@ -174,42 +183,44 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!resp.ok) throw new Error('API response not OK');
             const data = await resp.json();
             
-            document.getElementById('modalStoreName').innerHTML = `${storeName} <span style="font-size: 0.8em; color: #666;">(${distance}km)</span>`;
-            modalItemListEl.innerHTML = '';
-
             if (data.items && data.items.length > 0) {
-                data.items.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
-                    card.setAttribute('data-item-id', item.id); // 카드 자체에 item-id 저장
-                    
-                    // ★★★ 수량, 시간 선택 UI가 포함된 HTML로 변경 ★★★
-                    card.innerHTML = `
-                        ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}">` : ''}
+              modalItemListEl.innerHTML = '';
+              data.items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.dataset.itemId = item.id;
+                card.innerHTML = `
+                  <div class="per_stores">
+                    <div class="modal_info_box">
+                      ${item.photo_url ? `<img src="${item.photo_url}" alt="${item.name}" class="modal_product_img">` : ''}
+                      <div class="detail_info">
                         <p><strong>품목:</strong> ${item.name} (${item.unit}) ${item.price.toLocaleString()}원</p>
-                        <p><strong>판매 시간:</strong> ${item.sale_hours || ''}</p>
-                        <p><strong>위치:</strong> ${item.address || ''}</p>
                         <p><strong>설명:</strong> ${item.description || ''}</p>
-                        <div class="reservation-form" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <label>수량</label>
-                                <div class="qty-box" style="display: flex; align-items: center; gap: 8px;">
-                                    <button type="button" class="qty-btn minus-btn">-</button>
-                                    <input type="number" class="qty-input" value="1" min="1" style="width: 50px; text-align: center;">
-                                    <button type="button" class="qty-btn plus-btn">+</button>
-                                </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="reservation-form">
+                            <div class="reserve_controls">
+                                    <div class="quantity_box">
+                                    <div class="qty-box" style="display: flex; align-items: center; gap: 8px;">
+                                        <button type="button" class="qty_btn minus-btn">-</button>
+                                        <input type="number" class="qty-input quantity" value="1" min="1" style="width: 50px; text-align: center;">
+                                        <button type="button" class="qty_btn plus-btn">+</button>
+                                    </div>
+                                    </div>
+                                    <div class="time_box">
+                                        <input type="time" class="pickup-time-input" step="600" required style="margin-bottom:10px;">
+                                    </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <label>픽업 시간</label>
-                                <input type="time" class="pickup-time-input" step="600" required>
-                            </div>
-                            <button type="button" class="reserve-now-btn" style="width: 100%; text-align: center; padding: 12px; background-color: #A5D6A7; color: #121212; text-decoration: none; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">
-                                예약하기
-                            </button>
                         </div>
-                    `;
-                    modalItemListEl.appendChild(card);
-                });
+                        <div class="resbuttonhugger">
+                            <button type="button" class="reserve_btn reserve-now-btn">예약하기</button>
+                        </div>
+                  </div>
+                `;
+                modalItemListEl.appendChild(card);
+              });
+
             } else {
                 modalItemListEl.innerHTML = '<p>등록된 품목이 없습니다.</p>';
             }
@@ -367,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <form id="profileEditForm" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="modal-actions">
-            <button id="closeModalBtn">×</button>
+            <button type="button" id="closeModalBtn">×</button>
           </div>
           <div class="nickname-row" style="margin-top:10px;">
             <input type="text" name="username" id="nicknameInput" value="{{ request.user.username }}" />
@@ -440,12 +451,12 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="sheet_content_v2">
         <div class="many_items_store">
           <h3 id="modalStoreName"></h3>
-          <button onclick="closeStoreModal()" style="position: absolute; top: 20px; right: 20px;">닫기</button>
-          <hr>
+          <button class="closingbtn">×</button>
           <div id="modalItemList"></div>
         </div>
       </div>
     </div>
+
 
 {{ stores_for_map_json|json_script:"stores-data" }}
 {{ user_location|json_script:"user-location-data" }}
