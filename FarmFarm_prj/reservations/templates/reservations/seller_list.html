@@ -373,7 +373,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
           <div class="product-info">
             <p>이름: {{ r.buyer.user.username }}</p>
-            <p>예약 품목: {{ item.item_name }} <span class="highlight-text">{{ item.quantity }}</span></p>
+            <p>예약 품목: 
+            {% for item in r.items.all %}
+              {{ item.item_name }} {{ item.unit }} × <span class="highlight-text">{{ item.quantity }}</span>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+            </p>
             <p>픽업 시간: <span class="highlight-text">{{ r.requested_pickup_at|date:"Y-m-d H:i" }}</span></p>
             <p>연락처: {{ r.buyer.user.phone }}</p>
             <p>예약코드: {{ r.reservation_code }}</p>
