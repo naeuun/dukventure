@@ -504,7 +504,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="nav_box">
         {% if user.usertype == 'BUYER' %}
         <nav class="bottom_nav">
-            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
             <div class="btn selected_nav">
             <a href="{% url 'stores:map' %}">
                 <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
@@ -523,7 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </nav>
         {% elif user.usertype == 'SELLER' %}
         <nav class="bottom_nav">
-            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
             <div class="btn">
             <a href="{% url 'stores:map' %}">
                 <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
