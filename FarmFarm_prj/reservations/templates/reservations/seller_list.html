@@ -11,6 +11,20 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const csrftoken = '{{ csrf_token }}';
+    const now = new Date(); // 현재 시간
+
+    document.querySelectorAll('.button-group[data-pickup]').forEach(group => {
+    const pickupTimeStr = group.dataset.pickup;
+    const pickupTime = new Date(pickupTimeStr.replace(' ', 'T'));
+    
+    // 현재 버튼 그룹 안에 있는 버튼 상태 확인
+    const isPending = group.querySelector('.accept-btn') !== null;
+
+    if (isPending && pickupTime < now) {
+        group.innerHTML = '<button type="button" class="completed">픽업시간 만료</button>';
+    }
+});
+
 
     // 모달 & 폼 요소
     const rejectModal = document.getElementById('rejectModal');
@@ -357,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="product-info">
             <p>이름: {{ r.buyer.user.username }}</p>
             <p>예약 품목: {{ item.item_name }} <span class="highlight-text">{{ item.quantity }}</span></p>
-            <p>픽업 시간: <span class="highlight-text">오후 3시 30분</span></p>
+            <p>픽업 시간: <span class="highlight-text">{{ r.requested_pickup_at|date:"Y-m-d H:i" }}</span></p>
             <p>연락처: {{ r.buyer.user.phone }}</p>
             <p>예약코드: {{ r.reservation_code }}</p>
             <p>요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
@@ -365,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function() {
           </div>
         </div>
 
-        <div class="button-group">
+        <div class="button-group" data-pickup="{{ r.requested_pickup_at|date:'Y-m-d H:i:s' }}">
           {% if r.status == 'PENDING' %}
           <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
           <button type="button" class="btn btn-reject reject-btn" onclick="openRejectModal('{{ r.pk }}')">거절</button>
