@@ -216,6 +216,9 @@ function updateRewardUI(data) {
                 <img src="{% static 'img/background2.png' %}" alt="" />
             </div>
             <div class="welcome-box">
+      <a href="{% url 'users:logout' %}" class="logoutbtn" >
+        <img src="{% static 'img/logout_btn.png' %}" alt="" />
+      </a>
                 <div class="backgroundimg">
                 <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
                 </div>
@@ -376,65 +379,38 @@ function updateRewardUI(data) {
         </div>
 
         {% for r in active_reservations|slice:":3" %}
-        <div class="back_detail" >
-            {% for item in r.items.all %}
-            <div class="details_img">
-            {% if item.image %}
-            <img
-                src="{{ item.image.url }}"
-                alt="{{ item.item_name }}"
-                class="tomato"
-            />
-            {% else %}
-            <img
-                src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}"
-                alt="{{ item.item_name }}"
-                class="tomato"
-            />
-            {% endif %}
-            </div>
-            <div class="details_txt">
-            <span>
-            판매자: {{ r.store.name }} <br>
-            위치: {{ r.store.address }} <br>
-            판매 시간: {{ r.store.sale_hours }} <br>
-            가격:(총 {{ item.quantity }}개) {{ r.total_price }}원 <br>
-            상태: {{ r.get_status_display }} <br>
-            <span>
-            </div>
-            {% endfor %}
+<div class="{% if forloop.counter == 2 %}res_detial{% else %}back_detail{% endif %}">
+    {% for item in r.items.all %}
+    <div class="{% if forloop.parentloop.counter == 2 %}detail_img{% else %}details_img{% endif %}">
+        {% if item.image %}
+        <img
+            src="{{ item.image.url }}"
+            alt="{{ item.item_name }}"
+            class="tomato"
+        />
+        {% else %}
+        <img
+            src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}"
+            alt="{{ item.item_name }}"
+            class="tomato"
+        />
+        {% endif %}
+    </div>
+    <div class="{% if forloop.parentloop.counter == 2 %}detail_txt{% else %}details_txt{% endif %}">
+        <span>
+        판매자: {{ r.store.name }} <br>
+        위치: {{ r.store.address }} <br>
+        판매 시간: {{ r.store.sale_hours }} <br>
+        가격:(총 {{ item.quantity }}개) {{ r.total_price }}원 <br>
+        상태: {{ r.get_status_display }} <br>
+        <span>
+    </div>
+    {% endfor %}
 
-            <div>
-            {% if r.status == 'PENDING' %}
-                <span class="btn btn-dark">수락 대기중</span>
+    ...
+</div>
+{% endfor %}
 
-            {% elif r.status == 'ACCEPTED' %}
-                {# '수락' 상태일 때 #}
-                {% if r.remaining_minutes > 0 %}
-                    <span class="btn btn-dark time-info">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</span>
-                {% else %}
-                    <button type="button" class="btn btn-success pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
-                {% endif %}
-
-            {% elif r.status == 'PICKED_UP' %}
-                {# '픽업 완료' 상태일 때 #}
-                <span style="color: green; font-weight: bold;">픽업 완료</span>
-                {% if not r.review %}
-                    <button type="button" class="btn btn-light write-review-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">리뷰쓰기</button>
-                {% else %}
-                    <span class="btn btn-light" style="cursor: not-allowed; background-color: #e9ecef;">리뷰 작성 완료</span>
-                {% endif %}
-
-            {% elif r.status == 'REJECTED' %}
-                {# '거절됨' 상태일 때 #}
-                <span style="color: red; font-weight: bold;">거절됨</span>
-                
-            {% endif %}
-            </div>
-        </div>
-        {% empty %}
-            <p id="no-active-reservations" style="text-align:center; color: #aaa;">진행 중인 예약이 없습니다.</p>
-        {% endfor %}
         </div>
     </div>
     </div>
@@ -575,12 +551,12 @@ function updateRewardUI(data) {
             <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
             <div class="btn ">
             <a href="{% url 'stores:map' %}">
-                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+                <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
             </a>
             </div>
             <div class="btn selected_nav">
             <a href="{% url 'users:buyer_home' %}">
-                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+                <img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page">
             </a>
             </div>
             <div class="btn">
