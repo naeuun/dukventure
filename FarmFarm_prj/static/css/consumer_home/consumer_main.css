@@ -11,6 +11,8 @@ body {
     min-height: 100vh;
     /* background-color: black;
     color: white; */
+    
+  background: linear-gradient(white, #cbffb7);
 }
 .top-section{
   background: black;
