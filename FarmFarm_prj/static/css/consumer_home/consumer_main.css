@@ -883,7 +883,7 @@ body {
 .per_review{
   margin:10px;
   width:302px;
-  height:90px;
+  height: 94px;
   background: linear-gradient(#ffffff, #daf6cf);
   border:1px solid black;
   border-radius: 23px;
@@ -1156,4 +1156,32 @@ body {
   position: absolute;
   bottom: 72px;
   left: 195px;
+}
+
+.r_store_info{
+  width: auto; 
+  height: auto; 
+  display: block; 
+  position: absolute;
+  top: 28px;
+  left: 211px;
+  opacity: 0.7;
+  border-radius: 16px;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 0px 3px;
+  color: #0b2401;
+}
+
+.r_store_info p{
+  margin: 0 0 4px 0; 
+  font-weight: 700;
+}
+
+.r_store_info_small{
+  font-size: 5.3px;
+  color:#828282;
+  margin: 0;
+  padding-left: 5px; 
+  list-style-type: disc;
 }

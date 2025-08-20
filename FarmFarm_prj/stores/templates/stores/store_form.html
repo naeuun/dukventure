@@ -92,33 +92,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initMap(lat, lng) {
-        const center = new kakao.maps.LatLng(lat, lng);
-        if (!map) map = new kakao.maps.Map(document.getElementById('mapContainer'), { center, level: 3 });
-        else map.setCenter(center);
+    const center = new kakao.maps.LatLng(lat, lng);
 
-        if (!marker) marker = new kakao.maps.Marker({ position: center, map });
-        else marker.setPosition(center);
+    if (!map) map = new kakao.maps.Map(document.getElementById('mapContainer'), { center, level: 3 });
+    else map.setCenter(center);
 
-        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-            const latlng = mouseEvent.latLng;
-            latitudeInput.value = latlng.getLat();
-            longitudeInput.value = latlng.getLng();
-            geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
-                addressInput.value = (status === kakao.maps.services.Status.OK && result[0].address.address_name)
-                    ? result[0].address.address_name
-                    : "";
-                setMarkerAndCenter(latlng.getLat(), latlng.getLng());
-            });
+    // 커스텀 이미지
+    const imageSrc = "{% static 'img/stores.png' %}";
+    const imageSize = new kakao.maps.Size(20, 20);
+    const imageOption = { offset: new kakao.maps.Point(10, 20) }; // 마커 중심 조정
+    const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+    if (!marker) {
+        marker = new kakao.maps.Marker({
+            position: center,
+            map: map,
+            image: markerImage
         });
+    } else {
+        marker.setPosition(center);
+        marker.setImage(markerImage);
     }
+
+    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        const latlng = mouseEvent.latLng;
+        latitudeInput.value = latlng.getLat();
+        longitudeInput.value = latlng.getLng();
+        geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+            addressInput.value = (status === kakao.maps.services.Status.OK && result[0].address.address_name)
+                ? result[0].address.address_name
+                : "";
+            setMarkerAndCenter(latlng.getLat(), latlng.getLng());
+        });
+    });
+}
+
 
     function setMarkerAndCenter(lat, lng) {
-        const loc = new kakao.maps.LatLng(lat, lng);
-        if (!map) initMap(lat, lng);
-        if (!marker) marker = new kakao.maps.Marker({ position: loc, map });
-        else marker.setPosition(loc);
-        map.setCenter(loc);
+    const loc = new kakao.maps.LatLng(lat, lng);
+    
+    // 커스텀 이미지 생성
+    const imageSrc = "{% static 'img/stores.png' %}"; // 사용할 이미지 경로
+    const imageSize = new kakao.maps.Size(20, 20); // 마커 이미지 크기
+    const imageOption = { offset: new kakao.maps.Point(20, 50) }; // 마커 기준점 (이미지 아래 중심)
+    const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+    if (!map) initMap(lat, lng);
+
+    if (!marker) {
+        marker = new kakao.maps.Marker({
+            position: loc,
+            map: map,
+            image: markerImage // 커스텀 이미지 적용
+        });
+    } else {
+        marker.setPosition(loc);
+        marker.setImage(markerImage);
     }
+
+    map.setCenter(loc);
+}
+
 
     addressInput.addEventListener('blur', updateCoordsFromAddress);
     addressInput.addEventListener('keydown', function(e) { if (e.key==='Enter') { e.preventDefault(); updateCoordsFromAddress(); } });
@@ -168,94 +202,150 @@ document.addEventListener('DOMContentLoaded', function() {
     let mediaRecorder = null, audioChunks=[], currentStream=null;
 
     voiceBtn.addEventListener('click', async () => {
-        if (!navigator.mediaDevices?.getUserMedia) { alert("브라우저가 음성 입력을 지원하지 않습니다."); return; }
+    if (!navigator.mediaDevices?.getUserMedia) { 
+        alert("브라우저가 음성 입력을 지원하지 않습니다."); 
+        return; 
+    }
 
-        if (mediaRecorder?.state === "recording") {
-            mediaRecorder.stop();
-            currentStream?.getTracks().forEach(t=>t.stop());
-            currentStream=null;
-            return;
-        }
+    // 녹음 중이면 중지
+    if (mediaRecorder?.state === "recording") {
+        mediaRecorder.stop();
+        currentStream?.getTracks().forEach(t => t.stop());
+        currentStream = null;
+        return;
+    }
 
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
-            currentStream = stream;
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        currentStream = stream;
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
 
-            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
 
-            mediaRecorder.onstart = ()=>{ voiceStatus.textContent="🎤 녹음 중..."; };
+        mediaRecorder.onstart = () => {
+            voiceStatus.textContent = "🎤 녹음 중...";
+            voiceStatus.style.opacity = 1;
+            textbox.style.opacity = 1;
+            clearTimeout(hideTimeout);
+        };
 
-            mediaRecorder.onstop = async ()=>{
-                currentStream?.getTracks().forEach(t=>t.stop());
-                currentStream=null;
-                const audioBlob = new Blob(audioChunks);
-                const reader = new FileReader();
-                reader.readAsDataURL(audioBlob);
-                reader.onloadend = async ()=>{
-                    const base64Audio = reader.result;
-                    voiceStatus.textContent="⏳ 서버 처리 중...";
-                    try {
-                        const response = await fetch("{% url 'stores:voice_input' %}", {
-                            method:"POST",
-                            headers:{"Content-Type":"application/json"},
-                            body:JSON.stringify({ audio: base64Audio, form_type:'register' })
-                        });
-                        const data = await response.json();
-                        if(!data.form_data){ voiceStatus.textContent="⚠️ 음성 처리 실패"; return; }
-                        const formData = data.form_data;
+        mediaRecorder.onstop = async () => {
+            currentStream?.getTracks().forEach(t => t.stop());
+            currentStream = null;
 
-                        // 각 필드 업데이트
-                        ['name','address','contact','sale_days','sale_hours','payment_methods','description'].forEach(f=>{
-                            if(formData[f]){
-                                const el = document.getElementById(f==='name'?'nameInput': f==='address'?'addressInput':
-                                    f==='contact'?'contactInput': f==='sale_days'?'saleDaysInput':
-                                    f==='sale_hours'?'saleHoursInput': f==='payment_methods'?'paymentMethodsInput':'descriptionInput');
-                                if(el) el.value = formData[f];
-                            }
-                        });
+            const audioBlob = new Blob(audioChunks);
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+                const base64Audio = reader.result;
+                voiceStatus.textContent = "⏳ 서버 처리 중...";
+                voiceStatus.style.opacity = 1;
+                textbox.style.opacity = 1;
+                isProcessing = true; // 서버 처리 중 상태
 
-                        // 판매 품목
-                        if(formData.items?.length>0){
-                            const perRow = document.querySelector('#itemList .per_row');
-                            perRow.querySelectorAll('div').forEach(div=>div.remove());
-                            formData.items.forEach((item,idx)=>{
-                                const div = document.createElement('div');
-                                div.className='item_detail_hugger';
-                                div.innerHTML=`
-                                    <input type="text" name="item_name_${idx}" placeholder="품목명" value="${item.name||''}">
-                                    <input type="text" name="item_unit_${idx}" placeholder="단위" value="${item.unit||''}">
-                                    <input type="number" name="item_price_${idx}" placeholder="가격" value="${item.price||''}">
-                                    <input type="text" name="item_desc_${idx}" placeholder="설명" value="${item.description||''}">
-                                    <input type="file" name="item_photo_${idx}" accept="image/*">
-                                    <button type="button" onclick="removeItem(this)">제거</button>
-                                `;
-                                perRow.appendChild(div);
-                            });
+                try {
+                    const response = await fetch("{% url 'stores:voice_input' %}", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ audio: base64Audio, form_type: 'register' })
+                    });
+                    const data = await response.json();
+                    if(!data.form_data){ 
+                        voiceStatus.textContent="⚠️ 음성 처리 실패"; 
+                        isProcessing = false;
+                        return; 
+                    }
+
+                    const formData = data.form_data;
+
+                    // 각 필드 업데이트
+                    ['name','address','contact','sale_days','sale_hours','payment_methods','description'].forEach(f=>{
+                        if(formData[f]){
+                            const el = document.getElementById(
+                                f==='name'?'nameInput':
+                                f==='address'?'addressInput':
+                                f==='contact'?'contactInput':
+                                f==='sale_days'?'saleDaysInput':
+                                f==='sale_hours'?'saleHoursInput':
+                                f==='payment_methods'?'paymentMethodsInput':
+                                'descriptionInput'
+                            );
+                            if(el) el.value = formData[f];
                         }
+                    });
 
-                        voiceStatus.textContent="✅ 음성 입력 완료";
-                    } catch(err){ console.error(err); voiceStatus.textContent="❌ 서버 오류"; }
-                };
+                    // 판매 품목
+                    if(formData.items?.length > 0){
+                        const perRow = document.querySelector('#itemList .per_row');
+                        perRow.querySelectorAll('div').forEach(div => div.remove());
+                        formData.items.forEach((item, idx) => {
+                            const div = document.createElement('div');
+                            div.className = 'item_detail_hugger';
+                            div.innerHTML = `
+                                <input type="text" name="item_name_${idx}" placeholder="품목명" value="${item.name||''}">
+                                <input type="text" name="item_unit_${idx}" placeholder="단위" value="${item.unit||''}">
+                                <input type="number" name="item_price_${idx}" placeholder="가격" value="${item.price||''}">
+                                <input type="text" name="item_desc_${idx}" placeholder="설명" value="${item.description||''}">
+                                <input type="file" name="item_photo_${idx}" accept="image/*">
+                                <button type="button" onclick="removeItem(this)">제거</button>
+                            `;
+                            perRow.appendChild(div);
+                        });
+                    }
+
+                    voiceStatus.textContent = "✅ 음성 입력 완료";
+                } catch(err){ 
+                    console.error(err); 
+                    voiceStatus.textContent="❌ 서버 오류"; 
+                } finally {
+                    isProcessing = false; // 서버 처리 끝
+                    hideElementsAfterDelay(3000); // 처리 완료 후 3초 뒤 숨김
+                }
             };
+        };
 
-            mediaRecorder.start();
-        } catch(err){ console.error(err); voiceStatus.textContent="❌ 마이크 접근 거부됨"; }
-    });
+        mediaRecorder.start();
+    } catch(err){ 
+        console.error(err); 
+        voiceStatus.textContent="❌ 마이크 접근 거부됨"; 
+    }
+});
+    
 
-    // ------------------------- 폼 제출 -------------------------
-    document.getElementById('storeForm').addEventListener('submit', function(e){
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch(this.action||window.location.href,{
-            method:'POST',
-            body:formData
-        })
-        .then(r=>r.text())
-        .then(html=>{ document.body.innerHTML=html; })
-        .catch(err=>{ console.error(err); });
-    });
+const textbox = document.querySelector('.textbox');
+
+
+let hideTimeout = null;
+let isProcessing = false;  
+
+function hideElementsAfterDelay(delay=3000) {
+    clearTimeout(hideTimeout);
+
+    // 녹음 중이면 숨기지 않음
+    if(mediaRecorder?.state === "recording" || isProcessing) return;
+
+    hideTimeout = setTimeout(() => {
+        voiceStatus.style.opacity = 0;
+        textbox.style.opacity = 0;
+    }, delay);
+}
+
+
+// 페이지 로드 시 3초 표시 후 숨기기
+voiceStatus.style.opacity = 1;
+textbox.style.opacity = 1;
+hideElementsAfterDelay(3000);
+
+// hover 시 보이게
+voiceBtn.addEventListener('mouseenter', () => {
+    voiceStatus.style.opacity = 1;
+    textbox.style.opacity = 1;
+});
+voiceBtn.addEventListener('mouseleave', () => {
+    hideElementsAfterDelay(0); // hover 끝나면 바로 숨김
+});
+
 });
 </script>
 
@@ -264,9 +354,11 @@ document.addEventListener('DOMContentLoaded', function() {
 {% block body %}
 <div class="big_hugger">
     <div class="container_2">
+        {% if mode == 'register' %}
         <div class="progress_bar">
             <div class="now_step" style="width: 270px;"></div>
         </div>
+        {% endif %}
         <div class="content">
             <p class="bigger_content">
                 <div class="textboxarea">
@@ -275,6 +367,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text">음성녹음 <span style="color:grey;">등록이 가능해요!</span></div>
                 </div>
                 <span class="title">{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</span>
+                
+<div class="maphugger">
+<div id="mapModal">
+    <div style="text-align:right; padding:5px;">
+        <button id="closeModal">×</button>
+    </div>
+    <div id="mapContainer"></div>
+</div>
+</div>
             </p>
             <div class="register_box">
             <div class="scrollable_container">
@@ -444,13 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
             <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
         </div>
     </div>
-</div>
-
-<div id="mapModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:#fff; z-index:1000; border:1px solid #ccc;">
-    <div style="text-align:right; padding:5px;">
-        <button id="closeModal">닫기</button>
-    </div>
-    <div id="mapContainer" style="width:100%; height:90%;"></div>
 </div>
 
 <!-- 음성 인식 모달 -->

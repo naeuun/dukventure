@@ -32,6 +32,7 @@
         <br>
         <span>{{ request.user.username }}</span>
         <a href="#" id="profileEditBtn">프로필 편집</a>
+
         <div id="profileEditModal">
             <form id="profileEditForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -42,12 +43,13 @@
                 </div>
                 <div>
                     <label>프로필 사진</label><br>
-                    <img width="60" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 사진"><br>
+                    <img width="60" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 사진"><br>
                     <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
                     <button type="button" id="profileImageEditBtn">사진 편집</button>
                 </div>
             </form>
         </div>
+
     </div>
 </header>
 <main>

@@ -211,6 +211,9 @@ document.addEventListener("DOMContentLoaded", function () {
       <img src="{% static 'img/background2.png' %}" alt="" />
     </div>
     <div class="welcome-box">
+      <a href="{% url 'users:logout' %}" class="logoutbtn" >
+        <img src="{% static 'img/logout_btn.png' %}" alt="" />
+      </a>
       <div class="backgroundimg">
         <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
       </div>

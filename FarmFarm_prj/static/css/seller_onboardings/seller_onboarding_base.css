@@ -276,6 +276,7 @@ body {
   font-size: 14px;
   position:absolute;
   bottom:100px;
+  margin-left: 0px;
 }
 .newb a{
   text-decoration: none;
@@ -284,4 +285,35 @@ body {
 .newb a:hover{
   color:#C1FF52;
   font-weight:700;
+}
+.welcoming_brocoli_2{
+  width: 137px;
+  margin-left:-160px;
+  margin-bottom:-10px;
+}
+.face{
+  width:21px;
+  height:21px;
+}
+.a_tag{
+  text-decoration: none;
+  color:white;
+}
+.to_home{
+  border: 1px solid #C1FF52;
+  width: 311px;
+  height: 51px;
+  border-radius: 26px;
+  font-size: 15px;
+  font-weight: 700;
+  background-color: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+.to_home:hover{
+  background-color: #C1FF52;
+  color:black;
 }

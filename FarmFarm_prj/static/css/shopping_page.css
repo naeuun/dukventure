@@ -697,6 +697,7 @@ body {
 }
 .many_items_store .item-card{
   height:400px;
+  margin:10px;
 }
 #reportModal .report-item-card:nth-child(2){
   margin-top:-130px;
@@ -726,4 +727,21 @@ body {
   z-index:2;
   background-color: white;
   margin-top:-100px;
+}
+.logoutbtn{
+  width:35px;
+  height:35px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #C1FF52;
+  border:none;
+  border-radius: 50%;
+  position:absolute;
+  top:-90px;
+  left: 0;
+
+}
+.logoutbtn img{
+  width:27px;
 }
