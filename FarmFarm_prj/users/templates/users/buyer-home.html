@@ -2,11 +2,133 @@
 {% load static %} 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/consumer_home/consumer_main.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/consumer_home/consumer_profile.css' %}"/>
 {% endblock style %} 
 
 {% block script %}
-<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('modal_item_photo');
+    const fileNamePreview = document.getElementById('fileNamePreview');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if(file) {
+                // 파일명 표시
+                fileNamePreview.textContent = file.name;
 
+                // 이미지 미리보기
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
+                    const parent = btn.closest('.information_hugger');
+                    const imgTag = parent.querySelector('.product-img');
+                    imgTag.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileNamePreview.textContent = "선택된 파일 없음";
+            }
+        });
+    }
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    
+
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.querySelector('.image-edit-btn'); // id 대신 class로 안전하게
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
+    
+if (profileEditBtn) {
+    profileEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        const profileEditModal = document.getElementById('profileEditModal');
+        if(profileEditModal) profileEditModal.style.display = 'block';
+    });
+}
+
+if(profileImageEditBtn && profileImageInput){
+    profileImageEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        profileImageInput.click();
+    });
+}
+
+
+    profileImageInput.addEventListener('change', function(){
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              location.reload(); // ✅ 새로고침
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
+  });
+
+
+    // 닉네임 수정
+    const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
+    }
+});
+
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const csrftoken = '{{ csrf_token }}';
@@ -288,7 +410,7 @@ function updateRewardUI(data) {
         </div>
 
         <!-- 모달 -->
-        <div class="modal-overlay" id="editModal">
+        <div class="modal-overlay" id="profileEditModal">
             <div class="modal-content">
                 <form id="profileEditForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -602,11 +724,12 @@ function updateRewardUI(data) {
 
 
 
-
+<!--
 <div id="review-modal" class="modal">
   <div class="modal-content">
     <div id="review-modal-content">
       </div>
   </div>
 </div>
+-->
 {% endblock body %}

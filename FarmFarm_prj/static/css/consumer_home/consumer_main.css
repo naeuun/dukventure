@@ -216,42 +216,13 @@ body {
 }
 
 
-.modal-overlay {
-    display: none; /* 기본 상태 */
-    position: fixed;
-    top: 0;
-    left: 0;       /* 좌상단 기준으로 전체 화면 덮기 */
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
+
+.modal-overlay{
+  position:absolute;
 }
-
-
-.modal-content {
-    width: 85px;
-    height: 65px;
-    border-radius: 16px;
-    border: 0.6px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.07);
-    background-blend-mode: plus-lighter;
-    box-shadow:
-        -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
-        -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
-        1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
-        0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
-    backdrop-filter: blur(3px);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-    position: absolute;
-    top:180px;
-    right:50px;
+.modal-content{
+  top:177px;
 }
-
 .modal-content .nickname-row {
     display: flex;
     align-items: center;
@@ -340,7 +311,7 @@ body {
     font-weight: 700;
 }
 
-.level-box img {
+.level-box > img {
     width: 15px;
     position:absolute;
     right:45px;
