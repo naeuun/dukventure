@@ -703,7 +703,7 @@ body {
   margin-top:-130px;
 }
 
-.level-box img {
+.level-box > img {
     width: 15px;
     position:absolute;
     right:45px;
