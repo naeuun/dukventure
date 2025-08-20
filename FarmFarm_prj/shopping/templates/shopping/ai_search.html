@@ -16,6 +16,32 @@ document.addEventListener("DOMContentLoaded", function() {
     const profileImageEditBtn = document.getElementById('profileImageEditBtn');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileEditForm = document.getElementById('profileEditForm');
+// --- 1. 리워드 정보 로딩 및 UI 업데이트 로직 (기존과 동일) ---
+    const characterImages = {
+        1: 'https://placehold.co/120x120/4caf50/ffffff?text=Lv.1',
+        2: 'https://placehold.co/120x120/ff9800/ffffff?text=Lv.2',
+        3: 'https://placehold.co/120x120/f44336/ffffff?text=Lv.3',
+    };
+
+    function updateRewardUI(data) {
+        // 레벨 표시 업데이트
+            const levelText = document.querySelector('.level');
+            if (levelText) {
+                levelText.textContent = `LV.${data.character_level}`;
+            }
+          }
+      
+    async function fetchRewardStatus() {
+        try {
+            const response = await fetch('/rewards/status/');
+            if (!response.ok) throw new Error('리워드 정보 로딩 실패');
+            
+            const data = await response.json();
+            updateRewardUI(data);
+        } catch (error) {
+        }
+    }
+    fetchRewardStatus();
 
     function getCookie(name) {
         let cookieValue = null;
@@ -250,15 +276,20 @@ document.addEventListener("DOMContentLoaded", function () {
             />
           </div>
           <div class="level-box">
-            <p class="nickname">
-              {{ request.user.username }}
-              <img
-                id="editProfileBtn"
-                src="{% static 'img/edit.png' %}"
-                alt="수정"
-                style="cursor: pointer"
-              />
-            </p>
+                    <p class="nickname">
+                    {{ request.user.username }}
+                    <img
+                        id="editProfileBtn"
+                        src="{% static 'img/edit.png' %}"
+                        alt="수정"
+                        style="cursor: pointer"
+                    />
+                    </p>
+                    <p class="level">
+                    
+                    </p>
+                    <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
+
           </div>
         </div>
       </div>

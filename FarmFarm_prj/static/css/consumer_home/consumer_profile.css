@@ -10,7 +10,6 @@ body {
     width: 402px;
     min-height: 100vh;
     background-color: black;
-    color: white;
 }
 
 .profile-section {
@@ -35,6 +34,7 @@ body {
     border: 1px solid rgba(231, 255, 187, 0.8);
     border-radius: 26px;
     margin: 0 10px 10px 10px;
+  color:white;
 }
 
 .backgroundimg {
@@ -336,7 +336,7 @@ body {
     font-weight: 700;
 }
 
-.level-box img {
+.level-box > img {
     width: 15px;
     margin: 0 0 -2px -2px;
 }

@@ -2,11 +2,133 @@
 {% load static %} 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/consumer_home/consumer_main.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/consumer_home/consumer_profile.css' %}"/>
 {% endblock style %} 
 
 {% block script %}
-<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('modal_item_photo');
+    const fileNamePreview = document.getElementById('fileNamePreview');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if(file) {
+                // 파일명 표시
+                fileNamePreview.textContent = file.name;
 
+                // 이미지 미리보기
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
+                    const parent = btn.closest('.information_hugger');
+                    const imgTag = parent.querySelector('.product-img');
+                    imgTag.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileNamePreview.textContent = "선택된 파일 없음";
+            }
+        });
+    }
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    
+
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.querySelector('.image-edit-btn'); // id 대신 class로 안전하게
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
+    
+if (profileEditBtn) {
+    profileEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        const profileEditModal = document.getElementById('profileEditModal');
+        if(profileEditModal) profileEditModal.style.display = 'block';
+    });
+}
+
+if(profileImageEditBtn && profileImageInput){
+    profileImageEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        profileImageInput.click();
+    });
+}
+
+
+    profileImageInput.addEventListener('change', function(){
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              location.reload(); // ✅ 새로고침
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
+  });
+
+
+    // 닉네임 수정
+    const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
+    }
+});
+
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const csrftoken = '{{ csrf_token }}';
@@ -36,7 +158,11 @@ function updateRewardUI(data) {
         // 캐릭터 이미지 업데이트
         const characterImage = document.getElementById('character-image');
         if (characterImage) characterImage.src = characterImages[data.character_level] || characterImages[1];
-
+        // 레벨 표시 업데이트
+            const levelText = document.querySelector('.level');
+            if (levelText) {
+                levelText.textContent = `LV.${data.character_level}`;
+            }
         // [수정된 부분] 메달 등급에 따른 성장률 프로그레스 바 업데이트
         const medalToPercentage = {
             'NONE': 25,
@@ -216,6 +342,9 @@ function updateRewardUI(data) {
                 <img src="{% static 'img/background2.png' %}" alt="" />
             </div>
             <div class="welcome-box">
+      <a href="{% url 'users:logout' %}" class="logoutbtn" >
+        <img src="{% static 'img/logout_btn.png' %}" alt="" />
+      </a>
                 <div class="backgroundimg">
                 <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
                 </div>
@@ -272,15 +401,16 @@ function updateRewardUI(data) {
                     />
                     </p>
                     <p class="level">
-                    LV.3
-                    <img src="{% static 'img/level.png' %}" alt="" />
+                    
                     </p>
+                    <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
+
                 </div>
             </div>
         </div>
 
         <!-- 모달 -->
-        <div class="modal-overlay" id="editModal">
+        <div class="modal-overlay" id="profileEditModal">
             <div class="modal-content">
                 <form id="profileEditForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -376,65 +506,38 @@ function updateRewardUI(data) {
         </div>
 
         {% for r in active_reservations|slice:":3" %}
-        <div class="back_detail" >
-            {% for item in r.items.all %}
-            <div class="details_img">
-            {% if item.image %}
-            <img
-                src="{{ item.image.url }}"
-                alt="{{ item.item_name }}"
-                class="tomato"
-            />
-            {% else %}
-            <img
-                src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}"
-                alt="{{ item.item_name }}"
-                class="tomato"
-            />
-            {% endif %}
-            </div>
-            <div class="details_txt">
-            <span>
-            판매자: {{ r.store.name }} <br>
-            위치: {{ r.store.address }} <br>
-            판매 시간: {{ r.store.sale_hours }} <br>
-            가격:(총 {{ item.quantity }}개) {{ r.total_price }}원 <br>
-            상태: {{ r.get_status_display }} <br>
-            <span>
-            </div>
-            {% endfor %}
+<div class="{% if forloop.counter == 2 %}res_detial{% else %}back_detail{% endif %}">
+    {% for item in r.items.all %}
+    <div class="{% if forloop.parentloop.counter == 2 %}detail_img{% else %}details_img{% endif %}">
+        {% if item.image %}
+        <img
+            src="{{ item.image.url }}"
+            alt="{{ item.item_name }}"
+            class="tomato"
+        />
+        {% else %}
+        <img
+            src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}"
+            alt="{{ item.item_name }}"
+            class="tomato"
+        />
+        {% endif %}
+    </div>
+    <div class="{% if forloop.parentloop.counter == 2 %}detail_txt{% else %}details_txt{% endif %}">
+        <span>
+        판매자: {{ r.store.name }} <br>
+        위치: {{ r.store.address }} <br>
+        판매 시간: {{ r.store.sale_hours }} <br>
+        가격:(총 {{ item.quantity }}개) {{ r.total_price }}원 <br>
+        상태: {{ r.get_status_display }} <br>
+        <span>
+    </div>
+    {% endfor %}
 
-            <div>
-            {% if r.status == 'PENDING' %}
-                <span class="btn btn-dark">수락 대기중</span>
+    ...
+</div>
+{% endfor %}
 
-            {% elif r.status == 'ACCEPTED' %}
-                {# '수락' 상태일 때 #}
-                {% if r.remaining_minutes > 0 %}
-                    <span class="btn btn-dark time-info">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</span>
-                {% else %}
-                    <button type="button" class="btn btn-success pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
-                {% endif %}
-
-            {% elif r.status == 'PICKED_UP' %}
-                {# '픽업 완료' 상태일 때 #}
-                <span style="color: green; font-weight: bold;">픽업 완료</span>
-                {% if not r.review %}
-                    <button type="button" class="btn btn-light write-review-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">리뷰쓰기</button>
-                {% else %}
-                    <span class="btn btn-light" style="cursor: not-allowed; background-color: #e9ecef;">리뷰 작성 완료</span>
-                {% endif %}
-
-            {% elif r.status == 'REJECTED' %}
-                {# '거절됨' 상태일 때 #}
-                <span style="color: red; font-weight: bold;">거절됨</span>
-                
-            {% endif %}
-            </div>
-        </div>
-        {% empty %}
-            <p id="no-active-reservations" style="text-align:center; color: #aaa;">진행 중인 예약이 없습니다.</p>
-        {% endfor %}
         </div>
     </div>
     </div>
@@ -562,7 +665,7 @@ function updateRewardUI(data) {
         <!-- 삭제 버튼 제작 필요 -->
         </div>
         {% empty %}
-        <p style="text-align:center; color: #aaa;">작성한 리뷰가 없습니다.</p>
+        <p style="text-align:center; color:white;">작성한 리뷰가 없습니다.</p>
         {% endfor %}
     </div>
     
@@ -575,12 +678,12 @@ function updateRewardUI(data) {
             <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
             <div class="btn ">
             <a href="{% url 'stores:map' %}">
-                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+                <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
             </a>
             </div>
             <div class="btn selected_nav">
             <a href="{% url 'users:buyer_home' %}">
-                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+                <img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page">
             </a>
             </div>
             <div class="btn">
@@ -621,11 +724,12 @@ function updateRewardUI(data) {
 
 
 
-
+<!--
 <div id="review-modal" class="modal">
   <div class="modal-content">
     <div id="review-modal-content">
       </div>
   </div>
 </div>
+-->
 {% endblock body %}
