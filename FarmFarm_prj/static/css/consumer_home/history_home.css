@@ -8,7 +8,9 @@ body {
   min-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+  
 }
+
 .exit {
   margin-left: 10px;
 }
@@ -36,7 +38,6 @@ body {
   width: 390px;
   height: 900px; /* 카드가 200px 이상씩 보이도록 여유 */
   padding: 0px 16px 16px 16px;
-  overflow: scroll;
   top: 0;
 }
 
