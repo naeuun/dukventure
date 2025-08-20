@@ -702,6 +702,13 @@ body {
 #reportModal .report-item-card:nth-child(2){
   margin-top:-130px;
 }
+
+.level-box img {
+    width: 15px;
+    position:absolute;
+    right:45px;
+    top:87px;
+}
 .report-item-card:nth-child(2){
   margin-top:-180px;
   padding-top: 50px ;

@@ -36,7 +36,11 @@ function updateRewardUI(data) {
         // 캐릭터 이미지 업데이트
         const characterImage = document.getElementById('character-image');
         if (characterImage) characterImage.src = characterImages[data.character_level] || characterImages[1];
-
+        // 레벨 표시 업데이트
+            const levelText = document.querySelector('.level');
+            if (levelText) {
+                levelText.textContent = `LV.${data.character_level}`;
+            }
         // [수정된 부분] 메달 등급에 따른 성장률 프로그레스 바 업데이트
         const medalToPercentage = {
             'NONE': 25,
@@ -275,9 +279,10 @@ function updateRewardUI(data) {
                     />
                     </p>
                     <p class="level">
-                    LV.3
-                    <img src="{% static 'img/level.png' %}" alt="" />
+                    
                     </p>
+                    <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
+
                 </div>
             </div>
         </div>
