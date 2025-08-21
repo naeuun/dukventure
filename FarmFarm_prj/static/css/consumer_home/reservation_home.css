@@ -7,167 +7,195 @@
 
 /* 페이지 래퍼 */
 body {
-  margin:0;
-  background:transparent;
+  margin: 0;
+  background: transparent;
   overflow: scroll;
 }
 
 .page {
-  margin:0 auto;
-  max-width:402px;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  background:transparent;
-  position:relative;
+  margin: 0 auto;
+  max-width: 402px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  position: relative;
   padding-bottom: 90px;
 }
 
 /* 상단바 - 높이 205px 유지 (요청대로 z-index 없음) */
 .topbar {
-  top:0;
-  height:250px;
-  background:#000;
-  border-bottom:3px solid #C1FF52;
-  display:flex;
-  align-items:flex-start;
-  justify-content:flex-start;
+  top: 0;
+  height: 250px;
+  background: #000;
+  border-bottom: 3px solid #C1FF52;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 /* 나가기 버튼 */
 .topbar .back-btn {
-  position:absolute;
-  left:10px;
-  top:12px;
-  display:flex;
-  align-items:center;
+  position: absolute;
+  left: 10px;
+  top: 12px;
+  display: flex;
+  align-items: center;
 }
 
 .topbar .back-btn img {
-  width:24px;
-  height:24px;
+  width: 24px;
+  height: 24px;
 }
 
 /* 클로버 줄 */
 .leaf-row {
-  position:absolute;
-  top:12px;
-  margin-left:80px;
-  display:flex;
-  align-items:center;
+  position: absolute;
+  top: 12px;
+  margin-left: 80px;
+  display: flex;
+  align-items: center;
 }
 
 .leaf-row img {
-  height:23px;
-  width:auto;
+  height: 23px;
+  width: auto;
 }
 
 /* 본문: 상단바와 겹치도록 전체를 위로 끌어올림(스크롤 정상) */
 .content {
   margin-top: 0;
-  background:transparent;
-  position:relative;
+  background: transparent;
+  position: relative;
 }
 
 /* 카드 공통 */
 .card {
-  background:linear-gradient(#d6ffc4,#b0ff8f);
-  border:1px solid #C1FF52;
-  border-radius:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,.3);
-  padding:10px 0 14px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin-bottom:30px;
+  background: linear-gradient(#d6ffc4, #b0ff8f);
+  border: 1px solid #C1FF52;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+  padding: 10px 0 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
   top: 0;
   position: relative;
 
-  width: 360px;          /* 고정 너비 */
-  height: 260px;         /* 고정 높이 */
-  flex-shrink: 0;        /* 줄어들지 않게 */
-  margin: 0 auto 30px; 
+  width: 360px;
+  /* 고정 너비 */
+  height: 260px;
+  /* 고정 높이 */
+  flex-shrink: 0;
+  /* 줄어들지 않게 */
+  margin: 0 auto 30px;
 }
 
 /* 첫 카드(히어로) */
 .card--hero {
-  position:relative;
-  z-index:1;
+  position: relative;
+  z-index: 1;
   margin-top: -150px;
 }
 
 /* 이미지 영역: 326.049 x 114.441 */
 .card__image {
-  position:relative;
-  width:326.049px;
-  height:114.441px;
-  flex-shrink:0;
-  border-radius:17px;
-  border:1px solid #828282;
-  background-color:lightgray;
-  background-position:50% 50%;
-  background-size:cover;
-  background-repeat:no-repeat;
-  overflow:hidden;
+  position: relative;
+  width: 326.049px;
+  height: 114.441px;
+  flex-shrink: 0;
+  border-radius: 17px;
+  border: 1px solid #828282;
+  background-color: lightgray;
+  background-position: 50% 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 
 /* 중앙 텍스트(토마토/달걀) */
 .center-badge {
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%, -50%);
-  width:105.932px;
-  height:33.63px;
-  font-family:"Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
-  font-size:40px;
-  font-weight:800;
-  line-height:43px;
-  text-align:center;
-  color:rgba(255, 255, 255, 0.60);
-  white-space:nowrap;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 105.932px;
+  height: 33.63px;
+  font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 43px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.60);
+  white-space: nowrap;
 }
 
 /* 정보 박스 */
 .card__info {
-  width:291px;
-  min-height:102px;
-  margin-top:-24px;
-  background:rgba(255,255,255,.85);
-  border:0.7px solid #828282;
-  border-radius:16px;
-  padding:38px 18px 14px;
-  font-size:13px;
-  font-weight:700;
-  color:#000;
+  width: 291px;
+  min-height: 102px;
+  margin-top: -24px;
+  background: rgba(255, 255, 255, .85);
+  border: 0.7px solid #828282;
+  border-radius: 16px;
+  padding: 38px 18px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000;
 }
-.card__info ul { list-style:none; padding:0; margin:0; }
-.card__info li { line-height:1.35; }
-.card__info .note { color:#333; }
+
+.card__info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card__info li {
+  line-height: 1.35;
+}
+
+.card__info .note {
+  color: #333;
+}
 
 /* 카드 하단 버튼 */
 .card-actions-row {
-  display:flex;
-  gap:14px;
-  justify-content:center;
-  margin:12px 0 28px;
-  position:relative;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin: 12px 0 28px;
+  position: relative;
 }
 
 .btn {
-  width:152px;
-  height:52px;
-  border-radius:27px;
-  font-weight:800;
-  font-size:15px;
-  border:1px solid #C1FF52;
-  cursor:pointer;
-  transition:all .15s ease;
+  width: 152px;
+  height: 52px;
+  border-radius: 27px;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1px solid #C1FF52;
+  cursor: pointer;
+  transition: all .15s ease;
 }
-.btn-black { background:#000; color:#C1FF52; }
-.btn-black:hover { background:#1a1a1a; }
-.btn-lime { background:#C1FF52; color:#000; }
-.btn-lime:hover { filter:brightness(0.95); }
+
+.btn-black {
+  background: #000;
+  color: #C1FF52;
+}
+
+.btn-black:hover {
+  background: #1a1a1a;
+}
+
+.btn-lime {
+  background: #C1FF52;
+  color: #000;
+}
+
+.btn-lime:hover {
+  filter: brightness(0.95);
+}
 
 /* =========================
    모달 (리뷰 작성)
@@ -175,192 +203,203 @@ body {
 
 /* 최상단 오버레이 + 스크롤 고정 대비 */
 .modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:10000;
-  background:rgba(0,0,0,.6);
-  justify-content:center;
-  align-items:center;
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, .6);
+  justify-content: center;
+  align-items: center;
 }
-.modal.is-open { display:flex; }
+
+.modal.is-open {
+  display: flex;
+}
 
 /* 패널: 318.62 x 563.96 + 유리/그림자 */
 .modal__panel {
-  width:318.62px;
-  height:563.96px;
-  border-radius:16px;
-  border:0.6px solid rgba(255, 255, 255, 0.35);
-  background:rgba(255, 255, 255, 0.07);
-  background-blend-mode:plus-lighter;
+  width: 318.62px;
+  height: 563.96px;
+  border-radius: 16px;
+  border: 0.6px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.07);
+  background-blend-mode: plus-lighter;
   box-shadow:
     -11.15px -10.392px 48px -12px rgba(0, 0, 0, 0.15),
     -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
     1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
     0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
-  backdrop-filter:blur(2.72px);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:14px;
-  position:relative;
+  backdrop-filter: blur(2.72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px;
+  position: relative;
 }
 
 /* 헤더: 가운데 타이틀 + 우측 액션(업로드/닫기) */
 .modal__head {
-  position:relative;
-  width:100%;
-  height:44px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position: relative;
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 .modal__title {
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  padding:10px 18px;
-  border-radius:27px;
-  background:#C1FF52;
-  color:#000;
-  font-weight:800;
-  font-size:16px;
-  border:1px solid #000;
-  box-shadow:0 14px 28px rgba(0,0,0,.35), 0 2px 8px rgba(255,255,255,.15) inset;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 27px;
+  background: #C1FF52;
+  color: #000;
+  font-weight: 800;
+  font-size: 16px;
+  border: 1px solid #000;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .35), 0 2px 8px rgba(255, 255, 255, .15) inset;
 }
+
 .modal__head-actions {
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  display:flex;
-  align-items:center;
-  gap:12px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+
 .modal__close {
-  border:none;
-  background:none;
-  color:#fff;
-  font-size:22px;
-  cursor:pointer;
-  line-height:1;
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
 }
 
 /* 업로드 아이콘 */
 .change_photo_btn {
-  width:24px;
-  height:24px;
-  padding:0;
-  border:none;
-  background:transparent;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
+
 .change_photo {
-  width:24px;
-  height:24px;
-  object-fit:cover;
-  display:block;
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  display: block;
 }
 
 /* 별점 */
 .modal__stars {
-  margin:8px 0 10px;
-  font-size:18px;
-  color:#C1FF52;
-  text-align:center;
-  text-shadow:0 2px 10px rgba(0,0,0,.35);
+  margin: 8px 0 10px;
+  font-size: 18px;
+  color: #C1FF52;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
 }
 
 /* 텍스트 박스(요청한 스타일) */
 .modal__textarea-wrap {
-  width:296.074px;
-  height:122.311px;
-  flex-shrink:0;
-  border-radius:20px;
-  border:1px solid #C1FF52;
-  opacity:0.8;
-  background:#000;
-  padding:10px;
-  margin-bottom:10px;
-  box-shadow:none;
+  width: 296.074px;
+  height: 122.311px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  border: 1px solid #C1FF52;
+  opacity: 0.8;
+  background: #000;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: none;
 }
+
 .modal__input {
-  width:100%;
-  height:100%;
-  border:0;
-  background:transparent;
-  color:#fff;
-  outline:none;
-  resize:none;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  resize: none;
 }
 
 /* #키워드 칩(검정 배경 + 라임 테두리/텍스트) */
 .modal__keyword-head {
-  width:100%;
-  display:flex;
-  justify-content:flex-start;
-  margin:6px 0 8px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin: 6px 0 8px;
 }
+
 .chip-title {
-  display:inline-block;
-  padding:10px 16px;
-  border-radius:27px;
-  background:#000;
-  color:#C1FF52;
-  font-weight:800;
-  font-size:14px;
-  border:1px solid #C1FF52;
-  box-shadow:0 12px 24px rgba(0,0,0,.35), 0 1px 2px rgba(255,255,255,.15) inset;
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 27px;
+  background: #000;
+  color: #C1FF52;
+  font-weight: 800;
+  font-size: 14px;
+  border: 1px solid #C1FF52;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, .35), 0 1px 2px rgba(255, 255, 255, .15) inset;
 }
 
 /* 키워드 버튼들 */
 .modal__keywords {
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px 14px;
-  justify-content:flex-start;
-  width:100%;
-  margin-bottom:16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 14px;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 16px;
 }
+
 .tag {
-  padding:10px 16px;
-  border-radius:27px;
-  border:1px solid #C1FF52;
-  background:#000;
-  color:#C1FF52;
-  font-weight:800;
-  font-size:13px;
-  cursor:pointer;
-  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  padding: 10px 16px;
+  border-radius: 27px;
+  border: 1px solid #C1FF52;
+  background: #000;
+  color: #C1FF52;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
 }
+
 .tag:hover,
 .tag.selected {
-  background:#C1FF52;
-  color:#000;
+  background: #C1FF52;
+  color: #000;
 }
 
 /* 모달 제출 버튼 */
 .modal__submit {
-  width:180px;
-  height:52px;
-  border-radius:27px;
-  font-weight:800;
-  font-size:15px;
-  border:1px solid #C1FF52;
-  background:#C1FF52;
-  color:#000;
-  margin-top:auto;
+  width: 180px;
+  height: 52px;
+  border-radius: 27px;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1px solid #C1FF52;
+  background: #C1FF52;
+  color: #000;
+  margin-top: auto;
 }
 
 /* ===== 바디 스크롤락 시 클래스 (JS에서 사용) ===== */
 .body-lock {
-  position:fixed;
-  overflow:hidden;
-  inset:auto 0 0 0;
-  width:100%;
+  position: fixed;
+  overflow: hidden;
+  inset: auto 0 0 0;
+  width: 100%;
 }
 
 /* 하단네비게이션 */
@@ -377,13 +416,13 @@ body {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.664);
   box-shadow:
-  0 0 30px rgba(255, 255, 255, 0.6),
-  0 0 8px rgba(255, 255, 255, 0.8),
-  inset 0 0 3px rgba(255, 255, 255, 0.9);
+    0 0 30px rgba(255, 255, 255, 0.6),
+    0 0 8px rgba(255, 255, 255, 0.8),
+    inset 0 0 3px rgba(255, 255, 255, 0.9);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding:7px 0;
+  padding: 7px 0;
   z-index: 1000;
 }
 
@@ -439,4 +478,84 @@ body {
   position: absolute;
   bottom: 72px;
   left: 195px;
+}
+
+.r_store_info {
+  width: auto;
+  height: auto;
+  display: block;
+  position: absolute;
+  top: 28px;
+  left: 211px;
+  opacity: 0.7;
+  border-radius: 16px;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 0px 3px;
+  color: #0b2401;
+}
+
+.r_store_info p {
+  margin: 0 0 4px 0;
+  font-weight: 700;
+}
+
+.r_store_info_small {
+  font-size: 5.3px;
+  color: #828282;
+  margin: 0;
+  padding-left: 5px;
+  list-style-type: disc;
+}
+
+.logoutbtn {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #C1FF52;
+  border: none;
+  border-radius: 50%;
+  position: absolute;
+  top: -90px;
+  left: 0;
+
+}
+
+.logoutbtn img {
+  width: 27px;
+}
+
+.tomato {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.information_detail {
+  /* 기존 flex-end에서 center로 변경하여 내용물을 중앙에 배치합니다. */
+  justify-content: center !important;
+}
+
+.thumbnail-row {
+  position: relative;
+  /* 화살표가 들어갈 공간 확보 */
+  padding-top: 15px;
+}
+
+#level-arrow {
+  display: none;
+  /* 평소에는 숨김 */
+  position: absolute;
+  top: -5px;
+  /* 썸네일 위쪽에 위치 */
+  left: 0;
+  /* JS가 위치를 계산하여 설정 */
+  width: 15px;
+  /* 화살표 크기 */
+  height: auto;
+  transition: left 0.4s ease;
+  /* 부드러운 이동 효과 */
+  z-index: 10;
 }
