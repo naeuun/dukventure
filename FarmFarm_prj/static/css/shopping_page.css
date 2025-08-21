@@ -752,8 +752,6 @@ body {
 .logoutbtn img{
   width:27px;
 }
-.errormsg{
-  display:flex;
-  color:red;
-  white-space: nowrap;
+.error-placeholder::placeholder {
+    color: red;
 }
