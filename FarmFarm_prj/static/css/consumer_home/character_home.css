@@ -8,58 +8,95 @@ body {
   max-width: 402px;
   min-height: 100vh;
   overflow-y: auto;
-  
-  
+
+
 }
-.top-section{
-    background: linear-gradient(#000000,#F4F5EF);
+
+/* .top-section {
+  background: linear-gradient(#000000, #F4F5EF);
+  min-height: 370px;
+} */
+
+.top-section {
+  position: relative;
+  background: #F4F5EF;
+  /* 기본 배경 */
 }
-.bottom-section{
-    background:#fff;
+
+.top-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 350px;
+  background: linear-gradient(#000000, #F4F5EF);
+  z-index: 0;
 }
-.character-home{
-    width: 100%;
+
+.top-section>* {
+  position: relative;
+  z-index: 1;
+  /* 콘텐츠는 항상 위에 보이게 */
 }
-.cha_exit{
-    margin-left: 10px;
+
+.bottom-section {
+  background: #fff;
+  margin-bottom: 100px;
 }
-.cha_gra{
-    margin-left: 30px;
+
+.character-home {
+  width: 100%;
 }
-.character-main{
-    margin: 20px;
-    display: flex;        /* 가로 배치 */
-    flex-wrap: nowrap;    /* 줄바꿈 방지 */
-    align-items: flex-end; /* 위쪽 기준 정렬 */
-     
+
+.cha_exit {
+  margin-left: 10px;
 }
+
+.cha_gra {
+  margin-left: 30px;
+}
+
+.character-main {
+  margin: 20px;
+  display: flex;
+  /* 가로 배치 */
+  flex-wrap: nowrap;
+  /* 줄바꿈 방지 */
+
+
+}
+
 .character-image {
-    width: 209.506px;
-    height: 269.562px;
-    border-radius: 23px;
-    border: 3px solid #C1FF52;
-    background: #000;
-    overflow: hidden; /* 박스 밖으로 넘치는 부분 잘라내기 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 209.506px;
+  height: 269.562px;
+  border-radius: 23px;
+  border: 3px solid #C1FF52;
+  background: #000;
+  overflow: hidden;
+  /* 박스 밖으로 넘치는 부분 잘라내기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .character-image img {
-    margin-top: 50px;
-    margin-left: 30px;
-    width: 500px;
-    height: auto;
-    object-fit: cover;        /* 비율 유지하며 박스 채우기 */
-    object-position: center;  /* 가로·세로 중앙 */
+  margin-top: 50px;
+  margin-left: 30px;
+  width: 500px;
+  height: auto;
+  object-fit: cover;
+  /* 비율 유지하며 박스 채우기 */
+  object-position: center;
+  /* 가로·세로 중앙 */
 }
 
 /* 오른쪽 정보 */
 .information_detail {
   position: relative;
-  width: 100px;
-  height: 240x;
-  background:#373D2D;
+  width: 120px;
+  height: 270x;
+  background: #373D2D;
   border: 0.5px solid #C1FF52;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
   border-radius: 12px;
@@ -67,13 +104,18 @@ body {
   color: white;
   display: flex;
   flex-direction: column;
-  position: relative;  
+  justify-content: flex-start;
+  align-items: flex-start;
+  position: relative;
   margin-left: 0;
+  margin-top: 60px;
 }
+
 /* 이름 수정 팝업 (기본: 숨김) */
 .name-edit-popover {
   position: absolute;
-  top: -8px;          /* 위치는 상황에 맞게 미세조정 */
+  top: -8px;
+  /* 위치는 상황에 맞게 미세조정 */
   right: -6px;
 
   width: 105.528px;
@@ -104,7 +146,9 @@ body {
 }
 
 /* 보임 상태 */
-.name-edit-popover.show { display: flex; }
+.name-edit-popover.show {
+  display: flex;
+}
 
 /* 닫기(X) 버튼 */
 .name-pop-close {
@@ -116,7 +160,7 @@ body {
   border-radius: 999px;
   /* border 제거 */
   border: none;
-  background: transparent; 
+  background: transparent;
   color: #fff;
   font-size: 12px;
   line-height: 16px;
@@ -131,14 +175,16 @@ body {
   /* border 제거 */
   border: none;
   border-radius: 10px;
-  background: rgba(0,0,0,0.18);
+  background: rgba(0, 0, 0, 0.18);
   color: #fff;
   font-size: 12px;
   font-weight: 700;
   outline: none;
 }
 
-.name-input::placeholder { color: rgba(255,255,255,.65); }
+.name-input::placeholder {
+  color: rgba(255, 255, 255, .65);
+}
 
 /* 저장 버튼 */
 .name-pop-save {
@@ -147,36 +193,42 @@ body {
   padding: 0 10px;
   /* border 제거 */
   border: none;
-  background: transparent; 
+  background: transparent;
   position: relative;
   left: 10px;
   cursor: pointer;
 }
 
 /* 연필 아이콘 클릭 영역 */
-.edit { 
-  cursor: pointer; 
+.edit {
+  cursor: pointer;
   position: absolute;
   top: 6px;
   right: 6px;
 
 }
+
 .name-box {
   width: 100%;
   text-align: left;
-  margin-top: 24px; /* edit 버튼 아래 여백 */
+  margin-top: 24px;
+  /* edit 버튼 아래 여백 */
 }
+
 .cha_name {
   font-size: 14px;
   font-weight: 600;
 }
+
 .cha_nic {
   font-size: 12px;
   font-weight: 800;
   color: #C1FF52;
+  margin-bottom: 30px;
 }
-.edit{
-    align-items: end;
+
+.edit {
+  align-items: end;
 }
 
 .cha_growth {
@@ -184,6 +236,7 @@ body {
   font-weight: 600;
   margin-right: 20px;
 }
+
 .growth_chart {
   margin-top: 10px;
   position: relative;
@@ -204,18 +257,18 @@ body {
   color: #C1FF52;
 }
 
-.line{
+.line {
   position: absolute;
-  top:350px;
-  width:402px;
-  height:8px;
+  top: 350px;
+  width: 402px;
+  height: 8px;
   border-top: 4px solid #C1FF52;
   border-bottom: 1px solid #000;
 }
 
 .bottom-section {
   display: flex;
-  margin-top: 70px;
+  margin-top: 45px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -227,8 +280,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 0.7px solid #000;
-  background: rgba(193, 255, 82, 0.40)
-              url("{% static 'img/3cha.png' %}") no-repeat 20px center;
+  background: rgba(193, 255, 82, 0.40) url("{% static 'img/3cha.png' %}") no-repeat 20px center;
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -238,6 +290,7 @@ body {
   padding: 0 20px;
   gap: 20px;
 }
+
 .cha_3th img {
   width: 50px;
   height: 50px;
@@ -250,8 +303,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 0.7px solid #000;
-  background: rgba(193, 255, 82, 0.40)
-              url("{% static 'img/2cha.png' %}") no-repeat 20px center;
+  background: rgba(193, 255, 82, 0.40) url("{% static 'img/2cha.png' %}") no-repeat 20px center;
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -261,28 +313,36 @@ body {
   padding: 0 20px;
   /* gap: 20px; */
 }
+
 .cha_2th img {
   width: 50px;
   height: 50px;
   object-fit: contain;
 }
+
 /* 카드 공통 */
-.cha_2th, .cha_3th, .cha_1th {
-  position: relative; /* 체크박스 절대 위치를 위해 */
+.cha_2th,
+.cha_3th,
+.cha_1th {
+  position: relative;
+  /* 체크박스 절대 위치를 위해 */
 }
 
 /* 체크박스 */
 .cha_2th .checkbox,
 .cha_3th .checkbox {
   position: absolute;
-  top: 10px;   /* 카드 상단에서 위치 */
-  right: 10px; /* 카드 오른쪽 끝에서 위치 */
+  top: 10px;
+  /* 카드 상단에서 위치 */
+  right: 10px;
+  /* 카드 오른쪽 끝에서 위치 */
   width: 24px;
   height: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .cha_2th .checkbox .check,
 .cha_3th .checkbox .check {
   width: 24px;
@@ -296,8 +356,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 2px solid #C1FF52;
-  background: #000
-              url("{% static 'img/1cha.png' %}") no-repeat 20px center;
+  background: #000 url("{% static 'img/1cha.png' %}") no-repeat 20px center;
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -307,6 +366,7 @@ body {
   padding: 0 20px;
   gap: 20px;
 }
+
 .cha_1th img {
   width: 50px;
   height: 50px;
@@ -314,7 +374,52 @@ body {
 }
 
 /* (선택) 메달만 따로 쓰는 .th 클래스가 있으면 유지 가능 */
-.th { width: 50px; height: 50px; }
+.th {
+  width: 50px;
+  height: 50px;
+}
+
+
+/* 스탬프 */
+/* 각 카드 안의 4칸 스탬프 줄 */
+.stamps-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 200px;
+  /* 필요시 조절 */
+  padding: 10px 0;
+  margin-left: auto;
+  /* 오른쪽 정렬 느낌이면 */
+  margin-right: 20px;
+  /* 카드 우측 여백 */
+  align-items: center;
+  justify-items: center;
+}
+
+.stamps-row img {
+  width: 40px;
+  /* 스탬프 크기 */
+  height: 40px;
+  object-fit: contain;
+}
+
+/* 이미 카드에 .checkbox 위치 스타일이 있으면 그대로 사용,
+   없으면 예시 위치: */
+.cha_3th .checkbox,
+.cha_2th .checkbox,
+.cha_1th .checkbox {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.cha_3th .checkbox .check,
+.cha_2th .checkbox .check,
+.cha_1th .checkbox .check {
+  width: 24px;
+  height: 24px;
+}
 
 /* 하단네비게이션 */
 .bottom_nav {
@@ -330,13 +435,13 @@ body {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.664);
   box-shadow:
-  0 0 30px rgba(255, 255, 255, 0.6),
-  0 0 8px rgba(255, 255, 255, 0.8),
-  inset 0 0 3px rgba(255, 255, 255, 0.9);
+    0 0 30px rgba(255, 255, 255, 0.6),
+    0 0 8px rgba(255, 255, 255, 0.8),
+    inset 0 0 3px rgba(255, 255, 255, 0.9);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding:7px 0;
+  padding: 7px 0;
   z-index: 1000;
 }
 
