@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
+    if (!map) initMap(lat, lng);
     if (!marker) {
         marker = new kakao.maps.Marker({
             position: center,

@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 커스텀 이미지
     const imageSrc = "{% static 'img/stores.png' %}";
     const imageSize = new kakao.maps.Size(20, 20);
-    const imageOption = { offset: new kakao.maps.Point(10, 20) }; // 마커 중심 조정
+    const imageOption = { offset: new kakao.maps.Point(10, 10) }; // 마커 중심 조정
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
     if (!marker) {
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 커스텀 이미지 생성
     const imageSrc = "{% static 'img/stores.png' %}"; // 사용할 이미지 경로
     const imageSize = new kakao.maps.Size(20, 20); // 마커 이미지 크기
-    const imageOption = { offset: new kakao.maps.Point(20, 50) }; // 마커 기준점 (이미지 아래 중심)
+    const imageOption = { offset: new kakao.maps.Point(10, 10) }; // 마커 기준점 (이미지 아래 중심)
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
     if (!map) initMap(lat, lng);
@@ -149,8 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
         marker.setPosition(loc);
         marker.setImage(markerImage);
     }
-
-    map.setCenter(loc);
 }
 
 
