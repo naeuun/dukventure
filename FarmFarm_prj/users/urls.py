@@ -21,4 +21,5 @@ urlpatterns = [
     path('profile-edit/', profile_edit, name='profile_edit'),
     path('buyer-home/', buyer_home, name='buyer_home'),
     path('reservation-card/', reservation_card, name='reservation_card'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
