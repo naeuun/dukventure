@@ -3,6 +3,7 @@
   --topbar-h: 205px;
   --hero-offset: 125.71px;
   --hero-overlap: calc(var(--topbar-h) - var(--hero-offset));
+  --content-nudge: 8px;
 }
 
 /* 페이지 래퍼 */
@@ -62,11 +63,11 @@ body {
   width: auto;
 }
 
-/* 본문: 상단바와 겹치도록 전체를 위로 끌어올림(스크롤 정상) */
 .content {
-  margin-top: 0;
+  margin-top: calc(-1 * var(--hero-overlap) + var(--content-nudge));
   background: transparent;
   position: relative;
+  z-index: 0;
 }
 
 /* 카드 공통 */
@@ -111,6 +112,11 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
+}
+
+.card__image img {
+  width: 326.049px;
+  height: auto;
 }
 
 /* 중앙 텍스트(토마토/달걀) */
@@ -186,6 +192,30 @@ body {
 .btn-black:hover {
   background: #1a1a1a;
 }
+
+/* .pickup-complete-btn,
+.write-review-btn {
+  width: 152px;
+  height: 52px;
+  border-radius: 27px;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1px solid #C1FF52;
+  cursor: pointer;
+  transition: all .15s ease;
+} */
+
+/* .btn btn-black write-review-btn,
+.btn btn-lime pickup-complete-btn {
+  width: 152px;
+  height: 52px;
+  border-radius: 27px;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1px solid #C1FF52;
+  cursor: pointer;
+  transition: all .15s ease;
+} */
 
 .btn-lime {
   background: #C1FF52;
