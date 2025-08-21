@@ -37,7 +37,7 @@
             <li>
             개수:
             {% with first_item=r.items.all|first %}
-                {{ first_item.quantity }}{{ first_item.unit }}
+                {{ first_item.unit }}× {{ first_item.quantity }}
             {% endwith %}
             </li>
             <li>상태: {{ r.get_status_display }}</li>

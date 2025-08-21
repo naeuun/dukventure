@@ -96,7 +96,6 @@ body {
 .card--hero {
   position: relative;
   z-index: 1;
-  margin-top: -150px;
 }
 
 /* 이미지 영역: 326.049 x 114.441 */
