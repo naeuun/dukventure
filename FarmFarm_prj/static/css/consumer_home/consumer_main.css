@@ -864,7 +864,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: 8px;
-  position: relative;
+  position: absolute;
+  left:23%;
   z-index: 3;
   /* 맨 위 */
 }
@@ -912,9 +913,33 @@ body {
   padding: 5px;
   margin: 0 10px;
   /* 양 옆 여백 */
-
+  position:absolute;
+  right:0;
 }
-
+.second_detail{
+  width: 130px;
+  height: 170px;
+  border-radius: 23px;
+  border: 2px solid #C1FF52;
+  /* 같은 강조 색 */
+  background: linear-gradient(180deg,
+      rgba(244, 245, 239, 0.4) 5.44%,
+      rgba(164, 255, 0, 0.4) 100%),
+    #f4f5ef;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.5);
+  opacity: 0.4;
+  filter: blur(2px);
+  transform: scale(0.9);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  margin: 0 10px;
+  position:absolute;
+  left:0;
+}
 .egg,
 .pota {
   width: 118.017px;
@@ -940,6 +965,7 @@ body {
   font-size: 6px;
   font-weight: 600;
   padding: 4px;
+  text-align: center;
 }
 
 
@@ -1402,4 +1428,7 @@ body {
   transition: left 0.4s ease;
   /* 부드러운 이동 효과 */
   z-index: 10;
+}
+.reservation{
+  width:150px;
 }
