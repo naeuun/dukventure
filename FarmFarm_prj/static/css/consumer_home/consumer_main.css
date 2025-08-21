@@ -401,7 +401,22 @@ body {
   cursor: pointer;
   margin-bottom: 20px;
 }
-
+.reservation{
+  background: #C1FF52;
+  width: 150px;
+  height: 46px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid black;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  margin-bottom: 20px;
+}
 .cha_check {
   width: 30px;
   margin-left: 10px;
@@ -1010,7 +1025,7 @@ body {
 }
 
 .review_content {
-  width: 150px;
+  width: 140px;
   height: 54px;
   display: flex;
   justify-content: center;
@@ -1022,7 +1037,7 @@ body {
   border: 1px solid black;
   opacity: 70%;
   border-radius: 16px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   padding: 0 20px;
   color: #0b2401;
@@ -1032,7 +1047,7 @@ body {
   position: absolute;
   top: 10px;
   right: 20px;
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   color: #828282;
 }
@@ -1300,12 +1315,12 @@ body {
 }
 
 .r_store_info {
-  width: auto;
+  width: 95px;
   height: auto;
   display: block;
   position: absolute;
   top: 28px;
-  left: 211px;
+  left: 197px;
   opacity: 0.7;
   border-radius: 16px;
   font-size: 8px;
@@ -1317,16 +1332,22 @@ body {
 .r_store_info p {
   margin: 0 0 4px 0;
   font-weight: 700;
+  font-size:10px;
 }
 
 .r_store_info_small {
-  font-size: 5.3px;
+  font-size: 7.3px;
   color: #828282;
   margin: 0;
-  padding-left: 5px;
-  list-style-type: disc;
+  padding-left:0;
+  list-style: none; 
+  font-weight: 780;
 }
-
+.r_store_info_small li::before {
+    content: "•"; /* 커스텀 점 */
+    position: absolute;
+    left: 0;
+}
 .logoutbtn {
   width: 35px;
   height: 35px;
