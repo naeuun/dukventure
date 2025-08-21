@@ -345,7 +345,7 @@ function updateRewardUI(data) {
                     <div style="display: flex; gap: 18px;">
                         <div>
                             <img width="48" height="48" style="border-radius:50%; object-fit:cover; border:1px solid #eee;"
-                                 src="{% if request.user.buyer.profile_image %}{{ request.user.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+                                 src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/smiling_brocoli.png{% endif %}"
                                  alt="내 프로필">
                             <p style="margin:0; font-size:0.95em; color:#888;">{{ request.user.username }}</p>
                         </div>
