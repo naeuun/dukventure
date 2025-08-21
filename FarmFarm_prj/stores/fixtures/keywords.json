@@ -1,0 +1,65 @@
+[
+{
+  "model": "stores.keyword",
+  "pk": 1,
+  "fields": {
+    "keyword": "# 신선해요"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 2,
+  "fields": {
+    "keyword": "#저렴해요"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 3,
+  "fields": {
+    "keyword": "#친절해요"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 4,
+  "fields": {
+    "keyword": "#국내산"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 5,
+  "fields": {
+    "keyword": "#매일판매"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 6,
+  "fields": {
+    "keyword": "#덤이있어요"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 7,
+  "fields": {
+    "keyword": "#정직해요"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 8,
+  "fields": {
+    "keyword": "#한정판매"
+  }
+},
+{
+  "model": "stores.keyword",
+  "pk": 9,
+  "fields": {
+    "keyword": "#수확직송"
+  }
+}
+]
