@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <input type="text" name="item_desc_${idx}" placeholder="설명" value="${item.description||''}">
                             </div>
                             <div>
-                                <input id="itemPhoto_voiced" type="file" name="item_photo_${idx}" accept="image/*">
+                                <input id="itemPhoto_voiced" type="file" name="item_photo_${idx}" accept="image/*" style="display:none;">
                                         <label for="itemPhoto_voiced">
                                             <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
                                         </label>
