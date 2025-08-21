@@ -1,0 +1,369 @@
+{% extends "users/base_home.html" %}
+{% block role_content %}
+<hr>
+<div class="home-container">
+
+    <div class="my-section">
+        <h3>마이 캐릭터 🧸</h3>
+        <!-- 캐릭터 정보 들어갈 자리 -->
+         <div class="character-display">
+            <img id="character-image" src="https://placehold.co/120x120/3e3e3e/e0e0e0?text=Lv.1" alt="캐릭터" width="120" height="120">
+        </div>
+         <div class="growth-progress">
+            <div id="growth-progress-bar" class="progress-bar-inner"></div>
+        </div>
+        <p id="growth-progress-text" style="text-align:center; margin-top:5px; font-weight:bold;">성장률: 0%</p>
+    </div>
+
+    <div class="reward-section">
+        <h3>리워드 현황 🧩</h3>
+        <!-- 리워드 정보 들어갈 자리 -->
+         <div class="reward-status">
+            <div class="medals">
+                <div id="medal-gold">Gold Medal</div>
+                <div id="medal-silver">Silver Medal</div>
+                <div id="medal-bronze">Bronze Medal</div>
+            </div>
+            <div class="stamps">
+                <!-- JS가 스탬프 개수를 채웁니다 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="reservation-section">
+        <div class="section-header">
+            <h3>예약 현황 👛</h3>
+            <a href="{% url 'reservations:list' %}" class="btn">예약 상세 화면</a>
+        </div>
+        <div class="reservation-list">
+            <p>- 최근 예약 (최대 3개)</p>
+            <div id="active-reservations-list">
+                {% for r in active_reservations|slice:":3" %}
+                    <div class="res-card" id="res-card-{{ r.pk }}">
+                        {% for item in r.items.all %}
+                            <div class="res-card-image">
+                                {% if item.image %}
+                                    <img width="300px" height="150px" src="{{ item.image.url }}" alt="{{ item.item_name }}">
+                                {% else %}
+                                    <img width="300px" height="150px" src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
+                                {% endif %}
+                            </div>
+                            <div class="res-card-info">
+                                <p><strong>판매자:</strong> {{ r.store.name }}</p>
+                                <p><strong>위치:</strong> {{ r.store.address }}</p>
+                                <p><strong>판매 시간:</strong> {{ r.store.sale_hours }}</p>
+                                <p><strong>가격:</strong> (총 {{ item.quantity }}개) {{ r.total_price }}원</p>
+                                <p><strong>상태:</strong> <span class="status-text">{{ r.get_status_display }}</span></p>
+                            </div>
+                        {% endfor %}
+                        <!-- 예약 카드 내 버튼/상태 영역 -->
+                       <div class="res-card-actions">
+    {% if r.status == 'PENDING' %}
+        <span class="btn btn-dark">수락 대기중</span>
+
+    {% elif r.status == 'ACCEPTED' %}
+        {# '수락' 상태일 때 #}
+        {% if r.remaining_minutes > 0 %}
+            <span class="btn btn-dark time-info">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</span>
+        {% else %}
+            <button type="button" class="btn btn-success pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
+        {% endif %}
+
+    {% elif r.status == 'PICKED_UP' %}
+        {# '픽업 완료' 상태일 때 #}
+        <span style="color: green; font-weight: bold;">픽업 완료</span>
+        {% if not r.review %}
+            <button type="button" class="btn btn-light write-review-btn" data-pk="{{ r.pk }}" data-store-name="{{ r.store.name }}">리뷰쓰기</button>
+        {% else %}
+            <span class="btn btn-light" style="cursor: not-allowed; background-color: #e9ecef;">리뷰 작성 완료</span>
+        {% endif %}
+
+    {% elif r.status == 'REJECTED' %}
+        {# '거절됨' 상태일 때 #}
+        <span style="color: red; font-weight: bold;">거절됨</span>
+        
+    {% endif %}
+</div>
+                    </div>
+                {% empty %}
+                    <p id="no-active-reservations" style="text-align:center; color: #aaa;">진행 중인 예약이 없습니다.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="purchase-section">
+        <div class="section-header">
+            <h3>구매 내역 🎇</h3>
+            <a href="{% url 'reservations:purchase-list' %}" class="btn btn-light">구매 내역 전체 보기</a>
+        </div>
+        <div id="past-reservations-list">
+            {% for r in past_reservations|slice:":3" %}
+                <hr>
+                <div class="res-card">
+                    <div class="res-card-image">
+                        {% with item=r.items.first %}
+                            {% if item.image %}
+                                <img width="120px" src="{{ item.image.url }}" alt="{{ item.item_name }}">
+                            {% else %}
+                                <img width="120px" src="https://placehold.co/120x80/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="res-card-info">
+                        <p><strong>{{ r.store.name }}</strong> - <strong>{{ r.store.seller.user.username }}</strong></p>
+                        <p><strong>품목:</strong>
+                            {% for item in r.items.all %}
+                                {{ item.item_name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>위치:</strong> {{ r.store.address }}</p>
+                        <p><strong>판매 시간:</strong> {{ r.store.sale_hours }}</p>
+                        <p><strong>가격:</strong> {{ r.total_price }}원</p>
+                        <p><strong>구매일:</strong> {{ r.created_at|date:"Y.m.d" }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p id="no-past-reservations" style="text-align:center; color: #aaa;">지난 예약 내역이 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+     <div class="review-section">
+        <div class="section-header">
+            <h3>내가 쓴 리뷰 🎀</h3>
+            <a href="{% url 'reviews:my_list' %}" class="btn btn-light">리뷰 전체 보기</a>
+        </div>
+        <div class="review-list">
+            {% for review in reviews|slice:":3" %} <div class="res-card" id="review-card-{{ review.pk }}">
+                    <div style="display: flex; gap: 18px;">
+                        <div>
+                            <img width="48" height="48" style="border-radius:50%; object-fit:cover; border:1px solid #eee;"
+                                 src="{% if request.user.buyer.profile_image %}{{ request.user.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+                                 alt="내 프로필">
+                            <p style="margin:0; font-size:0.95em; color:#888;">{{ request.user.username }}</p>
+                        </div>
+                        <div>
+                            <p><strong>가게명:</strong> {{ review.store.name }}</p>
+                            </div>
+                    </div>
+                    <div class="res-card-info" style="margin-top:10px;">
+                        <p>{{ review.content|truncatewords:20 }}</p>
+                        <div class="review-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <p style="font-size: 0.8em; color: #aaa;">{{ review.created_at|date:"Y.m.d" }}</p>
+                            <button type="button" class="btn btn-danger delete-review-btn" data-review-id="{{ review.pk }}">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="text-align:center; color: #aaa;">작성한 리뷰가 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="review-modal" class="modal">
+  <div class="modal-content">
+    <div id="review-modal-content">
+      </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const csrftoken = '{{ csrf_token }}';
+
+    const reviewModal = document.getElementById('review-modal');
+    const reviewModalContent = document.getElementById('review-modal-content');
+
+    // --- 1. 리워드 정보 로딩 및 UI 업데이트 로직 (기존과 동일) ---
+    const characterImages = {
+        1: 'https://placehold.co/120x120/4caf50/ffffff?text=Lv.1',
+        2: 'https://placehold.co/120x120/ff9800/ffffff?text=Lv.2',
+        3: 'https://placehold.co/120x120/f44336/ffffff?text=Lv.3',
+    };
+
+    async function fetchRewardStatus() {
+        try {
+            const response = await fetch('/rewards/status/');
+            if (!response.ok) throw new Error('리워드 정보 로딩 실패');
+            const data = await response.json();
+            updateRewardUI(data);
+        } catch (error) {
+            console.error('리워드 정보 로딩 오류:', error);
+        }
+    }
+
+function updateRewardUI(data) {
+        // 캐릭터 이미지 업데이트
+        const characterImage = document.getElementById('character-image');
+        if (characterImage) characterImage.src = characterImages[data.character_level] || characterImages[1];
+
+        // [수정된 부분] 메달 등급에 따른 성장률 프로그레스 바 업데이트
+        const medalToPercentage = {
+            'NONE': 25,
+            'BRONZE': 50,
+            'SILVER': 75,
+            'GOLD': 100
+        };
+        const growthPercentage = medalToPercentage[data.medal_tier] || 25; // 기본값 25%
+
+        const progressBar = document.getElementById('growth-progress-bar');
+        const progressText = document.getElementById('growth-progress-text');
+
+        if (progressBar && progressText) {
+            progressBar.style.width = growthPercentage + '%';
+            progressText.textContent = `성장률: ${growthPercentage}%`;
+        }
+
+        // 메달 상태 업데이트
+        const goldMedal = document.getElementById('medal-gold');
+        const silverMedal = document.getElementById('medal-silver');
+        const bronzeMedal = document.getElementById('medal-bronze');
+        if (goldMedal) {
+            goldMedal.textContent = '금메달'; silverMedal.textContent = '은메달'; bronzeMedal.textContent = '동메달';
+            goldMedal.style.fontWeight = 'normal'; silverMedal.style.fontWeight = 'normal'; bronzeMedal.style.fontWeight = 'normal';
+            if (data.medal_tier === 'GOLD') goldMedal.style.fontWeight = 'bold';
+            if (data.medal_tier === 'SILVER') silverMedal.style.fontWeight = 'bold';
+            if (data.medal_tier === 'BRONZE') bronzeMedal.style.fontWeight = 'bold';
+        }
+
+        // 스탬프 상태 업데이트
+        const stampsContainer = document.querySelector('.stamps');
+        if (stampsContainer) {
+            let stampsHTML = '스탬프: ';
+            for (let i = 0; i < 4; i++) {
+                stampsHTML += (i < data.stamp_count) ? '●' : '○';
+            }
+            stampsContainer.textContent = stampsHTML;
+        }
+    }
+    fetchRewardStatus(); // 페이지 로드 시 실행
+
+    
+ document.body.addEventListener('click', async function(event) {
+        const target = event.target;
+
+        // '픽업 완료' 버튼 클릭 처리
+        if (target.classList.contains('pickup-complete-btn')) {
+            const reservationId = target.dataset.pk;
+            if (!confirm('픽업을 완료하시겠습니까?')) return;
+
+            const url = `/reservations/${reservationId}/change-status/`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    window.location.reload();
+                } else {
+                    alert(data.message || '상태 변경 실패');
+                }
+            } catch(error) {
+                alert('상태 변경 중 오류가 발생했습니다.');
+            }
+        }
+
+        // '리뷰쓰기' 버튼 클릭 처리
+        if (target.classList.contains('write-review-btn')) {
+            const reservationId = target.dataset.pk;
+            const storeName = target.dataset.storeName;
+            openReviewModal(reservationId, storeName);
+        }
+        
+        // '리뷰 삭제' 버튼 클릭 처리 (새로 추가)
+        if (target.classList.contains('delete-review-btn')) {
+            const reviewId = target.dataset.reviewId;
+            if (confirm('정말로 이 리뷰를 삭제하시겠습니까? 되돌릴 수 없습니다.')) {
+                handleReviewDelete(reviewId);
+            }
+        }
+
+        // 모달 닫기 버튼 또는 모달 바깥 영역 클릭 처리
+        if (target.classList.contains('close-modal-btn') || target === reviewModal) {
+            closeReviewModal();
+        }
+    });
+
+    // --- 리뷰 삭제를 서버에 요청하는 함수 (새로 추가) ---
+    async function handleReviewDelete(reviewId) {
+        const url = `/reviews/${reviewId}/delete/`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                document.getElementById(`review-card-${reviewId}`).remove();
+                alert(data.message);
+            } else {
+                alert('오류: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('리뷰 삭제 중 오류가 발생했습니다.');
+        }
+    }
+    // --- 3. 리뷰 관련 함수들 ---
+    async function openReviewModal(reservationId, storeName) {
+        try {
+            const response = await fetch(`/reviews/create/${reservationId}/`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || '리뷰 폼을 불러올 수 없습니다.');
+            }
+            const formHtml = await response.text();
+            
+            if (reviewModalContent) {
+                 reviewModalContent.innerHTML = `
+                    <span class="close-modal" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+                    ${formHtml}
+                `;
+            }
+            if (reviewModal) reviewModal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error opening review modal:', error);
+            alert(error.message);
+        }
+    }
+
+    function closeReviewModal() {
+        if (reviewModal) reviewModal.style.display = 'none';
+    }
+
+    // --- 4. 리뷰 폼 제출 이벤트 처리 ---
+    if (reviewModal) {
+        reviewModal.addEventListener('submit', async function(event) {
+            if (event.target.tagName === 'FORM') {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
+                    });
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        alert(result.message);
+                        window.location.reload();
+                    } else {
+                        throw new Error(result.message || '리뷰 등록에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('Error submitting review:', error);
+                    alert(`오류: ${error.message}`);
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

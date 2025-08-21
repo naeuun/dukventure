@@ -1,0 +1,665 @@
+{% extends "base_2.html" %} 
+{% load static %} 
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/consumer_home/consumer_main.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/consumer_home/consumer_profile.css' %}"/>
+{% endblock style %} 
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/consumer_home/buyer_home.js' %}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // --- 프로필 수정 관련 로직 ---
+    const fileInput = document.getElementById('modal_item_photo');
+    const fileNamePreview = document.getElementById('fileNamePreview');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if(file) {
+                fileNamePreview.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
+                    const parent = btn.closest('.information_hugger');
+                    const imgTag = parent.querySelector('.product-img');
+                    imgTag.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileNamePreview.textContent = "선택된 파일 없음";
+            }
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.querySelector('.image-edit-btn');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
+    
+    if (profileEditBtn) {
+        profileEditBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            if(profileEditModal) profileEditModal.style.display = 'flex';
+        });
+    }
+    
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if(profileEditModal) profileEditModal.style.display = 'none';
+        });
+    }
+
+    if(profileImageEditBtn && profileImageInput){
+        profileImageEditBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            profileImageInput.click();
+        });
+    }
+
+    if (profileImageInput) {
+        profileImageInput.addEventListener('change', function(){
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'image');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(response){
+                    document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+                    document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("사진 업로드 실패");
+                }
+            });
+        });
+    }
+
+    const nicknameBtn = profileEditForm ? profileEditForm.querySelector('button[name="edit_type"][value="name"]') : null;
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
+    }
+
+    // --- 리워드 및 캐릭터 정보 로딩 로직 ---
+    const characterMainImages = {
+        1: "{% static 'img/level1.png' %}",
+        2: "{% static 'img/level2.png' %}",
+        3: "{% static 'img/level3.png' %}",
+    };
+    const characterStyles = {
+        1: { transform: 'scale(1.0)', marginTop: '40px', marginLeft: '0px' },
+        2: { transform: 'scale(0.9)', marginTop: '30px', marginLeft: '0px' },
+        3: { transform: 'scale(1.1)', marginTop: '30px', marginLeft: '0px' }
+    };
+    const thumbnailStyles = {
+        1: { transform: 'scale(1.5)' },
+        2: { transform: 'scale(1.0)' },
+        3: { transform: 'scale(3.0)', marginTop: '50px' },
+    };
+     const stampOnImages = [
+        "{% static 'img/stamps/stamp_on.png' %}",
+        "{% static 'img/stamps/stamp_on2.png' %}",
+        "{% static 'img/stamps/stamp_on3.png' %}",
+    ];
+    const stampOffImages =[
+        "{% static 'img/stamps/stamp_off.png' %}",
+        "{% static 'img/stamps/stamp_off2.png' %}",
+        "{% static 'img/stamps/stamp_off3.png' %}",
+    ];
+    async function fetchRewardStatus() {
+        try {
+            const response = await fetch("{% url 'rewards:get_reward_status' %}");
+            if (!response.ok) throw new Error('리워드 정보 로딩 실패');
+            const data = await response.json();
+            updateRewardUI(data);
+        } catch (error) {
+            console.error('리워드 정보 로딩 오류:', error);
+        }
+    }
+
+    function updateRewardUI(data) {
+        const levelText = document.getElementById('character-level-text');
+        if(levelText) levelText.textContent = data.character_level;
+        
+        const characterLevel = data.character_level;
+        const mainImage = document.getElementById('character-main-image');
+
+        if (mainImage) {
+            mainImage.src = characterMainImages[characterLevel] || characterMainImages[1];
+            const styles = characterStyles[characterLevel] || characterStyles[1];
+            mainImage.style.transform = styles.transform;
+            mainImage.style.marginTop = styles.marginTop;
+            mainImage.style.marginLeft = styles.marginLeft;
+        }
+        
+        const arrow = document.getElementById('level-arrow');
+        document.querySelectorAll('.level-thumbnail').forEach((thumb, index) => {
+            const level = index + 1;
+            
+            const thumbStyle = thumbnailStyles[level] || { transform: 'scale(1.0)' };
+            thumb.style.transform = thumbStyle.transform;
+            thumb.style.border = 'none';
+
+            if (level === characterLevel) {
+                thumb.style.opacity = '1';
+                if(arrow) {
+                    setTimeout(() => {
+                        const arrowOffset = thumb.offsetLeft + (thumb.offsetWidth / 2) - (arrow.offsetWidth / 2);
+                        arrow.style.left = `${arrowOffset}px`;
+                        arrow.style.display = 'block';
+                    }, 50);
+                }
+            } else {
+                thumb.style.opacity = '0.6';
+            }
+        });
+
+        const basePercentage = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
+        let growthPercentage = (basePercentage[data.medal_tier] || 0) + (data.stamp_count * 6.25);
+        if (data.medal_tier === 'GOLD') {
+             growthPercentage = 100;
+        }
+        growthPercentage = Math.min(Math.floor(growthPercentage) + 25, 100);
+
+        const circleBar = document.getElementById('growth_chart_circle');
+        const circleText = document.getElementById('growth_percent_text');
+        if (circleBar && circleText) {
+            const radius = circleBar.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (growthPercentage / 100) * circumference;
+            
+            circleBar.style.strokeDashoffset = offset;
+            circleText.textContent = `${growthPercentage}%`;
+        }
+
+        const stampsGrid = document.getElementById('stamps-grid-container');
+        if (stampsGrid) {
+            stampsGrid.innerHTML = '';
+            const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
+            const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
+
+            for (let i = 0; i < 12; i++) {
+                const img = document.createElement('img');
+                if (i < totalStamps) {
+                    // 획득한 스탬프일 경우, ON 이미지 배열에서 무작위로 하나를 선택
+                    const randomIndex = Math.floor(Math.random() * stampOnImages.length);
+                    img.src = stampOnImages[randomIndex];
+                } else {
+                    // 획득하지 못한 스탬프일 경우, OFF 이미지 배열에서 무작위로 하나를 선택
+                    const randomIndex = Math.floor(Math.random() * stampOffImages.length);
+                    img.src = stampOffImages[randomIndex];
+                }
+                img.style.width = '100%';
+                img.style.objectFit = 'contain';
+                stampsGrid.appendChild(img);
+            }
+        }
+    }
+    fetchRewardStatus();
+    
+    const reviewModal = document.getElementById('review-modal');
+    const reviewModalContent = document.getElementById('review-modal-content');
+
+    document.body.addEventListener('click', async function(event) {
+        const target = event.target;
+
+        // '픽업 완료' 버튼 클릭 처리
+        if (target.classList.contains('pickup-complete-btn')) {
+            const reservationId = target.dataset.pk;
+            if (!confirm('픽업을 완료하시겠습니까?')) return;
+
+            const url = `/reservations/${reservationId}/change-status/`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    window.location.reload();
+                } else {
+                    alert(data.message || '상태 변경 실패');
+                }
+            } catch(error) {
+                alert('상태 변경 중 오류가 발생했습니다.');
+            }
+        }
+
+        // '리뷰쓰기' 버튼 클릭 처리
+        if (target.classList.contains('write-review-btn')) {
+            const reservationId = target.dataset.pk;
+            const storeName = target.dataset.storeName;
+            openReviewModal(reservationId, storeName);
+        }
+        
+        // '리뷰 삭제' 버튼 클릭 처리
+        if (target.classList.contains('delete-review-btn')) {
+            const reviewId = target.dataset.reviewId;
+            if (confirm('정말로 이 리뷰를 삭제하시겠습니까? 되돌릴 수 없습니다.')) {
+                handleReviewDelete(reviewId);
+            }
+        }
+
+        // 모달 닫기 버튼 또는 모달 바깥 영역 클릭 처리
+        if (target.classList.contains('close-modal') || target === reviewModal) {
+            closeReviewModal();
+        }
+    });
+
+    // --- 리뷰 삭제를 서버에 요청하는 함수 ---
+    async function handleReviewDelete(reviewId) {
+        const url = `/reviews/${reviewId}/delete/`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                document.getElementById(`review-card-${reviewId}`).remove();
+                alert(data.message);
+            } else {
+                alert('오류: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('리뷰 삭제 중 오류가 발생했습니다.');
+        }
+    }
+
+    // --- 리뷰 관련 함수들 ---
+    async function openReviewModal(reservationId, storeName) {
+        try {
+            const response = await fetch(`/reviews/create/${reservationId}/`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || '리뷰 폼을 불러올 수 없습니다.');
+            }
+            const formHtml = await response.text();
+            
+            if (reviewModalContent) {
+                 reviewModalContent.innerHTML = `
+                    <span class="close-modal" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+                    ${formHtml}
+                `;
+            }
+            if (reviewModal) reviewModal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error opening review modal:', error);
+            alert(error.message);
+        }
+    }
+
+    function closeReviewModal() {
+        if (reviewModal) reviewModal.style.display = 'none';
+    }
+
+    // --- 리뷰 폼 제출 이벤트 처리 ---
+    if (reviewModal) {
+        reviewModal.addEventListener('submit', async function(event) {
+            if (event.target.tagName === 'FORM') {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
+                    });
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        alert(result.message);
+                        window.location.reload();
+                    } else {
+                        throw new Error(result.message || '리뷰 등록에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('Error submitting review:', error);
+                    alert(`오류: ${error.message}`);
+                }
+            }
+        });
+    }
+});
+</script>
+
+{% endblock script %} 
+
+{% block body %}
+<div class="big_hugger">
+    <div class="top-section">
+        <div class="profile-section">
+            <div class="logo">
+                <img src="{% static 'img/background.png' %}" alt="" />
+                <img src="{% static 'img/background2.png' %}" alt="" />
+            </div>
+            <div class="welcome-box">
+                <a href="{% url 'users:logout' %}" class="logoutbtn">
+                    <img src="{% static 'img/logout_btn.png' %}" alt="로그아웃" />
+                </a>
+                <div class="backgroundimg">
+                    <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+                </div>
+                <div class="profile-info">
+                    <div class="profile-text">
+                        <div class="textbox">
+                            <span class="nickname-highlight">
+                                <span class="nickname">{{ request.user.username }}</span>
+                            </span>
+                            <span class="welcome-text">님 반가워요!</span>
+                            <img src="{% static 'img/emo1.png' %}" alt="" />
+                        </div>
+
+                        <div class="textbox1">
+                            <div class="firstmsg">
+                                오늘 뭐 먹을까?
+                                <img src="{% static 'img/emo2.png' %}" alt="" class="pic" />
+                            </div>
+                            <div class="desc-text">
+                                근처 <span class="green_small">노점</span>에서
+                                <span class="green_small">신선하게</span> 장봐봐요!
+                            </div>
+                            <div class="lastmsg">
+                                <span class="desc-text">지금 내 근처, 장보는 가장 따뜻한 방법 "</span>
+                                <span class="farmfarm">팜팜</span>"
+                                <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-box">
+                    <img src="{% static 'img/Union.png' %}" alt="" class="profile_hugger" />
+                    <div class="profile-edit">
+                        <img id="profileImage" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필" />
+                    </div>
+                    <div class="level-box">
+                        <p class="nickname">
+                            {{ request.user.username }}
+                            <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
+                        </p>
+                        <p class="level">
+                            LV. <span id="character-level-text">1</span>
+                            <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+<div class="modal-overlay" id="profileEditModal" style="display: none;">
+    <div class="modal-content">
+        <form id="profileEditForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button type="button" id="closeModalBtn">×</button>
+            </div>
+            <div class="nickname-row">
+                <input type="text" id="nicknameInput" value="{{ request.user.username }}" name="username">
+                <button type="button" name="edit_type" value="name" style="background: none; border: none; cursor: pointer;">
+                    <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
+                </button>
+            </div>
+            <div class="image-row">
+                <div class="image-preview">
+                    <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 미리보기" class="preview_img">
+                    <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+        </div>
+        <div class="line"></div>
+    </div>
+
+    <div class="bottom-section">
+        
+        <div class="cha_section">
+            <div class="character">마이 캐릭터 🧸</div>
+        </div>
+        <div class="information_zone">
+            <div class="information-card">
+                <div class="info-wrapper">
+                    <div class="information_cha">
+                        <div class="thumbnail-row">
+                            <img id="level-arrow" src="{% static 'img/arrow.png' %}" alt="current level">
+                             <div class="thumbnail-wrapper">
+                                <img id="level-thumb-1" class="level-thumbnail" src="{% static 'img/level1.png' %}" alt="Lv.1">
+                            </div>
+
+                            <div class="thumbnail-wrapper">
+                                <img id="level-thumb-2" class="level-thumbnail" src="{% static 'img/level2.png' %}" alt="Lv.2">
+                            </div>
+
+                            <div class="thumbnail-wrapper">
+                                <img id="level-thumb-3" class="level-thumbnail" src="{% static 'img/level3.png' %}" alt="Lv.3">
+                            </div>
+                        </div>
+                        <div class="main-image-container">
+                            <img id="character-main-image" class="main-character" src="{% static 'img/level1.png' %}" alt="메인 캐릭터">
+                        </div>
+                    </div>
+                    <div class="information_detail">
+                        <div class="cha_name" id="character-name">이름:</div>
+                        <div class="cha_nic">{{ user.username }}</div>
+                        <div class="cha_growth">성장퍼센트:</div>
+                        <div class="growth_chart">
+                            <svg width="80" height="80" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#5a6051" stroke-width="8"></circle>
+                                <circle id="growth_chart_circle" cx="50" cy="50" r="45" fill="none" stroke="#C1FF52" stroke-width="8" stroke-linecap="round" style="stroke-dasharray: 283; stroke-dashoffset: 283;"></circle>
+                            </svg>
+                            <div id="growth_percent_text" class="growth_percent">0%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="more">
+                    <a href="{% url 'rewards:reward_page' %}">
+                        <img src="{% static 'img/more.png' %}" alt="마이캐릭터 더보기" class="cha_more">
+                    
+                        <img class="rew_gra" src="{% static 'img/cha_gra.png' %}" alt="장식">
+                    </a>     
+                </div>
+            </div>
+        </div>
+
+        <div class="rew_section">
+            <div class="character">리워드 현황 🧩</div>
+        </div>
+        <div class="information2-card">
+            <div class="rew_total" id="stamps-grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; align-content: center; padding: 20px;">
+                </div>
+            <div class="more">
+                <img class="rew_gra" src="{% static 'img/rew_gra.png' %}" alt="장식">
+            </div>
+        </div>
+
+        <div class="res_section">
+            <div class="character">예약 현황<img src="{% static 'img/res_icon.png' %}" alt="예약 현황 아이콘" class="res_check"></div>
+        </div>
+        <div class="information_zone">
+            <div class="res_res">
+                <div class="information3-card">
+                    <div class="more">
+                        <a href="{% url 'reservations:list' %}"><img src="{% static 'img/res_more.png' %}" alt="예약 현황 더보기" class="res_more"></a>
+                    </div>
+                    {% for r in active_reservations|slice:":3" %}
+                    <div class="{% if forloop.counter == 2 %}res_detial{% else %}back_detail{% endif %}">
+                        {% for item in r.items.all %}
+                        <div class="{% if forloop.parentloop.counter == 2 %}detail_img{% else %}details_img{% endif %}">
+                            {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.item_name }}" class="tomato">
+                            {% else %}
+                            <img src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}" class="tomato">
+                            {% endif %}
+                        </div>
+                        <div class="{% if forloop.parentloop.counter == 2 %}detail_txt{% else %}details_txt{% endif %}">
+                            <span>
+                                판매자: {{ r.store.name }} <br>
+                                위치: {{ r.store.address }} <br>
+                                판매 시간: {{ r.store.sale_hours }} <br>
+                                가격:(총 {{ item.quantity }}개) {{ r.total_price }}원 <br>
+                                상태: {{ r.get_status_display }} <br>
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="buy_section">
+            <div class="character1">구매 내역<img src="{% static 'img/buy_icon.png' %}" alt="구매 내역 아이콘" class="buy_icon"></div>
+            <div class="information_zone">
+                <div class="res_res">
+                    <section class="information4-card">
+                        <div class="history_container">
+                            {% for r in past_reservations|slice:":3" %}
+                            <article class="history_card card--{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
+                                <div class="card_img">
+                                    {% with item=r.items.first %}
+                                    {% if item.image %}
+                                    <img src="{{ item.image.url }}" alt="{{ item.item_name }}">
+                                    {% else %}
+                                    <img src="https://placehold.co/120x80/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
+                                    {% endif %}
+                                    {% endwith %}
+                                </div>
+                                <div class="panel">
+                                    <span class="date">{{ r.created_at|date:"Y.m.d" }}</span>
+                                    <h3>[{{ r.store.name }} | {{ r.store.seller.user.username }}]</h3>
+                                    <ul>
+                                        <li>품목: {% for item in r.items.all %}{{ item.item_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+                                        <li>위치: {{ r.store.address }}</li>
+                                        <li>판매 시간: {{ r.store.sale_hours }}</li>
+                                        <li>가격: {{ r.total_price }}원</li>
+                                    </ul>
+                                </div>
+                            </article>
+                            {% empty %}
+                            <p style="text-align:center; color: #aaa;">지난 예약 내역이 없습니다.</p>
+                            {% endfor %}
+                            <div class="card_reflection" aria-hidden="true"></div>
+                        </div>
+                        <div class="more">
+                            <a href="{% url 'reservations:purchase-list' %}">
+                                <img src="{% static 'img/res_more.png' %}" alt="구매 내역 더보기" class="res_more">
+                                <img src="{% static 'img/rew_gra.png' %}" alt="리워드 현황 아이콘" class="rew_gra">
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="rev_section">
+            <div class="character1">내가 쓴 리뷰<img src="{% static 'img/rev_icon.png' %}" alt="리뷰 아이콘" class="rev_icon"></div>
+            <div class="review_hugger">
+                <img src="{% static 'img/review_deco.png' %}" alt="리뷰데코" class="review_deco">
+                {% for review in reviews %}
+                <div class="per_review" id="review-card-{{ review.id }}">
+                    <div class="reviewer_profile">
+                        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="내 프로필" class="r_profile_p">
+                    </div>
+                    <div class="stars">
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                        <img src="{% static 'img/starscore_filled.png' %}" alt="별점" class="per_star">
+                        {% else %}
+                        <img src="{% static 'img/starscore.png' %}" alt="빈 별" class="per_star">
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="r_store_info">
+                        <p><strong>[{{ review.store.name }}]</strong></p>
+                        <ul class="r_store_info_small">
+                            <li>위치: {{ review.store.address }}</li>
+                            <li>판매 시간: {{ review.store.sale_hours }}</li>
+                        </ul>
+                    </div>
+                    <div class="review_content">{{ review.content|truncatewords:20 }}</div>
+                    <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
+                </div>
+                {% empty %}
+                <p style="text-align:center; color:white;">작성한 리뷰가 없습니다.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="review-modal" class="modal">
+    <div class="modal-content-review">
+        <div id="review-modal-content">
+            </div>
+    </div>
+</div>
+
+<div class="nav_box">
+    {% if user.usertype == 'BUYER' %}
+    <nav class="bottom_nav">
+        <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+        <div class="btn"><a href="{% url 'stores:map' %}"><img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page"></a></div>
+        <div class="btn selected_nav"><a href="{% url 'users:buyer_home' %}"><img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page"></a></div>
+        <div class="btn"><a href="{% url 'shopping:ai_shopping' %}"><span class="shopping_page">AI</span></a></div>
+    </nav>
+    {% elif user.usertype == 'SELLER' %}
+    <nav class="bottom_nav">
+        <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+        <div class="btn"><a href="{% url 'stores:map' %}"><img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page"></a></div>
+        <div class="btn selected_nav"><a href="{% url 'users:seller_home' %}"><img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page"></a></div>
+        <div class="btn"><a href="{% url 'reservations:seller_list' %}"><span class="shopping_page">예약</span></a></div>
+    </nav>
+    {% endif %}
+</div>
+{% endblock body %}

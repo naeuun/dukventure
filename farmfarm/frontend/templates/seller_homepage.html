@@ -1,0 +1,448 @@
+{% extends "./base.html" %} 
+{% load static %} 
+{% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/consumer_home/consumer_profile.css' %}"
+/>
+<link rel="stylesheet" href="{% static 'css/seller_home_page.css' %}" />
+{% endblock style %} 
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.getElementById('profileEditBtn').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('profileEditModal').style.display = 'block';
+};
+
+// 사진 편집 버튼 클릭 시 파일 선택창 열기
+document.getElementById('profileImageEditBtn').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('profileImageInput').click();
+};
+
+// 파일 선택 후 자동 제출
+$('#profileImageInput').on('change', function(){
+    var formData = new FormData($('#profileEditForm')[0]);
+    formData.append('edit_type', 'image');
+    $.ajax({
+        url: "{% url 'users:profile_edit' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(){
+            alert("프로필 사진이 수정되었습니다.");
+            location.reload();
+        }
+    });
+});
+
+// 이름 편집 버튼 클릭 시 AJAX로 제출
+$('button[name="edit_type"][value="name"]').on('click', function(e){
+    e.preventDefault();
+    var formData = new FormData($('#profileEditForm')[0]);
+    formData.append('edit_type', 'name');
+    $.ajax({
+        url: "{% url 'users:profile_edit' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(){
+            alert("이름이 수정되었습니다.");
+            location.reload();
+        }
+    });
+});
+
+$(document).mouseup(function(e){
+    var modal = $("#profileEditModal");
+    if(modal.is(":visible") && !modal.is(e.target) && modal.has(e.target).length === 0){
+        modal.hide();
+    }
+});
+</script>
+<script src="{% static 'js/seller_home_page.js' %}"></script>
+<script src="{% static 'js/consumer_home/consumer_profile.js' %}"></script>
+{% endblock script %} 
+{% block body %}
+<div class="big_hugger">
+  <div class="container onboarding">
+    <!-- 인사 섹션 -->
+    <!-- 상단 프로필 영역 -->
+    <div class="profile-section">
+      <div class="logo">
+        <img src="{% static 'img/background.png' %}" alt="" />
+        <img src="{% static 'img/background2.png' %}" alt="" />
+      </div>
+      <div class="welcome-box">
+        <div class="backgroundimg">
+          <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+        </div>
+        <div class="profile-info">
+          <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
+          <div class="profile-text">
+            <div class="textbox0">
+              <span class="nickname-highlight"
+                ><span class="nickname">{{ request.user.username }}</span></span
+              >
+              <span class="welcome-text">
+                님 반가워요!
+                <img src="{% static 'img/emo1.png' %}" alt="" class="boom" />
+              </span>
+            </div>
+
+            <div class="textbox1">
+              <div class="smaller-text">
+                이제
+                <span class="green_highlight"> 우리 동네 손님들과 연결 </span>
+                될 준비가 끝났어요.
+              </div>
+              <div class="smaller-text">
+                <span class="bigger_green_highlight"> AI </span>
+                가 손님에게 가게 소식을 잘 전해드릴게요!
+                <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-box">
+          <img
+            src="{% static 'img/Union.png' %}"
+            alt=""
+            class="profile_hugger"
+          />
+          <div class="profile-edit">
+            <img
+              id="profileImage"
+              src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+              alt="프로필"
+            />
+          </div>
+          <div class="level-box">
+            <p class="nickname">
+              {{ request.user.username }}
+              <img
+                id="editProfileBtn"
+                src="{% static 'img/edit.png' %}"
+                alt="수정"
+                style="cursor: pointer"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 모달 -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal-content">
+        <form id="profileEditForm" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-actions">
+            <button id="closeModalBtn">×</button>
+          </div>
+          <div class="nickname-row">
+            <input type="text" name="username" id="nicknameInput" value="{{ request.user.username }}" />
+            <button type="submit" name="edit_type" value="name">
+              <img
+                class="nickname-edit-btn"
+                src="{% static 'img/edit.png' %}"
+                alt="닉네임 수정"
+              />
+            <button>
+          </div>
+
+          <div class="image-row">
+            <div class="image-preview">
+              <img
+                src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+                alt="프로필 미리보기"
+                class="preview_img"
+              />
+              <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
+              <img
+                class="image-edit-btn"
+                src="{% static 'img/edit.png' %}"
+                id="profileImageEditBtn"
+                alt="이미지 수정"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="line_"></div>
+
+    <!-- 가게 정보 섹션 -->
+    <div class="res_section">
+      <div class="information_">
+        가게정보
+        <img
+          src="{% static 'img/reservation_icon.png' %}"
+          alt="예약확인 아이콘"
+          class="res_check"
+        />
+      </div>
+    </div>
+    {% if store %}
+    <div class="decoration_right">
+      <img
+        src="{% static 'img/home_side_deco.png' %}"
+        alt="장식"
+        class="side_deco"
+      />
+    </div>
+
+    {% if store %}
+    <!-- 정보 카드 영역 -->
+    <div class="information_zone">
+      <div class="per_res">
+        <div class="information-card">
+          {% for store_item in store.store_items.all %}
+          <div class="information_hugger">
+            <div class="product-img-wrap">
+              {% if store_item.photo %}
+              <img
+                src="{{ store_item.photo.url }}"
+                alt="상품 이미지"
+                class="product-img"
+              />
+              {% else %}
+              <img
+                src="{% static 'img/default_item.png' %}"
+                alt="상품 이미지"
+                class="product-img"
+              />
+              {% endif %}
+              <input
+                type="file"
+                id="change_photo_input"
+                accept="image/*"
+                style="display: none"
+              />
+              <button
+                type="button"
+                value="이미지 변경"
+                class="change_photo_btn"
+              >
+                <img
+                  src="{% static 'img/add_photo.png' %}"
+                  alt="이미지 변경"
+                  class="change_photo"
+                />
+              </button>
+            </div>
+
+            <div class="product-info">
+              <ul>
+                <li>판매자: {{ store.name }}  {{ store.seller.name|default:store.seller.user.username }}</li>
+                <li>위치: {{ store.address }}</li>
+                <li>판매 시간: {{ store.sale_hours }}</li>
+                <li>가격: {{ store_item.item.name }} {{ store_item.unit }}</li>
+                <li>{{ store_item.description }}</>
+                <button type="button" class="edit-item-btn"
+                    data-id="{{ store_item.id }}"
+                    data-name="{{ store_item.item.name }}"
+                    data-unit="{{ store_item.unit }}"
+                    data-price="{{ store_item.price }}"
+                    data-desc="{{ store_item.description }}"
+                    data-photo-name="{% if store_item.photo %}{{ store_item.photo.name }}{% else %}{% endif %}">
+                    ✏️ 품목 수정
+                </button>
+              </ul>
+              <a href="{% url 'stores:edit_store' store.id %}">가게 정보 수정</a>
+            </div>
+          </div>
+          {% empty %}
+          <div>등록된 품목이 없습니다.</div>
+          {% endfor %}
+          <!--
+          <div class="recog">
+            <div class="text_box_hugger">
+              <img
+                src="{% static 'img/textbox/wide_text_box.png' %}"
+                alt="말풍선"
+                class="textbox"
+              />
+              <div class="texts">
+                음성녹음<span style="color: grey">으로</span><br />
+                오늘 판매 물건<span style="color: grey">을</span>
+                <span style="color: grey">수정</span>하세요!
+              </div>
+              <button
+                type="button"
+                value="음성인식"
+                class="voice_recognization_btn"
+              >
+                <img
+                  src="{% static 'img/mic.png' %}"
+                  alt="마이크"
+                  class="mic"
+                />
+              </button>
+            </div>
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+    {% else %}
+      <p>아직 등록된 가게가 없습니다.</p>
+      <button type="button"><a href="{% url 'stores:register' %}">가게 등록하기</a></button>
+    {% endif %}
+
+
+    <!-- 품목 수정 모달 -->
+    <div id="editItemModal" style="display:none; position:fixed; top:20%; left:35%; width:30%; background:#fff; z-index:3000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:20px;">
+        <form id="editItemForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" id="modal_item_id">
+            <label>품목명</label>
+            <input type="text" name="item_name" id="modal_item_name"><br>
+            <label>단위</label>
+            <input type="text" name="item_unit" id="modal_item_unit"><br>
+            <label>가격</label>
+            <input type="number" name="item_price" id="modal_item_price"><br>
+            <label>설명</label>
+            <input type="text" name="item_desc" id="modal_item_desc"><br>
+            <label>사진</label>
+            <input type="file" name="item_photo" id="modal_item_photo" accept="image/*"><br>
+            <button type="submit">저장</button>
+            <button type="button" id="closeEditItemModal">닫기</button>
+        </form>
+    </div>
+
+    <!-- 리뷰 섹션 -->
+    <div class="review_section">
+      <div class="information_">
+        받은 리뷰
+        <img src="{% static 'img/ribbon.png' %}" alt="리본" class="res_check" />
+      </div>
+    </div>
+
+    <div class="review_hugger">
+      <img
+        src="{% static 'img/review_deco.png' %}"
+        alt="리뷰데코"
+        class="review_deco"
+      />
+
+      
+      {% for review in reviews %}
+      <div class="per_review">
+        <div class="reviewer_profile">
+          <img
+            src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ review.author.user.username|first }}"
+            alt="리뷰어 프로필"
+            class="r_profile_p"
+          />
+        </div>
+        <div class="stars">
+          {% for i in "12345" %}
+          {% if i|add:0 <= review.rating %}
+          <img
+            src="{% static 'img/starscore_filled.png' %}"
+            alt="별점"
+            class="per_star"
+          />
+          {% else %}
+          <img
+            src="{% static 'img/starscore.png' %}"
+            alt="별점"
+            class="per_star"
+          />
+          {% endif %}
+        </div>
+        <div class="review_content">
+          {{ review.content }}
+        </div>
+        <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
+        {% if review.photo %}
+        <div class="review-photo">
+          <img src="{{ review.photo.url }}" alt="리뷰 사진">
+        </div>
+        {% endif %}
+        <div class="keywords">
+        {% for keyword in review.get_keywords_as_list %}
+          <span>{{ keyword }}</span>
+        {% endfor %}
+        </div>
+      </div>
+      {% empty %}
+          <p style="text-align: center;">아직 받은 리뷰가 없습니다.</p>
+      {% endfor %}
+      <!-- review_hugger 끝 -->
+    </div>
+  <div>
+  <!-- container 끝 -->
+
+  <!-- 네비게이션 바 -->
+        <div class="nav_box">
+        {% if user.usertype == 'BUYER' %}
+        <nav class="bottom_nav">
+            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <div class="btn selected_nav">
+            <a href="{% url 'stores:map' %}">
+                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'users:buyer_home' %}">
+                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'shopping:ai_shopping' %}">
+                <span class="shopping_page">AI</span>
+            </a>
+            </div>
+        </nav>
+        {% elif user.usertype == 'SELLER' %}
+        <nav class="bottom_nav">
+            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <div class="btn selected_nav">
+            <a href="{% url 'stores:map' %}">
+                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'users:seller_home' %}">
+                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'reservations:seller_list' %}">
+                <span class="shopping_page">예약</span>
+            </a>
+            </div>
+        </nav>
+        {% endif %}
+        </div>
+</div>
+<!-- big_hugger 끝 -->
+
+<!-- 음성 인식 모달 -->
+<div class="voice_modal hidden">
+  <div class="voice_modal_overlay"></div>
+  <div class="voice_modal_content">
+    <button class="voice_modal_close">✕</button>
+    <div class="text_box_area">
+      <img
+        src="{% static 'img/textbox/vertical_text_box.png' %}"
+        alt="말풍선"
+        class="voice_modal_ann"
+      />
+      <div class="ann_text">버튼을 누르고, 말하세요!</div>
+    </div>
+    <div class="voice_recognizing_btn">
+      <img
+        src="{% static 'img/mic_neon.png' %}"
+        alt="음성 인식 버튼"
+        class="voice_modal_mic"
+      />
+    </div>
+  </div>
+</div>
+{% endblock body %}

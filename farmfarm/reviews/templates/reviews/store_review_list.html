@@ -1,0 +1,15 @@
+{% comment %}
+reviews 변수로 전달됨을 가정
+{% endcomment %}
+
+{% if reviews %}
+  {% for review in reviews %}
+    <div class="review-card">
+      <p><strong>{{ review.user.username }}</strong> : {{ review.content }}</p>
+      <p class="review-date">{{ review.created_at|date:"Y-m-d H:i" }}</p>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>리뷰가 없습니다.</p>
+{% endif %}
+

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_input.css' %}" />
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+
+
+
+
+{% block content %}
+<div class="big_hugger">
+
+    <div class="container">
+
+        <div class="progress_bar">
+            <div class="now_step"></div>
+        </div>
+        <div class="content">
+            <p class="bigger_content" id="business-input-prompt"><span class="green_highlight">사업자등록</span>을 인증해주세요!</p>
+            <div class="button_hugger">
+                <form id="businessForm" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="business_number" class="input_field" id="business_number" placeholder="사업자등록번호" required>
+                    <button type="submit" value="사업자 등록 인증" class="btns" id="submit-btn">
+                        <span id="text">인증하기</span>
+                    </button>
+                </form>
+                <div class="result_message" id="result-message"></div>
+                <div class="welcome_content" id="welcome-message" style="display:none;">
+                    <p class="welcoming">
+                        <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli">
+                        <span class="green_highlight">{{ request.user.username }}</span>
+                        님 반가워요!
+                        <img src="{% static 'img/welcome_boom.png' %}" alt="축하 폭죽" class="welcome_boom">
+                    </p>
+                    <p class="under_texts">
+                        <span class="smaller_content">
+                            회원 가입이 
+                            <span class="green_highlight"> 완료</span>
+                            되었습니다!
+                        </span>
+                        <br>
+                        <span class="sub_text">
+                            <span>
+                                이제 
+                                <span class="green_highlight" style="font-size:16px;">
+                                    우리 동네 손님들과 연결
+                                </span>
+                                될 준비가 끝났어요.
+                            </span>
+                            <span>
+                                <br>
+                                <span class="green_highlight" style="font-size:16px;">
+                                    AI
+                                </span>
+                                가 손님에게 가게 소식을 잘 전해드릴게요!
+                            <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
+                            </span>
+                        </span>
+                    </p>
+                    <a href="{% url 'users:seller_home' %}" class="btns" style="text-decoration: none;">홈으로</a>
+                </div>
+                <div class="prev_page" onclick="history.back()">
+                    <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#businessForm").on("submit", function(e) {
+        e.preventDefault(); // 폼 기본 제출 방지
+
+        var businessNumber = $("#business_number").val();
+
+        $.ajax({
+            url: "{% url 'users:seller_business_verify' %}",
+            type: "POST",
+            data: {
+                'business_number': businessNumber,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.is_valid) {
+                    $("#result-message").html("✅ 영업중인 사업자입니다.<br> 인증 완료 버튼을 눌러주세요.");
+                    $("#submit-btn").text("인증완료").prop("disabled", false);
+
+                    // 진행률 바 늘리기
+                    $(".now_step").css("width", "270px"); 
+                    $("#submit-btn").off("click").on("click", function() {
+                        $("#businessForm").hide();
+                        $("#business-input-prompt").hide();
+                        $("#result-message").hide();
+                        $("#welcome-message").show();
+                        // 진행률 바 늘리기
+                        $(".now_step").addClass("completed");
+                    });
+                } else {
+                    $("#result-message").html("❌ 인증 실패<br> 영업중이지 않거나 등록되지 않은 사업자입니다.");
+                }
+            },
+            error: function() {
+                $("#result-message").text("⚠️ 서버 오류가 발생했습니다.");
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock body %}

@@ -1,0 +1,65 @@
+{% extends "../base.html" %}
+
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
+
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+    <div class="container">
+        <div class="prev_page" onclick="history.back()">&lt;</div>
+        <div class="progress_bar">
+            <div class="now_step" style="width: 336px;"></div>
+        </div>
+        <div class="welcome_content" id="welcome-message" style="display:none;">
+            <p class="welcoming">
+                <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli">
+                <span class="green_highlight">{{ request.user.username }}</span>
+                님 반가워요!
+                <img src="{% static 'img/welcome_boom.png' %}" alt="축하 폭죽" class="welcome_boom">
+            </p>
+            <p class="under_texts">
+                <span class="smaller_content">
+                    회원 가입이 
+                    <span class="green_highlight"> 완료</span>
+                    되었습니다!
+                </span>
+                <br>
+                <span class="sub_text">
+                    <span>
+                        이제 
+                        <span class="green_highlight" style="font-size:16px;">
+                            우리 동네 손님들과 연결
+                        </span>
+                        될 준비가 끝났어요.
+                    </span>
+                    <span>
+                        <br>
+                        <span class="green_highlight" style="font-size:16px;">
+                            AI
+                        </span>
+                        가 손님에게 가게 소식을 잘 전해드릴게요!
+                    <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
+                    </span>
+                </span>
+            </p>
+            <button
+            type="button" 
+            value="판매자 홈 페이지로" 
+            class="btns"
+            >
+                <a href="{% url 'users:seller_home' %}">홈으로</a>
+            </button>
+        </div>
+        
+        <div class="prev_page" onclick="history.back()">
+            <img src="{% static 'img/left_back.png' %}" alt="뒤로 가기">
+        </div>
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% load static %} 
+{% block style %} 
+    <link
+    rel="stylesheet"
+    href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}"
+    />
+{% endblock style %}
+
+{% block script %} {% endblock script %} 
+
+{% block body %}
+<!-- common_onboarding.html ✅ -->
+{% block content %}
+<div class="big_hugger">
+  <div class="container">
+    <div class="progress_bar"></div>
+    <div class="content">
+      <p class="bigger_content">당신은 무엇인가요?</p>
+      <form action="{% url 'users:auto_login' %}" method="post">
+        {% csrf_token %}
+        <div class="buttons">
+          <button
+            type="submit"
+            name="role"
+            value="seller"
+            class="button_"
+          >
+            판매자 박OO
+          </button>
+          <button
+            type="submit"
+            name="role"
+            value="buyer"
+            class="button_"
+          >
+            구매자 김OO
+          </button>
+        </div>
+      </form>
+      <div class="newb">
+        <a href="{% url 'users:login' %}">로그인</a> | 
+        <a href="{% url 'users:signup_type' %}">회원가입</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% endblock body %}

@@ -1,0 +1,107 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_home_page.css' %}" />
+{% endblock style %}
+
+{% block script %}
+<script src="{% static 'js/seller_home_page.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+  <div class="container onboarding">
+
+    <!-- 인사 섹션 -->
+    <div class="greeting_section">
+      <img src="{% static 'img/home_deco.png' %}" alt="클로버 배경" class="clover_bg" />
+      <img src="{% static 'img/farmfarm_logo.png' %}" alt="로고" class="logo" />
+      <div class="greeting_card">
+        <div class="greeting_text">
+          <p class="hello">
+            <span class="username">김말선</span> 님 반가워요!
+            <img src="{% static 'img/welcome_boom.png' %}" alt="폭죽" class="boom">
+          </p>
+          <p class="desc">
+            <span>
+              이제 <span class="highlight">우리 동네 손님들과 연결</span> 될 준비가 끝났어요.<br>
+            </span>
+            <span>
+              <span class="highlight" style="font-size:17px;">AI</span> 가 손님에게 가게 소식을 잘 전해드릴게요! 
+              <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
+            </span>
+          </p>
+        </div>
+
+        <div class="profile_section">
+          <div class="profile_img">
+            <img src="{% static 'img/logo_leaves.png' %}" alt="더미프로필" />
+          </div>
+          <p class="profile_name">김말선</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="line_"></div>
+
+    <!-- 예약 확인 섹션 -->
+    <div class="res_section">
+      <div class="information_">
+        예약확인
+        <img src="{% static 'img/reservation_icon.png' %}" alt="예약확인 아이콘" class="res_check" />
+      </div>
+    </div>
+
+    <div class="decoration_right">
+      <img src="{% static 'img/home_side_deco.png' %}" alt="장식" class="side_deco" />
+    </div>
+
+    <!-- 정보 카드 영역 -->
+    <div class="information_zone">
+      <div class="per_res">
+        <div class="information-card">
+          <img src="{% static 'img/smiling_brocoli.png' %}" alt="브로콜리" class="brocoli" />
+          <div>
+            <img src="{% static 'img/textbox/vertical_text_box.png' %}" alt="말풍선" class="textbox_small" />
+            <span class="smalltext">음성녹음 <span style="color:grey;">등록이 가능해요!</span></span>
+          </div>
+          <img src="{% static 'img/voice_brocoli.png' %}" alt="쪼꼬미브로콜리" class="small_brocoli" />
+          <a href="{% url 'stores:register' %}">
+            <button 
+              type="button"
+              class="letsregister"
+              onclick="location.href='selleronboarding3'">
+              등록하기
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- container 끝 -->
+
+  <!-- 네비게이션 바 -->
+  <div class="nav_box">
+    <nav class="bottom_nav">
+      <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
+      <div class="btn">
+        <a href="/storesseller">
+          <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
+        </a>
+      </div>
+      <div class="btn selected_nav">
+        <a href="/sellerhomepage">
+          <img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page">
+        </a>
+      </div>
+      <div class="btn">
+        <a href="/reservationsseller">
+          <span class="shopping_page">예약</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+</div> <!-- big_hugger 끝 -->
+{% endblock body %}
