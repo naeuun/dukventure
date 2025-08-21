@@ -283,12 +283,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             const div = document.createElement('div');
                             div.className = 'item_detail_hugger';
                             div.innerHTML = `
+                            <div>
                                 <input type="text" name="item_name_${idx}" placeholder="품목명" value="${item.name||''}">
                                 <input type="text" name="item_unit_${idx}" placeholder="단위" value="${item.unit||''}">
+                            </div>
+                            <div>
                                 <input type="number" name="item_price_${idx}" placeholder="가격" value="${item.price||''}">
                                 <input type="text" name="item_desc_${idx}" placeholder="설명" value="${item.description||''}">
-                                <input type="file" name="item_photo_${idx}" accept="image/*">
-                                <button type="button" onclick="removeItem(this)">제거</button>
+                            </div>
+                            <div>
+                                <input id="itemPhoto_voiced" type="file" name="item_photo_${idx}" accept="image/*">
+                                        <label for="itemPhoto_voiced">
+                                            <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
+                                        </label>
+                                <button type="button" class="deleteitem" onclick="removeItem(this)">×</button>
+                            </div>
                             `;
                             perRow.appendChild(div);
                         });
