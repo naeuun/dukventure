@@ -607,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 {% for review in reviews %}
                 <div class="per_review" id="review-card-{{ review.id }}">
                     <div class="reviewer_profile">
-                        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="내 프로필" class="r_profile_p">
+                        <img src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="내 프로필" class="r_profile_p">
                     </div>
                     <div class="stars">
                         {% for i in "12345" %}
