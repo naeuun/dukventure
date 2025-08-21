@@ -593,16 +593,7 @@ document.addEventListener("DOMContentLoaded", function () {
           {{ review.content }}
         </div>
         <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
-        {% if review.photo %}
-        <div class="review-photo">
-          <img src="{{ review.photo.url }}" alt="리뷰 사진">
-        </div>
-        {% endif %}
-        <div class="keywords">
-        {% for keyword in review.get_keywords_as_list %}
-          <span>{{ keyword }}</span>
-        {% endfor %}
-        </div>
+        
       </div>
       {% empty %}
           <p style="color:white; text-align: center;">아직 받은 리뷰가 없습니다.</p>

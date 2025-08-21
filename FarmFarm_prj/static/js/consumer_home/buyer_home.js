@@ -1,129 +1,16 @@
-{% extends "base_2.html" %}
-{% load static %}
 
-{# ---------- STYLE ---------- #}
-{% block style %}
-<link rel="stylesheet" href="{% static 'css/consumer_home/character_home.css' %}" />
-{% endblock style %}
-
-{# ---------- BODY ---------- #}
-{% block body %}
-<div class="big_hugger">
-  <div class="character-home">
-    <div class="top-section">
-      <!-- 상단 캐릭터 메인 -->
-      <a href="{% url 'users:buyer_home' %}">
-        <img src="{% static 'img/cha_exit.png' %}" alt="캐릭터 상세화면 나가기" class="cha_exit" />
-      </a>
-      <img src="{% static 'img/cha_gra2.png' %}" alt="캐릭터 상세화면 상단 데코" class="cha_gra" />
-      <img src="{% static 'img/cha_gra22.png' %}" alt="캐릭터 상세화면 상단 데코2" class="cha_gra2" />
-
-      <div class="character-main">
-        <div class="character-image">
-          <img id="character-main-image" class="main-character"
-               src="{% static 'img/cha1.png' %}" alt="마이캐릭터 메인" />
-        </div>
-        <!-- 오른쪽 정보 -->
-        <div class="information_detail">
-          <div class="cha_name" id="character-name">이름:</div>
-          <div class="cha_nic">{{ user.username }}</div>
-
-          <div class="cha_growth">성장퍼센트:</div>
-          <div class="growth_chart">
-            <svg width="80" height="80" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#5a6051" stroke-width="8"></circle>
-              <circle id="growth_chart_circle" cx="50" cy="50" r="45"
-                      fill="none" stroke="#C1FF52" stroke-width="8" stroke-linecap="round"
-                      style="stroke-dasharray: 283; stroke-dashoffset: 283;"></circle>
-            </svg>
-            <div id="growth_percent_text" class="growth_percent">0%</div>
-        </div>
-      </div>
-    </div>
-
-          <div class="line"></div>
-
-          <!-- 리워드 하단 -->
-          <div class="bottom-section">
-            <!-- 3등(동) -->
-            <div class="cha_3th">
-            <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
-
-            <!-- 동(브론즈) 4칸 -->
-            <div class="stamps-row" id="stamps-bronze"></div>
-
-            <!-- 4칸 다 채우면 보일 체크 -->
-            <div class="checkbox">
-                <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-bronze" style="display:none;" />
-            </div>
-            </div>
-
-            <!-- 2등(은) -->
-            <div class="cha_2th">
-            <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
-
-            <!-- 은(실버) 4칸 -->
-            <div class="stamps-row" id="stamps-silver"></div>
-
-            <div class="checkbox">
-                <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-silver" style="display:none;" />
-            </div>
-            </div>
-
-            <!-- 1등(금) -->
-            <div class="cha_1th">
-            <img src="{% static 'img/1th.png' %}" alt="캐릭터 1등" class="th" />
-
-            <!-- 금(골드) 4칸 -->
-            <div class="stamps-row" id="stamps-gold"></div>
-
-            <div class="checkbox">
-                <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-gold" style="display:none;" />
-            </div>
-            </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 네비게이션 -->
-    <div class="nav_box">
-      {% if user.usertype == 'BUYER' %}
-      <nav class="bottom_nav">
-        <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
-        <div class="btn"><a href="{% url 'stores:map' %}"><img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page"></a></div>
-        <div class="btn selected_nav"><a href="{% url 'users:buyer_home' %}"><img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page"></a></div>
-        <div class="btn"><a href="{% url 'shopping:ai_shopping' %}"><span class="shopping_page">AI</span></a></div>
-      </nav>
-      {% elif user.usertype == 'SELLER' %}
-      <nav class="bottom_nav">
-        <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
-        <div class="btn"><a href="{% url 'stores:map' %}"><img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page"></a></div>
-        <div class="btn selected_nav"><a href="{% url 'users:seller_home' %}"><img src="{% static 'img/home_page_black.png' %}" alt="홈페이지" class="home_page"></a></div>
-        <div class="btn"><a href="{% url 'reservations:seller_list' %}"><span class="shopping_page">예약</span></a></div>
-      </nav>
-      {% endif %}
-    </div>
-  </div>
-</div>
-{% endblock body %}
-
-{# ---------- SCRIPT ---------- #}
-{% block script %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/consumer_home/buyer_home.js' %}"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     // --- 프로필 수정 관련 로직 ---
     const fileInput = document.getElementById('modal_item_photo');
     const fileNamePreview = document.getElementById('fileNamePreview');
     if (fileInput) {
-        fileInput.addEventListener('change', function() {
+        fileInput.addEventListener('change', function () {
             const file = this.files[0];
-            if(file) {
+            if (file) {
                 fileNamePreview.textContent = file.name;
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
+                reader.onload = function (e) {
+                    const btn = document.querySelector('.edit-item-btn[data-id="' + modalId.value + '"]');
                     const parent = btn.closest('.information_hugger');
                     const imgTag = parent.querySelector('.product-img');
                     imgTag.src = e.target.result;
@@ -157,30 +44,30 @@ document.addEventListener("DOMContentLoaded", function() {
     const profileImageEditBtn = document.querySelector('.image-edit-btn');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileEditForm = document.getElementById('profileEditForm');
-    
+
     if (profileEditBtn) {
-        profileEditBtn.addEventListener('click', function(e){
+        profileEditBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            if(profileEditModal) profileEditModal.style.display = 'flex';
-        });
-    }
-    
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if(profileEditModal) profileEditModal.style.display = 'none';
+            if (profileEditModal) profileEditModal.style.display = 'flex';
         });
     }
 
-    if(profileImageEditBtn && profileImageInput){
-        profileImageEditBtn.addEventListener('click', function(e){
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (profileEditModal) profileEditModal.style.display = 'none';
+        });
+    }
+
+    if (profileImageEditBtn && profileImageInput) {
+        profileImageEditBtn.addEventListener('click', function (e) {
             e.preventDefault();
             profileImageInput.click();
         });
     }
 
     if (profileImageInput) {
-        profileImageInput.addEventListener('change', function(){
+        profileImageInput.addEventListener('change', function () {
             var formData = new FormData(profileEditForm);
             formData.append('edit_type', 'image');
             $.ajax({
@@ -190,12 +77,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 processData: false,
                 contentType: false,
                 headers: { 'X-CSRFToken': csrftoken },
-                success: function(response){
+                success: function (response) {
                     document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
                     document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
                     location.reload();
                 },
-                error: function(err){
+                error: function (err) {
                     console.log(err);
                     alert("사진 업로드 실패");
                 }
@@ -205,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const nicknameBtn = profileEditForm ? profileEditForm.querySelector('button[name="edit_type"][value="name"]') : null;
     if (nicknameBtn) {
-        nicknameBtn.addEventListener('click', function(e){
+        nicknameBtn.addEventListener('click', function (e) {
             e.preventDefault();
             var formData = new FormData(profileEditForm);
             formData.append('edit_type', 'name');
@@ -216,11 +103,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 processData: false,
                 contentType: false,
                 headers: { 'X-CSRFToken': csrftoken },
-                success: function(){
+                success: function () {
                     alert("이름이 수정되었습니다.");
                     location.reload();
                 },
-                error: function(err){
+                error: function (err) {
                     console.log(err);
                     alert("닉네임 수정 실패");
                 }
@@ -244,12 +131,12 @@ document.addEventListener("DOMContentLoaded", function() {
         2: { transform: 'scale(1.0)' },
         3: { transform: 'scale(3.0)', marginTop: '50px' },
     };
-     const stampOnImages = [
+    const stampOnImages = [
         "{% static 'img/stamps/stamp_on.png' %}",
         "{% static 'img/stamps/stamp_on2.png' %}",
         "{% static 'img/stamps/stamp_on3.png' %}",
     ];
-    const stampOffImages =[
+    const stampOffImages = [
         "{% static 'img/stamps/stamp_off.png' %}",
         "{% static 'img/stamps/stamp_off2.png' %}",
         "{% static 'img/stamps/stamp_off3.png' %}",
@@ -267,8 +154,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateRewardUI(data) {
         const levelText = document.getElementById('character-level-text');
-        if(levelText) levelText.textContent = data.character_level;
-        
+        if (levelText) levelText.textContent = data.character_level;
+
         const characterLevel = data.character_level;
         const mainImage = document.getElementById('character-main-image');
 
@@ -279,18 +166,18 @@ document.addEventListener("DOMContentLoaded", function() {
             mainImage.style.marginTop = styles.marginTop;
             mainImage.style.marginLeft = styles.marginLeft;
         }
-        
+
         const arrow = document.getElementById('level-arrow');
         document.querySelectorAll('.level-thumbnail').forEach((thumb, index) => {
             const level = index + 1;
-            
+
             const thumbStyle = thumbnailStyles[level] || { transform: 'scale(1.0)' };
             thumb.style.transform = thumbStyle.transform;
             thumb.style.border = 'none';
 
             if (level === characterLevel) {
                 thumb.style.opacity = '1';
-                if(arrow) {
+                if (arrow) {
                     setTimeout(() => {
                         const arrowOffset = thumb.offsetLeft + (thumb.offsetWidth / 2) - (arrow.offsetWidth / 2);
                         arrow.style.left = `${arrowOffset}px`;
@@ -305,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const basePercentage = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
         let growthPercentage = (basePercentage[data.medal_tier] || 0) + (data.stamp_count * 6.25);
         if (data.medal_tier === 'GOLD') {
-             growthPercentage = 100;
+            growthPercentage = 100;
         }
         growthPercentage = Math.min(Math.floor(growthPercentage) + 25, 100);
 
@@ -315,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const radius = circleBar.r.baseVal.value;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (growthPercentage / 100) * circumference;
-            
+
             circleBar.style.strokeDashoffset = offset;
             circleText.textContent = `${growthPercentage}%`;
         }
@@ -344,34 +231,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     fetchRewardStatus();
-    
+
     const reviewModal = document.getElementById('review-modal');
     const reviewModalContent = document.getElementById('review-modal-content');
 
-    document.addEventListener('DOMContentLoaded', () => {
-        function renderStamps(containerId, count, filledCount) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ""; // 초기화
-
-            for (let i = 0; i < count; i++) {
-            const stamp = document.createElement("div");
-            stamp.className = "stamp" + (i < filledCount ? " filled" : "");
-            container.appendChild(stamp);
-            }
-        }
-
-        // 브론즈, 실버, 골드 각각 4칸
-        renderStamps("stamps-bronze", 4, 2); // 총 4칸 중 2칸 채움
-        renderStamps("stamps-silver", 4, 4); // 4칸 다 채움
-        renderStamps("stamps-gold", 4, 1);   // 1칸만 채움
-
-        // 4칸 다 채우면 체크 보이게
-        if (document.querySelectorAll("#stamps-silver .stamp.filled").length === 4) {
-            document.getElementById("check-silver").style.display = "block";
-        }
-        });
-
-    document.body.addEventListener('click', async function(event) {
+    document.body.addEventListener('click', async function (event) {
         const target = event.target;
 
         // '픽업 완료' 버튼 클릭 처리
@@ -391,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     alert(data.message || '상태 변경 실패');
                 }
-            } catch(error) {
+            } catch (error) {
                 alert('상태 변경 중 오류가 발생했습니다.');
             }
         }
@@ -402,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const storeName = target.dataset.storeName;
             openReviewModal(reservationId, storeName);
         }
-        
+
         // '리뷰 삭제' 버튼 클릭 처리
         if (target.classList.contains('delete-review-btn')) {
             const reviewId = target.dataset.reviewId;
@@ -447,9 +311,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 throw new Error(errorData.message || '리뷰 폼을 불러올 수 없습니다.');
             }
             const formHtml = await response.text();
-            
+
             if (reviewModalContent) {
-                 reviewModalContent.innerHTML = `
+                reviewModalContent.innerHTML = `
                     <span class="close-modal" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
                     ${formHtml}
                 `;
@@ -467,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- 리뷰 폼 제출 이벤트 처리 ---
     if (reviewModal) {
-        reviewModal.addEventListener('submit', async function(event) {
+        reviewModal.addEventListener('submit', async function (event) {
             if (event.target.tagName === 'FORM') {
                 event.preventDefault();
                 const form = event.target;
@@ -480,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
                     });
                     const result = await response.json();
-                    
+
                     if (response.ok) {
                         alert(result.message);
                         window.location.reload();
@@ -495,106 +359,3 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  // CSRF
-  function getCookie(name){
-    let v=null;
-    if(document.cookie){document.cookie.split(';').some(c=>{
-      c=c.trim(); if(c.startsWith(name+'=')){v=decodeURIComponent(c.slice(name.length+1)); return true;} return false;
-    });}
-    return v;
-  }
-  const csrftoken = getCookie('csrftoken');
-
-  // --- 리워드/캐릭터 로딩 ---
-  const characterMainImages = {
-    1: "{% static 'img/level1.png' %}",
-    2: "{% static 'img/level2.png' %}",
-    3: "{% static 'img/level3.png' %}",
-  };
-  const characterStyles = {
-    1: { transform: 'scale(1.0)', marginTop: '40px', marginLeft: '0px' },
-    2: { transform: 'scale(0.9)',  marginTop: '30px', marginLeft: '0px' },
-    3: { transform: 'scale(1.1)',  marginTop: '30px', marginLeft: '0px' },
-  };
-  const stampOnImages = [
-    "{% static 'img/stamps/stamp_on.png' %}",
-    "{% static 'img/stamps/stamp_on2.png' %}",
-    "{% static 'img/stamps/stamp_on3.png' %}",
-  ];
-  const stampOffImages = [
-    "{% static 'img/stamps/stamp_off.png' %}",
-    "{% static 'img/stamps/stamp_off2.png' %}",
-    "{% static 'img/stamps/stamp_off3.png' %}",
-  ];
-
-   // 3) 꽉 찼으면 체크 노출
-  show('check-bronze', filledBronze === 4);
-  show('check-silver', filledSilver === 4);
-  show('check-gold',   filledGold === 4);
-
-  async function fetchRewardStatus() {
-    const res = await fetch("{% url 'rewards:get_reward_status' %}");
-    if (!res.ok) throw new Error('리워드 정보 로딩 실패');
-    const data = await res.json();
-    updateRewardUI(data);
-  }
-
-  function updateRewardUI(data) {
-    // 레벨 텍스트(선택)
-    const levelText = document.getElementById('character-level-text');
-    if (levelText) levelText.textContent = data.character_level;
-
-    // 메인 이미지 + 스타일
-    const mainImage = document.getElementById('character-main-image');
-    if (mainImage) {
-      const lvl = data.character_level;
-      mainImage.src = characterMainImages[lvl] || characterMainImages[1];
-      const s = characterStyles[lvl] || characterStyles[1];
-      mainImage.style.transform = s.transform;
-      mainImage.style.marginTop = s.marginTop;
-      mainImage.style.marginLeft = s.marginLeft;
-    }
-
-    // 성장 퍼센트 (원형)
-    const base = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
-    let growth = (base[data.medal_tier] || 0) + (data.stamp_count * 6.25);
-    if (data.medal_tier === 'GOLD') growth = 100;
-    growth = Math.min(Math.floor(growth) + 25, 100);
-
-    const circleBar = document.getElementById('growth_chart_circle');
-    const circleText = document.getElementById('growth_percent_text');
-    if (circleBar && circleText) {
-      const radius = circleBar.r.baseVal.value;
-      const circumference = 2 * Math.PI * radius; // 여기서는 2πr = 약 283
-      const offset = circumference - (growth / 100) * circumference;
-      circleBar.style.strokeDashoffset = offset;
-      circleText.textContent = `${growth}%`;
-    }
-
-    // 스탬프 12칸
-    const stampsGrid = document.getElementById('stamps-grid-container');
-    if (stampsGrid) {
-      stampsGrid.innerHTML = '';
-      const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
-      const totalStamps = data.medal_tier === 'GOLD'
-        ? 12
-        : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
-
-      for (let i = 0; i < 12; i++) {
-        const img = document.createElement('img');
-        const arr = (i < totalStamps) ? stampOnImages : stampOffImages;
-        img.src = arr[Math.floor(Math.random() * arr.length)];
-        img.style.width = '100%';
-        img.style.objectFit = 'contain';
-        stampsGrid.appendChild(img);
-      }
-    }
-  }
-
-  fetchRewardStatus().catch(console.error);
-});
-</script>
-{% endblock script %}
