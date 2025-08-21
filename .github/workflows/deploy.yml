@@ -22,7 +22,9 @@ jobs:
 
             # 1) 깃 저장소 루트에서 최신 코드
             cd ${{ secrets.REPO_DIR }}
-            git pull origin main
+            git fetch --all
+            git reset --hard origin/main
+            git clean -fd
 
             # 2) 장고 앱 폴더에서 migrate
             cd ${{ secrets.APP_DIR }}
