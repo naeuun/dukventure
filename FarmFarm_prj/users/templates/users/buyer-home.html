@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "{% static 'img/stamps/stamp_on3.png' %}",
     ];
     const stampOffImages =[
-    "{% static 'img/stamps/stamp_off.png' %}",
+        "{% static 'img/stamps/stamp_off.png' %}",
         "{% static 'img/stamps/stamp_off2.png' %}",
         "{% static 'img/stamps/stamp_off3.png' %}",
     ];
@@ -424,8 +424,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             {{ request.user.username }}
                             <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
                         </p>
-                        <p class="level"></p>
-                        <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
+                        <p class="level">
+                            LV. <span id="character-level-text">1</span>
+                            <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
+
+                        </p>
                     </div>
                 </div>
             </div>
@@ -444,18 +447,26 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="information_cha">
                         <div class="thumbnail-row">
                             <img id="level-arrow" src="{% static 'img/arrow.png' %}" alt="current level">
-                            <img id="level-thumb-1" class="level-thumbnail" src="{% static 'img/level1.png' %}" alt="Lv.1">
-                            <img id="level-thumb-2" class="level-thumbnail" src="{% static 'img/level2.png' %}" alt="Lv.2">
-                            <img id="level-thumb-3" class="level-thumbnail" src="{% static 'img/level3.png' %}" alt="Lv.3">
+                             <div class="thumbnail-wrapper">
+                                <img id="level-thumb-1" class="level-thumbnail" src="{% static 'img/level1.png' %}" alt="Lv.1">
+                            </div>
+
+                            <div class="thumbnail-wrapper">
+                                <img id="level-thumb-2" class="level-thumbnail" src="{% static 'img/level2.png' %}" alt="Lv.2">
+                            </div>
+
+                            <div class="thumbnail-wrapper">
+                                <img id="level-thumb-3" class="level-thumbnail" src="{% static 'img/level3.png' %}" alt="Lv.3">
+                            </div>
                         </div>
                         <div class="main-image-container">
                             <img id="character-main-image" class="main-character" src="{% static 'img/level1.png' %}" alt="메인 캐릭터">
                         </div>
                     </div>
                     <div class="information_detail">
-                        <div class="cha_name" id="character-name">브로브로콜리</div>
+                        <div class="cha_name" id="character-name">이름:</div>
                         <div class="cha_nic">{{ user.username }}</div>
-                        <div class="cha_growth">성장률</div>
+                        <div class="cha_growth">성장퍼센트:</div>
                         <div class="growth_chart">
                             <svg width="80" height="80" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#5a6051" stroke-width="8"></circle>
@@ -465,7 +476,13 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                     </div>
                 </div>
-                <img class="cha_gra" src="{% static 'img/cha_gra.png' %}" alt="장식">
+                <div class="more">
+                    <a href="{% url 'rewards:reward_page' %}">
+                        <img src="{% static 'img/more.png' %}" alt="마이캐릭터 더보기" class="cha_more">
+                    
+                        <img class="rew_gra" src="{% static 'img/cha_gra.png' %}" alt="장식">
+                    </a>     
+                </div>
             </div>
         </div>
 

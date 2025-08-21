@@ -288,3 +288,8 @@ def profile_edit(request):
     else:
         form = ProfileEditForm(instance=user)
         return render(request, 'users/profile_edit_form.html', {'form': form})
+    
+def reservation_card(request):
+    return render(request, 'users/reservation_card.html')
+
+
