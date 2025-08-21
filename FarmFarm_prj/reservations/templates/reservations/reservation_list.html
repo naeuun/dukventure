@@ -46,78 +46,30 @@
     </section>
 
     <div class="card-actions-row">
-        <button class="btn btn-lime" id="btn-finish">픽업 완료</button>
-        <button class="btn btn-black" id="btn-review">리뷰쓰기</button>
+        {# Buyer가 가능한 전이: ACCEPTED/PREPARING/READY -> PICKED_UP #}
+        {% if r.status != 'PICKED_UP' and r.status != 'CANCELLED' and r.status != 'REJECTED' and r.status != 'EXPIRED' and r.status != 'PENDING' %}
+            <button class="btn btn-lime pickup-complete-btn"
+                    data-pk="{{ r.pk }}">픽업 완료</button>
+        {% endif %}
+        {% if r.status == 'PICKED_UP' %}
+            <button class="btn btn-black write-review-btn"
+                    data-pk="{{ r.pk }}"
+                    data-store-name="{{ r.store.name }}">리뷰쓰기</button>
+        {% endif %}
     </div>
+
+
+
     {% endfor %}
     </main>
 
-    
-    <!-- 카드 2 버튼(예시) -->
-    {% comment %} <div class="card-actions-row">
-      <button class="btn btn-black">10분후 픽업가능</button>
-      <button class="btn btn-lime">픽업 전</button>
-    </div>
-  </main>
-</div> {% endcomment %}
-
-<!-- 리뷰작성 모달 -->
-<div id="reviewModal" class="modal" aria-hidden="true">
-  <div
-    class="modal__panel"
-    role="dialog"
-    aria-modal="true"
-    aria-label="리뷰작성"
-  >
-    <div class="modal__head">
-      <div class="modal__title">리뷰작성</div>
-      <div class="modal__head-actions">
-        <button
-          type="button"
-          value="이미지 변경"
-          class="change_photo_btn"
-          id="changePhotoBtn"
-          aria-label="이미지 변경"
-        >
-          <img
-            src="{% static 'img/add_photo.png' %}"
-            alt="이미지 변경"
-            class="change_photo"
-            id="changePhotoImg"
-          />
-        </button>
-        <input type="file" id="reviewPhoto" accept="image/*" hidden />
-        <button class="modal__close" id="modalCloseBtn" aria-label="닫기">
-          ×
-        </button>
-      </div>
+    <!-- 리뷰 작성 모달 (동적 폼 주입용) -->
+    <div id="reviewModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+        <div id="review-modal-content"></div>
+        </div>
     </div>
 
-    <div class="modal__stars">★★★★★</div>
-
-    <div class="modal__textarea-wrap">
-      <textarea class="modal__input" placeholder="입력하세요..."></textarea>
-    </div>
-
-    <div class="modal__keyword-head">
-      <span class="chip-title">#키워드</span>
-    </div>
-
-    <div class="modal__keywords">
-      <button class="tag">#신선해요</button>
-      <button class="tag">#저렴해요</button>
-      <button class="tag">#친절해요</button>
-      <button class="tag">#국내산</button>
-      <button class="tag">#매일판매</button>
-      <button class="tag">#덤이있어요</button>
-      <button class="tag">#정직해요</button>
-      <button class="tag">#한정판매</button>
-      <button class="tag">#수확직송</button>
-    </div>
-
-    <button class="btn btn-lime modal__submit">입력완료</button>
-  </div>
-</div>
 <!-- 네비게이션 -->
     <div class="nav_box">
         {% if user.usertype == 'BUYER' %}
@@ -139,4 +91,130 @@
     </div>
 {% endblock body %} {% block script %}
 <script src="{% static 'js/consumer_home/reservation_home.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 서버 템플릿에서 CSRF 토큰 주입
+  const csrftoken = '{{ csrf_token }}';
+
+  const reviewModal = document.getElementById('reviewModal');
+  const reviewModalContent = document.getElementById('review-modal-content');
+
+  // document 레벨로 위임
+  document.body.addEventListener('click', async function(event) {
+    const target = event.target;
+
+    // 픽업 완료
+    if (target.classList.contains('pickup-complete-btn')) {
+      const reservationId = target.dataset.pk;
+      await handlePickupComplete(reservationId);
+      return;
+    }
+
+    // 리뷰쓰기
+    if (target.classList.contains('write-review-btn')) {
+      const reservationId = target.dataset.pk;
+      const storeName = target.dataset.storeName || '';
+      await openReviewModal(reservationId, storeName);
+      return;
+    }
+
+    // 모달 닫기 (X 버튼 또는 바깥 영역 클릭)
+    if (target.classList.contains('close-modal-btn') || target === reviewModal) {
+      closeReviewModal();
+      return;
+    }
+  });
+
+  // 픽업 완료 처리
+  async function handlePickupComplete(reservationId) {
+    if (!confirm('픽업을 완료하시겠습니까?')) return;
+
+    const url = `/reservations/${reservationId}/change-status/`;
+    const formData = new FormData();
+    formData.append('to_status', 'PICKED_UP');
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+      });
+
+      // JSON 응답 가정
+      const result = await response.json();
+
+      if (response.ok && result.status === 'success') {
+        alert('픽업이 완료되었습니다!');
+        window.location.reload();
+      } else {
+        alert('오류: ' + (result.message || '상태 변경 실패'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('상태 변경 중 오류가 발생했습니다.');
+    }
+  }
+
+  // 리뷰 모달 열기 (서버에서 폼 HTML 받아와서 주입)
+  async function openReviewModal(reservationId, storeName) {
+    try {
+      const response = await fetch(`/reviews/create/${reservationId}/`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+
+      if (!response.ok) {
+        // 서버가 HTML이 아닌 JSON 에러를 줄 수도 있으므로 대비
+        let message = '리뷰 폼을 불러올 수 없습니다.';
+        try {
+          const errJson = await response.json();
+          if (errJson && errJson.message) message = errJson.message;
+        } catch(_) {}
+        throw new Error(message);
+      }
+
+      const formHtml = await response.text();
+
+      reviewModalContent.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <strong style="font-size:18px;">리뷰작성 ${storeName ? '(' + storeName + ')' : ''}</strong>
+          <span class="close-modal-btn" style="color:#aaa; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+        </div>
+        ${formHtml}
+      `;
+
+      reviewModal.style.display = 'flex';
+      reviewModal.setAttribute('aria-hidden', 'false');
+    } catch (error) {
+      console.error('Error opening review modal:', error);
+      alert(error.message);
+    }
+  }
+
+  function closeReviewModal() {
+    reviewModal.style.display = 'none';
+    reviewModal.setAttribute('aria-hidden', 'true');
+    reviewModalContent.innerHTML = '';
+  }
+
+  // 비어있는 섹션 메시지 처리(선택)
+  function updateEmptyMessages() {
+    const activeList = document.getElementById('active-reservations-list');
+    const pastList = document.getElementById('past-reservations-list');
+    const noActiveMsg = document.getElementById('no-active-reservations');
+    const noPastMsg = document.getElementById('no-past-reservations');
+
+    if (activeList && noActiveMsg) {
+      noActiveMsg.style.display = activeList.children.length === 0 ? 'block' : 'none';
+    }
+    if (pastList && noPastMsg) {
+      noPastMsg.style.display = pastList.children.length === 0 ? 'block' : 'none';
+    }
+  }
+
+  updateEmptyMessages();
+});
+</script>
 {% endblock script %}

@@ -17,26 +17,26 @@
 
   <main class="content">
     <!-- 카드 1 : 진행 중인 예약 -->
-    {% for r in reservations %}
-    <section class="card card--hero">
-      <div class="card__image">
-        
+    {% comment %} {% for r in reservations %} {% endcomment %}
+    <div class="card card--hero">
+      <div
+        class="card__image"
+        style="background-image: url('{% static 'img/tomato3.png' %}')"
+      >
         <span class="center-badge">토마토</span>
       </div>
       <div class="card__info">
         <ul>
-          <li>판매자: {{ r.store.seller.user.username }}</li>
-          <li>위치: {{ r.store.address }}</li>
-          <li>판매 시간: {{ r.store.sale_hours }}</li>
-          <li>가격: {{ r.total_price }}원</li>
-          <li>개수: {% with first_item=reservation.items.all|first %}
-    {{ first_item.quantity }}{{ first_item.unit }}
-  {% endwith %}</li>
+          <li>판매자: 박미향</li>
+          <li>위치: 수유역 4번 출구 앞</li>
+          <li>판매 시간: 오늘 오후 4시~7시</li>
+          <li>가격: 2,500원</li>
+          <li>개수: 1팩</li>
           <li>상태: 예약 완료</li>
           <li class="note">→ [픽업 완료] 버튼 노출 예정</li>
         </ul>
       </div>
-    </section>
+    </div>
 
     <!-- 카드 1 버튼 -->
     <div class="card-actions-row">
