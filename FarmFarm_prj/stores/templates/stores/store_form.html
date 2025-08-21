@@ -394,13 +394,13 @@ voiceBtn.addEventListener('mouseleave', () => {
                     <!-- 1. 가게 이름 -->
                     <div class="form_row">
                         <label for="nameInput">1. 가게 이름</label>
-                        <input type="text" name="name" id="nameInput" value="{{ form.name.value|default_if_none:'' }}" placeholder="입력하시오..." />
+                        <input type="text" name="name" id="nameInput" value="{{ form.name.value|default_if_none:'' }}" placeholder="입력하시오..." required/>
                     </div>
 
                     <!-- 2. 사업자 등록번호 -->
                     <div class="form_row">
                         <label for="businessNumberInput">2. 사업자 등록번호</label>
-                        <input type="text" name="business_number" id="businessNumberInput" value="{{ request.user.seller.business_number }}" readonly placeholder="입력하시오..." />
+                        <input type="text" name="business_number" id="businessNumberInput" value="{{ request.user.seller.business_number }}" readonly placeholder="입력하시오..." required/>
                     </div>
 
                     <!-- 판매 장소 -->
@@ -409,7 +409,7 @@ voiceBtn.addEventListener('mouseleave', () => {
                         <div class="place">
                             <input type="text" id="addressInput" name="address"
                                 value="{{ form.address.value|default_if_none:'' }}"
-                                placeholder="주소를 입력하거나, 검색/지도에서 선택하세요">
+                                placeholder="주소를 입력하거나, 검색/지도에서 선택하세요" required>
                             <button type="button" id="searchBtn">
                                 <img src="{% static 'img/search.png' %}" alt="upload" class="search" />
                             </button>
@@ -437,12 +437,12 @@ voiceBtn.addEventListener('mouseleave', () => {
 
                                     <div>
                                         <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
-                                        <input type="text" name="item_name_{{ forloop.counter0 }}" id="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
-                                        <input type="text" name="item_unit_{{ forloop.counter0 }}" id="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위">
+                                        <input type="text" name="item_name_{{ forloop.counter0 }}" id="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명" required>
+                                        <input type="text" name="item_unit_{{ forloop.counter0 }}" id="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위" required>
                                     </div>
                                     <div>
-                                        <input type="number" name="item_price_{{ forloop.counter0 }}" id="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
-                                        <input type="text" name="item_desc_{{ forloop.counter0 }}" id="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
+                                        <input type="number" name="item_price_{{ forloop.counter0 }}" id="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격" required>
+                                        <input type="text" name="item_desc_{{ forloop.counter0 }}" id="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명" required>
                                     </div>
                                     <div>
                                         <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
@@ -456,12 +456,12 @@ voiceBtn.addEventListener('mouseleave', () => {
                                 {% else %}
                                 <div class="item_detail_hugger">
                                     <div>
-                                        <input type="text" name="item_name_0" id="item_name_0" placeholder="품목명">
-                                        <input type="text" name="item_unit_0" id="item_unit_0" placeholder="단위">
+                                        <input type="text" name="item_name_0" id="item_name_0" placeholder="품목명" required>
+                                        <input type="text" name="item_unit_0" id="item_unit_0" placeholder="단위" required>
                                     </div>
                                     <div>
-                                        <input type="number" name="item_price_0" id="item_price_0" placeholder="가격">
-                                        <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명">
+                                        <input type="number" name="item_price_0" id="item_price_0" placeholder="가격" required>
+                                        <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명" required>
                                     </div>
                                     <div>
                                         <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
@@ -479,25 +479,25 @@ voiceBtn.addEventListener('mouseleave', () => {
                     <!-- 5. 판매 요일 -->
                     <div class="form_row">
                         <label for="field4">5. 판매 요일</label>
-                        <input type="text"  name="sale_days" id="saleDaysInput" value="{{ form.sale_days.value|default_if_none:'' }}" placeholder="예: 월,수,금" />
+                        <input type="text"  name="sale_days" id="saleDaysInput" value="{{ form.sale_days.value|default_if_none:'' }}" placeholder="예: 월,수,금"  required/>
                     </div>
 
                     <!-- 6. 판매 시간대 -->
                     <div class="form_row">
                         <label for="saleHoursInput">6. 판매 시간대</label>
-                        <input type="text" name="sale_hours" id="saleHoursInput" value="{{ form.sale_hours.value|default_if_none:'' }}" placeholder="예: 10:00~18:00" />
+                        <input type="text" name="sale_hours" id="saleHoursInput" value="{{ form.sale_hours.value|default_if_none:'' }}" placeholder="예: 10:00~18:00" required/>
                     </div>
 
                     <!-- 7. 결제 수단 -->
                     <div class="form_row">
                         <label for="paymentMethodsInput">7. 결제 수단</label>
-                        <input type="text" name="payment_methods" id="paymentMethodsInput" value="{{ form.payment_methods.value|default_if_none:'' }}" placeholder="예: 현금, 카드" />
+                        <input type="text" name="payment_methods" id="paymentMethodsInput" value="{{ form.payment_methods.value|default_if_none:'' }}" placeholder="예: 현금, 카드"  required/>
                     </div>
 
                     <!-- 8. 판매자 연락 수단 -->
                     <div class="form_row">
                         <label for="contactInput">8. 판매자 연락 수단</label>
-                        <input  type="text" name="contact" id="contactInput" value="{{ form.contact.value|default_if_none:'' }}" placeholder="예: 010-1234-5678" />
+                        <input  type="text" name="contact" id="contactInput" value="{{ form.contact.value|default_if_none:'' }}" placeholder="예: 010-1234-5678" required/>
                     </div>
 
                     <!-- 9. 가게 사진 업로드 -->
