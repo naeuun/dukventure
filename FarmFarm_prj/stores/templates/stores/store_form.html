@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCoordsFromAddress() {
         const address = addressInput.value.trim();
         if (!address) return;
+
         geocoder.addressSearch(address, function(result, status) {
             if (status === kakao.maps.services.Status.OK && result.length > 0) {
                 const lat = result[0].y;
@@ -86,7 +87,10 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 latitudeInput.value = "";
                 longitudeInput.value = "";
-                alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
+
+                if (searchModal.style.display === 'none' && address !== ''){
+                    alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
+                }
             }
         });
     }
@@ -151,10 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 
-
-    addressInput.addEventListener('blur', updateCoordsFromAddress);
-    addressInput.addEventListener('keydown', function(e) { if (e.key==='Enter') { e.preventDefault(); updateCoordsFromAddress(); } });
-
     document.getElementById('mapBtn').onclick = function() {
         document.getElementById('mapModal').style.display='block';
         const lat = parseFloat(latitudeInput.value)||37.6509;
@@ -163,30 +163,60 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     document.getElementById('closeModal').onclick = function(){ document.getElementById('mapModal').style.display='none'; };
 
+    let isSelectingFromSearch = false; // 검색 결과 선택 플래그 
+
     document.getElementById('searchBtn').onclick = function() {
         const query = addressInput.value.trim();
-        if (!query) return;
+
+        // 수정 
+        if (!query){
+            searchResult.innerHTML = '<li>검색어를 입력해주세요.</li>';
+            searchModal.style.display='block';
+            return;
+        }
+
         ps.keywordSearch(query, function(data, status) {
             searchResult.innerHTML = '';
-            if (status === kakao.maps.services.Status.OK) {
+
+            if (status === kakao.maps.services.Status.OK && data.length > 0) {
+                //  검색 성공하면 리스트 생성 
                 data.forEach(place => {
                     const li = document.createElement('li');
                     li.textContent = place.place_name+' ('+place.address_name+')';
                     li.style.cursor='pointer';
                     li.style.padding='5px 0';
                     li.onclick = function() {
+                        isSelectingFromSearch = true; // 검색 결과 선택 플래그 설정
                         addressInput.value = place.address_name;
                         latitudeInput.value = place.y;
                         longitudeInput.value = place.x;
                         setMarkerAndCenter(place.y, place.x);
                         searchModal.style.display='none';
+                        setTimeout(() => { isSelectingFromSearch = false; }, 300); // 짧게 초기화
                     };
                     searchResult.appendChild(li);
                 });
-            } else searchResult.innerHTML='<li>검색 결과가 없습니다.</li>';
+            } else {
+                searchResult.innerHTML='<li>검색 결과가 없습니다.</li>';
+            }
+
+            // 항상 모달 열기
             searchModal.style.display='block';
         });
     };
+
+    // Enter 이벤트: 입력값이 있으면 검색 버튼 클릭과 동일하게 실행
+    addressInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = addressInput.value.trim();
+            if (query) { 
+                document.getElementById('searchBtn').click(); // 검색 버튼 클릭과 동일
+            }
+            // 값이 없으면 아무 것도 하지 않음
+        }
+    });
+
     closeSearchModal.onclick = function(){ searchModal.style.display='none'; };
 
     document.getElementById('storePhoto').addEventListener('change', function(e){
