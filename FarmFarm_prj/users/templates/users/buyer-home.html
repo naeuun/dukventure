@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="image-row">
                 <div class="image-preview">
                     <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 미리보기" class="preview_img">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 미리보기" class="preview_img">
                     <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
                 </div>
             </div>
