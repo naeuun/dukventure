@@ -1,4 +1,4 @@
-{% extends "../base.html" %} {% load static %} {% block style %}
+{% extends "base_2.html" %} {% load static %} {% block style %}
 <link
   rel="stylesheet"
   href="{% static 'css/consumer_home/reservation_home.css' %}"
@@ -16,7 +16,8 @@
   </header>
 
   <main class="content">
-    <!-- 카드 1 : 토마토 (히어로) -->
+    <!-- 카드 1 : 진행 중인 예약 -->
+    {% for r in reservations %}
     <section class="card card--hero">
       <div
         class="card__image"
