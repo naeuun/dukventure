@@ -1,0 +1,180 @@
+{% extends "users/base_home.html" %}
+{% block role_content %}
+<style>
+/* (스타일 코드는 기존과 동일하게 유지) */
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+.modal-content { background: #fff; border-radius: 14px; padding: 32px 24px; max-width: 400px; width: 90vw; margin: auto; position: relative; top: 10vh; }
+.res-card { display: flex; gap: 16px; border:1px solid #eee; padding:16px; margin-bottom:16px; border-radius: 12px; }
+.res-card-info { flex-grow: 1; }
+.res-card-actions { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
+.btn { border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: bold; }
+.btn-success { background-color: #28a745; color: white; }
+.btn-light { background-color: #f8f9fa; color: #212529; border: 1px solid #dee2e6;}
+.no-items-message { text-align:center; color: #888; background: #f5f6fa; border-radius: 10px; padding: 24px 0; font-size: 1.1em; margin: 24px 0; }
+</style>
+
+<div class="wrap">
+    <div class="header">
+        <h2>내 예약 목록</h2>
+        <a href="{% url 'stores:store-list' %}" class="btn">새 예약하기</a>
+    </div>
+
+    <h3 style="margin-top: 24px;">진행 중인 예약</h3>
+    <div id="active-reservations-list">
+        {% for r in reservations %}
+            {% if r.status != 'PICKED_UP' %}
+                {% include 'reservations/reservation_card.html' with reservation=r %}
+            {% endif %}
+        {% endfor %}
+    </div>
+    <p id="no-active-reservations" class="no-items-message" style="display: none;">진행 중인 예약이 없습니다.</p>
+
+
+    <h3 style="margin-top: 36px;">지난 예약</h3>
+    <div id="past-reservations-list">
+         {% for r in reservations %}
+            {% if r.status == 'PICKED_UP' %}
+                {% include 'reservations/reservation_card.html' with reservation=r %}
+            {% endif %}
+        {% endfor %}
+    </div>
+    <p id="no-past-reservations" class="no-items-message" style="display: none;">지난 예약이 없습니다.</p>
+
+</div>
+
+<!-- 리뷰 작성 모달 -->
+<div id="reviewModal" class="modal">
+    <div class="modal-content">
+        <div id="review-modal-content">
+            </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const csrftoken = '{{ csrf_token }}';
+    const reviewModal = document.getElementById('reviewModal');
+    const reviewModalContent = document.getElementById('review-modal-content');
+
+    // --- 모든 클릭 이벤트를 document.body에서 한 번에 처리 ---
+    document.body.addEventListener('click', async function(event) {
+        const target = event.target;
+
+        if (target.classList.contains('pickup-complete-btn')) {
+            const reservationId = target.dataset.pk;
+            handlePickupComplete(reservationId);
+        }
+        
+        if (target.classList.contains('write-review-btn')) {
+            const reservationId = target.dataset.pk;
+            const storeName = target.dataset.storeName;
+            openReviewModal(reservationId, storeName);
+        }
+        
+        if (target.classList.contains('close-modal-btn') || target === reviewModal) {
+            closeReviewModal();
+        }
+    });
+
+    // --- '픽업 완료' 기능 함수 ---
+    async function handlePickupComplete(reservationId) {
+        if (!confirm('픽업을 완료하시겠습니까?')) return;
+        
+        const url = `/reservations/${reservationId}/change-status/`;
+        const formData = new FormData();
+        formData.append('to_status', 'PICKED_UP');
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('픽업이 완료되었습니다!');
+                window.location.reload(); // 성공 시 간단하게 새로고침
+            } else {
+                alert('오류: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('상태 변경 중 오류가 발생했습니다.');
+        }
+    }
+
+    // --- 리뷰 관련 기능 함수 ---
+    async function openReviewModal(reservationId, storeName) {
+        try {
+            const response = await fetch(`/reviews/create/${reservationId}/`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || '리뷰 폼을 불러올 수 없습니다.');
+            }
+            const formHtml = await response.text();
+            
+            reviewModalContent.innerHTML = `
+                <span class="close-modal-btn" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+                ${formHtml}
+            `;
+            reviewModal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error opening review modal:', error);
+            alert(error.message);
+        }
+    }
+
+    function closeReviewModal() {
+        reviewModal.style.display = 'none';
+        reviewModalContent.innerHTML = '';
+    }
+
+    // --- 리뷰 폼 제출 이벤트 처리 ---
+    reviewModal.addEventListener('submit', async function(event) {
+        if (event.target.tagName === 'FORM') {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message);
+                    window.location.reload();
+                } else {
+                    throw new Error(result.message || '리뷰 등록에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert(`오류: ${error.message}`);
+            }
+        }
+    });
+    
+    // ★★★ 누락되었던 유틸리티 함수 추가 ★★★
+    function updateEmptyMessages() {
+        const activeList = document.getElementById('active-reservations-list');
+        const pastList = document.getElementById('past-reservations-list');
+        const noActiveMsg = document.getElementById('no-active-reservations');
+        const noPastMsg = document.getElementById('no-past-reservations');
+
+        if(activeList && noActiveMsg) {
+            noActiveMsg.style.display = activeList.children.length === 0 ? 'block' : 'none';
+        }
+        if(pastList && noPastMsg) {
+            noPastMsg.style.display = pastList.children.length === 0 ? 'block' : 'none';
+        }
+    }
+
+    // --- 페이지 로드 시 초기 실행 ---
+    updateEmptyMessages(); // 이제 함수가 존재하므로 정상 실행됩니다.
+});
+</script>
+{% endblock %}

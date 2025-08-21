@@ -401,7 +401,8 @@ body {
   cursor: pointer;
   margin-bottom: 20px;
 }
-.reservation{
+
+.reservation {
   background: #C1FF52;
   width: 150px;
   height: 46px;
@@ -417,6 +418,7 @@ body {
   cursor: pointer;
   margin-bottom: 20px;
 }
+
 .cha_check {
   width: 30px;
   margin-left: 10px;
@@ -1235,14 +1237,12 @@ body {
   filter: blur(2px);
 }
 
-
-/* 하단네비게이션 */
 .bottom_nav {
   position: fixed;
+  height: 74px;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 74px;
   max-width: 401px;
   margin: auto;
   background: inherit;
@@ -1260,15 +1260,6 @@ body {
   z-index: 1000;
 }
 
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  box-sizing: border-box;
-}
-
 .bottom_nav a {
   text-decoration: none;
   color: #888;
@@ -1276,14 +1267,20 @@ body {
   font-weight: 500;
 }
 
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+}
+
 .map_page {
   width: 16px;
-  margin: 3px 0 -3px;
 }
 
 .home_page {
   width: 24px;
-  margin: 3px 0 -3px;
 }
 
 .shopping_page {
@@ -1296,6 +1293,9 @@ body {
   background-color: #C1FF52;
   border: 1px solid black;
   border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: black;
 }
 
@@ -1313,6 +1313,7 @@ body {
   bottom: 72px;
   left: 195px;
 }
+
 
 .r_store_info {
   width: 95px;
@@ -1332,22 +1333,25 @@ body {
 .r_store_info p {
   margin: 0 0 4px 0;
   font-weight: 700;
-  font-size:10px;
+  font-size: 10px;
 }
 
 .r_store_info_small {
   font-size: 7.3px;
   color: #828282;
   margin: 0;
-  padding-left:0;
-  list-style: none; 
+  padding-left: 0;
+  list-style: none;
   font-weight: 780;
 }
+
 .r_store_info_small li::before {
-    content: "•"; /* 커스텀 점 */
-    position: absolute;
-    left: 0;
+  content: "•";
+  /* 커스텀 점 */
+  position: absolute;
+  left: 0;
 }
+
 .logoutbtn {
   width: 35px;
   height: 35px;
