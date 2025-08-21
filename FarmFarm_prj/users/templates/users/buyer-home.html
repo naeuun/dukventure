@@ -432,6 +432,30 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
             </div>
+<div class="modal-overlay" id="profileEditModal" style="display: none;">
+    <div class="modal-content">
+        <form id="profileEditForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button type="button" id="closeModalBtn">×</button>
+            </div>
+            <div class="nickname-row">
+                <input type="text" id="nicknameInput" value="{{ request.user.username }}" name="username">
+                <button type="button" name="edit_type" value="name" style="background: none; border: none; cursor: pointer;">
+                    <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
+                </button>
+            </div>
+            <div class="image-row">
+                <div class="image-preview">
+                    <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 미리보기" class="preview_img">
+                    <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
         </div>
         <div class="line"></div>
     </div>
@@ -616,30 +640,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="modal-content-review">
         <div id="review-modal-content">
             </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="profileEditModal" style="display: none;">
-    <div class="modal-content">
-        <form id="profileEditForm" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="modal-actions">
-                <button type="button" id="closeModalBtn">×</button>
-            </div>
-            <div class="nickname-row">
-                <input type="text" id="nicknameInput" value="{{ request.user.username }}" name="username">
-                <button type="button" name="edit_type" value="name" style="background: none; border: none; cursor: pointer;">
-                    <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
-                </button>
-            </div>
-            <div class="image-row">
-                <div class="image-preview">
-                    <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 미리보기" class="preview_img">
-                    <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
-                </div>
-            </div>
-        </form>
     </div>
 </div>
 
