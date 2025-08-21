@@ -348,6 +348,29 @@ document.addEventListener("DOMContentLoaded", function() {
     const reviewModal = document.getElementById('review-modal');
     const reviewModalContent = document.getElementById('review-modal-content');
 
+    document.addEventListener('DOMContentLoaded', () => {
+        function renderStamps(containerId, count, filledCount) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ""; // 초기화
+
+            for (let i = 0; i < count; i++) {
+            const stamp = document.createElement("div");
+            stamp.className = "stamp" + (i < filledCount ? " filled" : "");
+            container.appendChild(stamp);
+            }
+        }
+
+        // 브론즈, 실버, 골드 각각 4칸
+        renderStamps("stamps-bronze", 4, 2); // 총 4칸 중 2칸 채움
+        renderStamps("stamps-silver", 4, 4); // 4칸 다 채움
+        renderStamps("stamps-gold", 4, 1);   // 1칸만 채움
+
+        // 4칸 다 채우면 체크 보이게
+        if (document.querySelectorAll("#stamps-silver .stamp.filled").length === 4) {
+            document.getElementById("check-silver").style.display = "block";
+        }
+        });
+
     document.body.addEventListener('click', async function(event) {
         const target = event.target;
 

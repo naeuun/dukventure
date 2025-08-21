@@ -379,6 +379,18 @@ body {
   height: 50px;
 }
 
+.stamp {
+  width: 40px;
+  height: 40px;
+  border: 2px dashed #C1FF52;
+  border-radius: 50%;
+  margin: 5px;
+}
+
+.stamp.filled {
+  background: #C1FF52;
+  border: 2px solid #C1FF52;
+}
 
 /* 스탬프 */
 /* 각 카드 안의 4칸 스탬프 줄 */
