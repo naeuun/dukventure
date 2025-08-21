@@ -8,7 +8,6 @@
 
 {% block script %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/consumer_home/buyer_home.js' %}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // --- 프로필 수정 관련 로직 ---
@@ -371,7 +370,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
-
 {% endblock script %} 
 
 {% block body %}
@@ -450,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="image-row">
                 <div class="image-preview">
                     <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 미리보기" class="preview_img">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 미리보기" class="preview_img">
                     <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
                 </div>
             </div>
@@ -524,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
 
         <div class="res_section">
-            <div class="reservation">진행중인 예약<img src="{% static 'img/res_icon.png' %}" alt="예약 현황 아이콘" class="res_check"></div>
+            <div class="character">예약 현황<img src="{% static 'img/res_icon.png' %}" alt="예약 현황 아이콘" class="res_check"></div>
         </div>
         <div class="information_zone">
             <div class="res_res">
@@ -609,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 {% for review in reviews %}
                 <div class="per_review" id="review-card-{{ review.id }}">
                     <div class="reviewer_profile">
-                        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="내 프로필" class="r_profile_p">
+                        <img src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="내 프로필" class="r_profile_p">
                     </div>
                     <div class="stars">
                         {% for i in "12345" %}
