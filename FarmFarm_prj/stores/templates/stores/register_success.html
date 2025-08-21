@@ -1,8 +1,57 @@
-{% extends "base.html" %}
+{% extends "base_2.html" %}
 
-{% block content %}
-<h2>가게 등록 성공</h2>
-<p>가게가 성공적으로 등록되었습니다!</p>
-<a href="{% url 'users:seller_home' %}">홈으로</a>
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_base.css' %}" />
 
-{% endblock %}
+{% endblock style %}
+
+{% block script %}
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+    <div class="container">
+        <div class="prev_page" onclick="history.back()">&lt;</div>
+
+        <div class="welcome_content" id="welcome-message">
+            <p class="welcoming">
+                <img src="{% static 'img/smiling_brocoli.png' %}" alt="웃는 브로콜리" class="welcoming_brocoli_2">
+            </p>
+            <p class="under_texts">
+                <span class="smaller_content">
+                    가게 등록이 
+                    <span class="green_highlight"> 완료</span>
+                    되었습니다!
+                    <img src="{% static 'img/tongue_face.png' %}" alt="얼굴" class="face">
+
+                </span>
+                <br>
+                <span class="sub_text">
+                    <span>
+                        이제 
+                        <span class="green_highlight" style="font-size:16px;">
+                            우리 동네 손님들과 연결
+                        </span>
+                        될 준비가 끝났어요.
+                    </span>
+                    <span>
+                        <br>
+                        <span class="green_highlight" style="font-size:16px;">
+                            AI
+                        </span>
+                        가 손님에게 가게 소식을 잘 전해드릴게요!
+                    <img src="{% static 'img/twinkle.png' %}" alt="반짝" class="twinkle">
+                    </span>
+                </span>
+            </p>
+            <a class="a_tag" href="{% url 'users:seller_home' %}">
+              <div class="to_home">
+                  홈으로
+              </div>
+            </a>
+        </div>
+        
+    </div>
+</div>
+{% endblock body %}

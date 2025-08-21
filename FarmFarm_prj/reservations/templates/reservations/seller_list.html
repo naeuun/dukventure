@@ -1,104 +1,67 @@
-{% extends "users/base_home.html" %}
-{% block role_content %}
-<style>
-    .card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px; margin-bottom: 16px; } 
-    .action-buttons { display: flex; gap: 8px; }
-    .btn { border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: bold; }
-    .btn-accept { background-color: #28a745; color: white; }
-    .btn-reject { background-color: #dc3545; color: white; }
-    /* Modal Styles */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-    .modal-content { background-color: #fff; margin: 15% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; }
-</style>
+{% extends "base_2.html" %}
+{% load static %}
 
-<div class="wrap">
-    <h2>예약 확인 🎇</h2>
-    {% for r in page_obj %}
-        <div class="card" id="res-card-seller-{{ r.pk }}">
-            <div class="card-content">
-                <!-- 구매자 정보 -->
-                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
-                    <img width="48" height="48" style="border-radius:50%; object-fit:cover; border:1px solid #eee;"
-                         src="{% if r.buyer.profile_image %}{{ r.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
-                         alt="구매자 프로필">
-                    <div>
-                        <p style="margin:0;"><strong>{{ r.buyer.user.username }}</strong></p>
-                        <p style="margin:0; font-size:0.95em; color:#888;">전화번호: {{ r.buyer.user.phone }}</p>
-                    </div>
-                </div>
-                <p><strong>예약코드:</strong> {{ r.reservation_code }}</p>
-                <p>요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
-                <p><strong>상태:</strong> <span class="status">{{ r.get_status_display }}</span></p>
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/consumer_home/consumer_profile.css' %}" />
+<link rel="stylesheet" href="{% static 'css/reservations_seller.css' %}" />
+{% endblock style %}
 
-                <!-- 예약 아이템 정보 -->
-                <div style="display: flex; gap: 12px; margin: 10px 0;">
-                    {% for item in r.items.all %}
-                        <div style="text-align:center;">
-                            {% if item.image %}
-                                <img width="60" height="60" style="object-fit:cover; border-radius:8px; border:1px solid #eee;" src="{{ item.image.url }}" alt="{{ item.item_name }}">
-                            {% else %}
-                                <img width="60" height="60" style="object-fit:cover; border-radius:8px; border:1px solid #eee;" src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}">
-                            {% endif %}
-                            <div style="font-size:0.95em;">{{ item.item_name }}</div>
-                            <div style="font-size:0.9em; color:#555;">수량: {{ item.quantity }}</div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="action-buttons">
-                    {% if r.status == 'PENDING' %}
-                        <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
-                        <button type="button" class="btn btn-reject" onclick="openRejectModal('{{ r.pk }}')">거절</button>
-                    {% elif r.status == 'ACCEPTED' %}
-                        <span>수락 완료</span>
-                    {% elif r.status == 'PICKED_UP' %}
-                        <span style="color: green; font-weight: bold;">픽업 완료</span>
-                    {% elif r.status == 'REJECTED' %}
-                        <span style="color: red;">거절됨</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    {% empty %}
-        <p>예약이 없습니다.</p>
-    {% endfor %}
-    <!-- ... 페이지네이션 ... -->
-</div>
-
-<!-- 거절 사유 선택 모달 -->
-<div id="rejectModal" class="modal">
-    <div class="modal-content">
-        <h3>예약 거절 사유</h3>
-        <form id="rejectForm" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="to_status" value="REJECTED">
-            {{ reject_form.as_p }}
-            <button type="submit">거절 확정</button>
-            <button type="button" onclick="closeRejectModal()">취소</button>
-        </form>
-    </div>
-</div>
-
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-const csrftoken = '{{ csrf_token }}';
+document.addEventListener("DOMContentLoaded", function() {
+    const csrftoken = '{{ csrf_token }}';
+    const now = new Date(); // 현재 시간
 
-// 거절 모달 제어
-const rejectModal = document.getElementById('rejectModal');
-const rejectForm = document.getElementById('rejectForm');
-function openRejectModal(reservationId) {
-    rejectForm.action = `/reservations/${reservationId}/change-status/`;
-    rejectModal.style.display = 'block';
-}
-function closeRejectModal() {
-    rejectModal.style.display = 'none';
-}
+    document.querySelectorAll('.button-group[data-pickup]').forEach(group => {
+    const pickupTimeStr = group.dataset.pickup;
+    const pickupTime = new Date(pickupTimeStr.replace(' ', 'T'));
+    
+    // 현재 버튼 그룹 안에 있는 버튼 상태 확인
+    const isPending = group.querySelector('.accept-btn') !== null;
 
-// '수락' 버튼 AJAX 처리
-document.querySelectorAll('.accept-btn').forEach(button => {
-    button.addEventListener('click', async function() {
-        const reservationId = this.dataset.pk;
-        const url = `/reservations/${reservationId}/change-status/`;
-        const formData = new FormData();
-        formData.append('to_status', 'ACCEPTED');
+    if (isPending && pickupTime < now) {
+        group.innerHTML = '<button type="button" class="completed">픽업시간 만료</button>';
+    }
+});
+
+
+    // 모달 & 폼 요소
+    const rejectModal = document.getElementById('rejectModal');
+    const rejectForm = document.getElementById('rejectForm');
+    const closeRejectBtn = rejectForm.querySelector('button[type="button"]'); // 취소 버튼
+
+    let currentReservationId = null;
+
+    // 모달 열기
+    window.openRejectModal = function(reservationId) {
+        currentReservationId = reservationId;
+        rejectForm.action = `/reservations/${reservationId}/change-status/`;
+        rejectModal.style.display = 'block';
+    }
+
+    // 모달 닫기
+    window.closeRejectModal = function() {
+        rejectModal.style.display = 'none';
+    }
+
+    // 모달 취소 버튼
+    closeRejectBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        closeRejectModal();
+    });
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', function(e) {
+        if (e.target === rejectModal) closeRejectModal();
+    });
+
+    // 거절 제출 AJAX
+    rejectForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        if (!currentReservationId) return;
+        const url = rejectForm.action;
+        const formData = new FormData(rejectForm);
 
         try {
             const response = await fetch(url, {
@@ -107,19 +70,403 @@ document.querySelectorAll('.accept-btn').forEach(button => {
                 body: formData
             });
             const result = await response.json();
-             if (response.ok) {
-                const card = document.getElementById(`res-card-seller-${reservationId}`);
-                // 이제 .status 요소가 존재하므로 정상적으로 텍스트를 바꿀 수 있습니다.
-                card.querySelector('.status').textContent = result.new_status;
-                // action-buttons 영역 전체를 바꾸면 '수락 완료' 텍스트만 남습니다.
-                card.querySelector('.action-buttons').innerHTML = '<span>수락 완료</span>';
+            if (response.ok) {
+                // 상태 변경 후 새로고침
+                location.reload();
             } else {
-                alert('오류: ' + result.message);
+                alert('거절 실패: ' + (result.message || '알 수 없는 오류'));
             }
-        } catch (error) {
-            alert('요청 중 오류가 발생했습니다.');
+        } catch (err) {
+            console.error(err);
+            alert('요청 중 오류 발생');
         }
     });
+
+    // ------------------------
+    // 수락 버튼 AJAX 처리
+    // ------------------------
+    document.querySelectorAll('.accept-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const reservationId = this.dataset.pk;
+            const url = `/reservations/${reservationId}/change-status/`;
+            const formData = new FormData();
+            formData.append('to_status', 'ACCEPTED');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    const card = document.getElementById(`res-card-seller-${reservationId}`);
+                    card.querySelector('.status').textContent = result.new_status;
+                    card.querySelector('.button-group').innerHTML = '<span>수락 완료</span>';
+                } else {
+                    alert('오류: ' + (result.message || '알 수 없는 오류'));
+                }
+            } catch (error) {
+                alert('요청 중 오류가 발생했습니다.');
+            }
+        });
+    });
+
 });
 </script>
-{% endblock %}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const profileImageEditBtn = document.getElementById('profileImageEditBtn');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileEditForm = document.getElementById('profileEditForm');
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // 모달 열기
+    profileEditBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'block';
+    });
+
+    // 모달 닫기
+    closeModalBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        profileEditModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === profileEditModal) profileEditModal.style.display = 'none';
+    });
+
+    // 이미지 선택
+    profileImageEditBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        profileImageInput.click();
+    });
+
+    profileImageInput.addEventListener('change', function(){
+      var formData = new FormData(profileEditForm);
+      formData.append('edit_type', 'image');
+
+      $.ajax({
+          url: "{% url 'users:profile_edit' %}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function(response){
+              // 서버에서 새 이미지 URL을 반환한다고 가정
+              // response.new_image_url
+              document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
+              document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
+              location.reload(); // ✅ 새로고침
+          },
+          error: function(err){
+              console.log(err);
+              alert("사진 업로드 실패");
+          }
+      });
+  });
+
+
+    // 닉네임 수정
+    const nicknameBtn = profileEditForm.querySelector('button[name="edit_type"][value="name"]');
+    if (nicknameBtn) {
+        nicknameBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var formData = new FormData(profileEditForm);
+            formData.append('edit_type', 'name');
+            $.ajax({
+                url: "{% url 'users:profile_edit' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(){
+                    alert("이름이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function(err){
+                    console.log(err);
+                    alert("닉네임 수정 실패");
+                }
+            });
+        });
+    }
+});
+
+</script>
+{% endblock script %}
+
+{% block body %}
+<div class="big_hugger">
+  <div class="container onboarding">
+
+    <!-- 인사 섹션 -->
+    <!-- 상단 프로필 영역 -->
+    <div class="profile-section">
+      <div class="logo">
+        <img src="{% static 'img/background.png' %}" alt="" />
+        <img src="{% static 'img/background2.png' %}" alt="" />
+      </div>
+      <div class="welcome-box">
+      <a href="{% url 'users:logout' %}" class="logoutbtn" >
+        <img src="{% static 'img/logout_btn.png' %}" alt="" />
+      </a>
+        <div class="backgroundimg">
+          <img src="{% static 'img/Rounded rectangle.svg' %}" alt="" />
+        </div>
+        <div class="profile-info">
+          <!-- <img src="/" alt="프로필 이미지" class="profile-img"> -->
+          <div class="profile-text">
+            <div class="textbox0">
+              <span class="nickname-highlight"
+                ><span class="nickname">{{ request.user.username }}</span></span
+              >
+              <span class="welcome-text">
+                님 반가워요!
+                <img src="{% static 'img/emo1.png' %}" alt="" class="boom" />
+              </span>
+            </div>
+
+            <div class="textbox1">
+              <div class="smaller-text">
+                이제
+                <span class="green_highlight"> 우리 동네 손님들과 연결 </span>
+                될 준비가 끝났어요.
+              </div>
+              <div class="smaller-text">
+                <span class="bigger_green_highlight"> AI </span>
+                가 손님에게 가게 소식을 잘 전해드릴게요!
+                <img src="{% static 'img/emo3.png' %}" alt="" class="pic" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-box">
+          <img
+            src="{% static 'img/Union.png' %}"
+            alt=""
+            class="profile_hugger"
+          />
+          <div class="profile-edit">
+            <img
+              id="profileImage"
+              src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+              alt="프로필"
+            />
+          </div>
+          <div class="level-box">
+            <p class="nickname">
+              {{ request.user.username }}
+              <img
+                id="editProfileBtn"
+                src="{% static 'img/edit.png' %}"
+                alt="수정"
+                style="cursor: pointer"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 모달 -->
+    <div class="modal-overlay" id="profileEditModal">
+      <div class="modal-content">
+        <form id="profileEditForm" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-actions">
+            <button id="closeModalBtn">×</button>
+          </div>
+          <div class="nickname-row" style="margin-top:10px;">
+            <input type="text" name="username" id="nicknameInput" value="{{ request.user.username }}" />
+            <button type="submit" name="edit_type" value="name" class="edit_btns" style="margin-top:-10px;">
+              <img
+                class="nickname-edit-btn"
+                src="{% static 'img/edit.png' %}"
+                alt="닉네임 수정"
+              />
+            </button>
+          </div>
+
+          <div class="image-row" style="margin-top:10px;">
+            <div class="image-preview">
+              <img
+                src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}"
+                alt="프로필 미리보기"
+                class="preview_img"
+              />
+              <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
+              
+              <button type="button" id="profileImageEditBtn" class="edit_btns" style="margin-top:-5px;">
+                <img
+                class="image-edit-btn"
+                src="{% static 'img/edit.png' %}"
+                alt="이미지 수정"
+                />
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="line_"></div>
+
+    <!-- 예약 확인 섹션 -->
+      <div class="res_section">
+        <div class="reservation_">
+          예약확인
+          <img src="{% static 'img/res_icon.png' %}"
+          alt="예약확인 아이콘"
+          class="res_check" 
+          />
+        </div>
+      </div>
+
+      <div class="decoration_right">
+        <img src="{% static 'img/res_deco.png' %}" alt="장식" class="side_deco" />
+      </div>
+      <!-- 예약 카드 영역 -->
+    <div class="reservation_zone">
+      {% for r in page_obj %}
+      <!-- 예약 카드 1 -->
+      <div class="per_res" id="res-card-seller-{{ r.pk }}">
+        <div class="reservation-card">
+          <div class="product-img-wrap">
+            {% for item in r.items.all %}
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.item_name }}" class="product-img">
+            {% else %}
+            <img src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}" class="product-img">
+            {% endif %}
+            {% endfor %}
+            <div class="profile-circle">
+              <img 
+              src="{% if r.buyer.profile_image %}{{ r.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" 
+              alt="프로필 이미지"
+              >
+            </div>
+            <div class="profile-hugger-circle"></div>
+          </div>
+
+          <div class="product-info">
+            <p>이름: {{ r.buyer.user.username }}</p>
+            <p>예약 품목: 
+            {% for item in r.items.all %}
+              {{ item.item_name }} {{ item.unit }} × <span class="highlight-text">{{ item.quantity }}</span>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+            </p>
+            <p>픽업 시간: <span class="highlight-text">{{ r.requested_pickup_at|date:"Y-m-d H:i" }}</span></p>
+            <p>연락처: {{ r.buyer.user.phone }}</p>
+            <p>예약코드: {{ r.reservation_code }}</p>
+            <p>요청픽업: {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</p>
+            <p>상태: <span class="status">{{ r.get_status_display }}</span></p>
+          </div>
+        </div>
+
+        <div class="button-group" data-pickup="{{ r.requested_pickup_at|date:'Y-m-d H:i:s' }}">
+          {% if r.status == 'PENDING' %}
+          <button type="button" class="btn btn-accept accept-btn" data-pk="{{ r.pk }}">수락</button>
+          <button type="button" class="btn btn-reject reject-btn" onclick="openRejectModal('{{ r.pk }}')">거절</button>
+          {% elif r.status == 'ACCEPTED' %}
+          <button class="completed">수락 완료</button>
+          {% elif r.status == 'PICKED_UP' %}
+          <button class="completed">픽업 완료</button>
+          {% elif r.status == 'REJECTED' %}
+          <button class="completed">거절됨</button>
+          {% endif %}
+        </div>
+
+        
+      </div>
+      {% empty %}
+          <p>예약이 없습니다.</p>
+      {% endfor %}
+    </div> <!-- reservation_zone 끝 -->
+
+<!-- 거절 사유 선택 모달 -->
+<!-- 거절 사유 모달 -->
+        <div id="rejectModal" class="modal">
+          <div class="modal-content0">
+            <div class="modal_title">거절 사유</div>
+            <form id="rejectForm" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="to_status" value="REJECTED">
+              {{ reject_form.as_p }}
+              <div class="modal-actions">
+                <button type="submit" class="confirm-btn">거절 확정</button>
+                <button type="button" class="close-btn">×</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+  </div> <!-- container 끝 -->
+
+  <!-- 네비게이션 바 -->
+        <div class="nav_box">
+        {% if user.usertype == 'BUYER' %}
+        <nav class="bottom_nav">
+            <img src="{% static 'img/now_page.png' %}" alt="현재 페이지" class="now_page">
+            <div class="btn selected_nav">
+            <a href="{% url 'stores:map' %}">
+                <img src="{% static 'img/map_page_black.png' %}" alt="지도페이지" class="map_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'users:buyer_home' %}">
+                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'shopping:ai_shopping' %}">
+                <span class="shopping_page">AI</span>
+            </a>
+            </div>
+        </nav>
+        {% elif user.usertype == 'SELLER' %}
+        <nav class="bottom_nav">
+            <img src="{% static 'img/now_page_neon.png' %}" alt="현재 페이지" class="now_page">
+            <div class="btn">
+            <a href="{% url 'stores:map' %}">
+                <img src="{% static 'img/map_page_gray.png' %}" alt="지도페이지" class="map_page">
+            </a>
+            </div>
+            <div class="btn">
+            <a href="{% url 'users:seller_home' %}">
+                <img src="{% static 'img/home_page_gray.png' %}" alt="홈페이지" class="home_page">
+            </a>
+            </div>
+            <div class="btn selected_nav">
+            <a href="{% url 'reservations:seller_list' %}">
+                <span class="shopping_page">예약</span>
+            </a>
+            </div>
+        </nav>
+        {% endif %}
+        </div>
+</div>
+{% endblock body %}

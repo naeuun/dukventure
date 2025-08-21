@@ -11,12 +11,15 @@ urlpatterns = [
     path('seller-step1/', seller_step1, name='seller_step1'),
     path('seller-step2/', seller_step2, name='seller_step2'),
     path('seller-step3/', seller_step3, name='seller_step3'),
-    path('home/', home, name='home'),
     path('buyer-home/', buyer_home, name='buyer_home'),
     path('seller-home/', seller_home, name='seller_home'),
+    path('signup-type/', signup_type, name='signup_type'),
     path('signup/', signup, name='signup'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
     path('seller-business-verify/', seller_business_verify, name='seller_business_verify'),
     path('profile-edit/', profile_edit, name='profile_edit'),
+    path('buyer-home/', buyer_home, name='buyer_home'),
+    path('reservation-card/', reservation_card, name='reservation_card'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

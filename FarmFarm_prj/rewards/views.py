@@ -26,3 +26,4 @@ def get_reward_status(request):
         'character_level': reward.character_level,
     }
     return JsonResponse(data)
+
