@@ -19,7 +19,7 @@
     {% for r in reservations %}
     <section class="card card--hero">
         <div class="card__image">
-        {% with item=r.items.first %}
+        {% with item=r.items.first %} 
             {% if item.image %}
             <img src="{{ item.image.url }}" alt="{{ item.item_name }}" />
             {% else %}
