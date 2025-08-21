@@ -346,14 +346,13 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="searching_">    
         <form method="post" action="{% url 'shopping:ai_shopping' %}" style="width: 100%; max-width: 400px;">
           {% csrf_token %}
-          <input type="text" name="dish" id="searchInput" placeholder="입력하시오..." required/>
+          <input type="text"
+       class="{% if error %}error-placeholder{% endif %}" name="dish" id="searchInput" placeholder="{% if error %}{{ error }}{% else %}입력하시오...{% endif %}" required/>
           <button type="submit" id="searchBtn">
             <img src="{% static 'img/search.png' %}" alt="검색 아이콘">
           </button>
         </form>
-        {% if error %}
-          <p style="color: red; margin-top: 15px;">{{ error }}</p>
-        {% endif %}
+        
       </div>
       <div class="foods_hugger">
         <div class="example_foods">
