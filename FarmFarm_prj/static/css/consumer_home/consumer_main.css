@@ -771,7 +771,16 @@ body {
   width: auto;
   height: 200px;
   margin: 20px;
-  margin-top: 60px;
+  width: 260px;
+  margin-top: 30px;
+  padding: 15px;
+}
+
+.rew_total img {
+  width: 50px;
+  /* 스탬프 크기 */
+  height: 50px;
+  object-fit: contain;
 }
 
 .rew_gra {
