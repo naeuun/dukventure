@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 마커 이미지 설정
     const imageSrc = "{% static 'img/stores.png' %}"; // 마커 이미지 경로
     const imageSize = new kakao.maps.Size(20, 20);    // 이미지 크기 (원하는 크기로 변경 가능)
-    const imageOption = { offset: new kakao.maps.Point(20, 40) }; // 중심 좌표 기준 위치 조정
+    const imageOption = { offset: new kakao.maps.Point(10, 10) }; // 중심 좌표 기준 위치 조정
 
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
