@@ -627,7 +627,15 @@ document.addEventListener("DOMContentLoaded", function() {
                             <li>판매 시간: {{ review.store.sale_hours }}</li>
                         </ul>
                     </div>
-                    <div class="review_content">{{ review.content|truncatewords:20 }}</div>
+
+                    <div class="review_content">
+                        {{ review.content|truncatewords:20 }}
+                        <div class="keywords">
+                        {% for keyword in review.get_keywords_as_list %}
+                        <span>#{{ keyword }}</span>
+                    {% endfor %}
+                    </div>
+                    </div>
                     <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
                 </div>
                 {% empty %}
