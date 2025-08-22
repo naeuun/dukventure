@@ -3,7 +3,8 @@
   rel="stylesheet"
   href="{% static 'css/consumer_home/reservation_home.css' %}"
 />
-{% endblock style %} {% block body %}
+{% endblock style %}
+{% block body %}
 <div class="page">
   <!-- 상단바 -->
   <header class="topbar">
@@ -40,55 +41,41 @@
                 {{ first_item.unit }}× {{ first_item.quantity }}
             {% endwith %}
             </li>
-            <li>상태: {{ r.get_status_display }}</li>
+            <li>요청 픽업 시간 : {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</li>
         </ul>
         </div>
     </section>
 
     <div class="card-actions-row">
-
-    {# 왼쪽: 상태표시 버튼(항상 표시) #}
-    <button class="btn status-btn" type="button">
-    {% if r.status == 'PICKED_UP' %}
-        픽업 완료
-    {% elif r.status == 'READY' %}
-        픽업 가능
-    {% elif r.can_mark_picked %}
-        {% if r.remaining_minutes <= 0 %}
-        픽업 가능
-        {% elif r.remaining_minutes <= 10 %}
-        10분후 픽업가능
+      <!-- 수락 대기 중일 때 -->
+      {% if r.status == 'PENDING' %}
+        <button type="button" class="btn status-btn">수락 대기중</button>
+        <button class="btn action-btn" type="button" disabled aria-disabled="true">픽업 전</button>
+      <!-- 판매자가 수락했을 때 -->
+      {% elif r.status == 'ACCEPTED' %}
+        {% if r.remaining_minutes > 0 %}
+            <button type="button" class="btn status-btn">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</button>
+            <button class="btn action-btn" type="button" disabled aria-disabled="true">픽업 전</button>
         {% else %}
-        픽업 전
+            <button type="button" class="btn status-btn">픽업 가능</button>
+            <button type="button" class="btn action-btn pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
         {% endif %}
-    {% else %}
-        픽업 전
-    {% endif %}
-    </button>
+      <!-- 픽업 완료 후 -->
+      {% elif r.status == 'PICKED_UP' %}
+        <button type="button" class="btn status-btn">픽업 완료</button>
+        {% if not r.review %}
+          <button type="button" class="btn action-btn write-review-btn" data-pk="{{ r.pk}}" data-store-name="{{ r.store.name }}">리뷰 쓰기</button>
+        {% else %}
+          <button class="btn action-btn" style="cursor: not-allowed;" disabled aria-disabled="true">리뷰 작성 완료</button>
+        {% endif %}
+      {% elif r.status == 'REJECTED' %}
+        <button type="button" class="btn status-btn">예약이 거절됨</button>
+        <button class="btn action-btn" type="button" disabled aria-disabled="true">{{ r.get_rejected_reason_display }}</button>
+      {% endif %}
 
-    {# 오른쪽: 행동 버튼 (픽업 완료 / 리뷰쓰기 / 픽업 전) #}
-    {% if r.status == 'PICKED_UP' %}
-        <button class="btn action-btn write-review-btn"
-                data-pk="{{ r.pk }}"
-                data-store-name="{{ r.store.name }}">
-        리뷰쓰기
-        </button>
-    {% elif r.can_mark_picked %}
-        <button class="btn action-btn pickup-complete-btn"
-                data-pk="{{ r.pk }}">
-        픽업 완료
-        </button>
-    {% else %}
-        <button class="btn action-btn" type="button" disabled aria-disabled="true">
-        픽업 전
-        </button>
-    {% endif %}
+
 
     </div>
-
-
-
-
     {% endfor %}
     </main>
 
