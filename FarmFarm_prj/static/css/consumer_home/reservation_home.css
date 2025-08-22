@@ -165,66 +165,49 @@ body {
 }
 
 /* 카드 하단 버튼 */
+/* 카드 하단 버튼 레이아웃 (두 버튼 한 줄) */
 .card-actions-row {
   display: flex;
-  gap: 14px;
   justify-content: center;
+  gap: 14px;
   margin: 12px 0 28px;
-  position: relative;
 }
 
-.btn {
-  width: 152px;
-  height: 52px;
-  border-radius: 27px;
+/* 공통 크기 */
+.card-actions-row .btn {
+  width: 152.751px;
+  height: 51.79px;
+  flex-shrink: 0;
+  border-radius: 26.788px;
   font-weight: 800;
   font-size: 15px;
-  border: 1px solid #C1FF52;
-  cursor: pointer;
   transition: all .15s ease;
 }
 
-.btn-black {
+/* 왼쪽: 상태표시(검정/라임테두리/글자) */
+.card-actions-row .status-btn {
   background: #000;
   color: #C1FF52;
+  border: 1px solid #C1FF52;
 }
 
-.btn-black:hover {
-  background: #1a1a1a;
-}
-
-/* .pickup-complete-btn,
-.write-review-btn {
-  width: 152px;
-  height: 52px;
-  border-radius: 27px;
-  font-weight: 800;
-  font-size: 15px;
-  border: 1px solid #C1FF52;
-  cursor: pointer;
-  transition: all .15s ease;
-} */
-
-/* .btn btn-black write-review-btn,
-.btn btn-lime pickup-complete-btn {
-  width: 152px;
-  height: 52px;
-  border-radius: 27px;
-  font-weight: 800;
-  font-size: 15px;
-  border: 1px solid #C1FF52;
-  cursor: pointer;
-  transition: all .15s ease;
-} */
-
-.btn-lime {
+/* 오른쪽: 행동버튼(라임/검정테두리/글자)
+   - 리뷰쓰기/픽업완료 모두 같은 비주얼 */
+.card-actions-row .action-btn {
   background: #C1FF52;
   color: #000;
+  border: 1px solid #000;
 }
 
-.btn-lime:hover {
-  filter: brightness(0.95);
+/* 비활성화 공통 */
+.card-actions-row .btn[disabled],
+.card-actions-row .btn[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+  filter: grayscale(.05);
 }
+
+
 
 /* 모달 */
 /* =========================
