@@ -25,10 +25,10 @@
         />
       </div>
 
-      <div class="history_container">
+      <div class="history_container" style="--count: {{ past_reservations|length }};">
         <!-- 카드 1 -->
         {% for r in past_reservations %}
-        <article class="history_card card--{{ forloop.counter }}">
+        <article class="history_card card--{{ forloop.counter }}" style="--i: {{ forloop.counter0 }};">
           <div class="card_img">
             {% with item=r.items.first %}
               {% if item.image %}

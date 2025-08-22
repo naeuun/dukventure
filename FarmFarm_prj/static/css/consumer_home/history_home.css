@@ -39,9 +39,9 @@ body {
 .information4-card {
   position: relative;
   width: 390px;
-  height: 900px;
-  /* 카드가 200px 이상씩 보이도록 여유 */
-  padding: 0px 16px 16px 16px;
+  /* height: 900px; */
+  /* padding: 0px 16px 16px 16px; */
+  padding: 0 16px 16px;
   top: 0;
 }
 
@@ -73,7 +73,13 @@ body {
 .history_container {
   position: relative;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  --gap-y: 220px;
+  /* 카드 간 세로 간격 */
+  min-height: calc(var(--card-h) + max(0, (var(--count) - 1)) * var(--gap-y) + 140px);
+  /* 하단 네비 겹침 방지 여유 */
+  padding-bottom: 100px;
+
 }
 
 /* 지난 예약 내역 없음 문구: 상단 데코 아래에 고정 */
@@ -90,7 +96,7 @@ body {
 }
 
 /* 카드 공통 */
-.history_card {
+/* .history_card {
   position: absolute;
   left: 0;
   top: 0;
@@ -109,7 +115,38 @@ body {
   transform: scale(0.92);
   opacity: 0;
   transition: transform 0.35s ease, opacity 0.35s ease;
+} */
+/* 모든 카드 공통: 인덱스 기반 배치 */
+.history_card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: 0 0 35px 35px;
+  border: 1px solid #000;
+  border-top: none;
+  background:
+    linear-gradient(180deg, rgba(164, 255, 0, .40) 0%, rgba(244, 245, 239, .40) 100%),
+    #F4F5EF;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, .40);
+  padding: var(--card-pad);
+
+  transform: translate(-26px, calc(var(--i) * var(--gap-y))) scale(calc(1 - var(--i) * 0.015));
+  opacity: 1;
+  z-index: calc(100 - var(--i));
+  transition: transform .35s ease, opacity .35s ease;
 }
+
+/* 첫 카드만 데코 보정 */
+.history_card.card--1 .card_img {
+  top: calc(30px + var(--deco-offset));
+}
+
+.history_card.card--1 .text_box {
+  top: calc(36px + var(--deco-offset));
+}
+
 
 /* 좌측 이미지 */
 .history_card .card_img {
@@ -123,6 +160,7 @@ body {
   background: lightgray 50% / cover no-repeat;
   overflow: hidden;
   z-index: 5;
+  transform: translateY(10px);
 }
 
 .history_card .card_img img {
@@ -187,40 +225,6 @@ body {
   margin-bottom: 6px;
 }
 
-/* 카드 1: 데코 때문에 이미지/텍스트를 아래로 내림 */
-.card--1 {
-  transform: translate(-26px, 0) scale(1);
-  opacity: 1;
-  z-index: 4;
-  border-top: none;
-}
-
-.card--1 .card_img {
-  top: calc(30px + var(--deco-offset));
-}
-
-.card--1 .text_box {
-  top: calc(36px + var(--deco-offset));
-}
-
-/* 카드 2~4: 200px 이상 보이도록 간격 확보 */
-.card--2 {
-  transform: translate(-26px, 220px) scale(0.985);
-  opacity: 1;
-  z-index: 3;
-}
-
-.card--3 {
-  transform: translate(-26px, 440px) scale(0.97);
-  opacity: 1;
-  z-index: 2;
-}
-
-.card--4 {
-  transform: translate(-26px, 660px) scale(0.965);
-  opacity: 1;
-  z-index: 1;
-}
 
 /* 하단네비게이션 */
 .bottom_nav {
