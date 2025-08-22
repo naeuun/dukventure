@@ -567,7 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="per_review">
         <div class="reviewer_profile">
           <img
-            src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ review.author.user.username|first }}"
+            src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/smiling_brocoli.png{% endif %}"
             alt="리뷰어 프로필"
             class="r_profile_p"
           />
@@ -590,13 +590,18 @@ document.addEventListener("DOMContentLoaded", function () {
           {% endfor %}
         </div>
         <div class="review_content">
-          {{ review.content }}
+          {{ review.content|truncatewords:20 }}
+        <div class="keywords">
+        {% for keyword in review.get_keywords_as_list %}
+          <span>#{{ keyword }}</span>
+        {% endfor %}
+        </div>
         </div>
         <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
         
       </div>
       {% empty %}
-          <p style="color:white; text-align: center;">아직 받은 리뷰가 없습니다.</p>
+          <p style="color:#999; text-align: center;">아직 받은 리뷰가 없습니다.</p>
       {% endfor %}
       <!-- review_hugger 끝 -->
     </div>

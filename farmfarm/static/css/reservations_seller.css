@@ -321,16 +321,17 @@ body {
 
 .modal {
   display: none; /* 숨김 상태 */
-  position: absolute;
-  top: 90px;
-  left: 45px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top:-164px;
+  margin-left:-158px;
   width: 277px;
   height: 329px;
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
-
 .modal-content0 {
   display:flex;
   background:rgba(26, 26, 26, 0.09);

@@ -19,6 +19,8 @@ from stores.models import Store, StoreItem
 from items.models import Item   
 from reviews.forms import ReviewForm
 
+import math
+
 # ... _require_buyer, _require_seller 등 헬퍼 함수 ...
 
 
@@ -108,7 +110,8 @@ def _require_seller(request):
 def reservation_list(request):
     """구매자: 내 예약 목록"""
     buyer, jump = _require_buyer(request)
-    if jump: return jump
+    if jump: 
+        return jump
 
     reservation_list = (Reservation.objects
         .filter(buyer=buyer)
@@ -116,11 +119,22 @@ def reservation_list(request):
         .prefetch_related('items')
         .order_by('-created_at'))
     
+    now = timezone.now()
+    for r in reservation_list:
+        # ACCEPTED 상태일 때만 남은 시간 계산
+        if r.status == 'ACCEPTED' and r.requested_pickup_at:
+            diff = r.requested_pickup_at - now
+            r.remaining_minutes = math.ceil(diff.total_seconds() / 60)
+            if r.remaining_minutes < 0:
+                r.remaining_minutes = 0
+        else:
+            r.remaining_minutes = None  # 나머지는 None 처리
+    
     review_form = ReviewForm()
     return render(request, 'reservations/reservation_list.html', {
         'reservations': reservation_list,
         'review_form': review_form,
-        'now': timezone.now(),
+        'now': now,
     })
 
 

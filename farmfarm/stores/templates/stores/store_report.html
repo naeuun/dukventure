@@ -35,104 +35,179 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 지도 초기화
     function mapInit(center) {
-    const container = document.getElementById('mapContainer');
+        const container = document.getElementById('mapContainer');
 
-    if (!map) {
-        map = new kakao.maps.Map(container, {
-            center: center,
-            level: 3
+        if (!map) {
+            map = new kakao.maps.Map(container, {
+                center: center,
+                level: 3
+            });
+        } else {
+            map.setCenter(center);
+        }
+
+        // 마커 이미지 설정
+        const imageSrc = "{% static 'img/stores.png' %}"; // 마커 이미지 경로
+        const imageSize = new kakao.maps.Size(20, 20);    // 이미지 크기 (원하는 크기로 변경 가능)
+        const imageOption = { offset: new kakao.maps.Point(10, 10) }; // 중심 좌표 기준 위치 조정
+
+        const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+        if (!map) initMap(lat, lng);
+        if (!marker) {
+            marker = new kakao.maps.Marker({
+                position: center,
+                map: map,
+                image: markerImage // 커스텀 이미지 적용
+            });
+        } else {
+            marker.setPosition(center);
+            marker.setImage(markerImage); // 이미 있는 마커에도 이미지 적용
+        }
+
+        map.relayout();
+
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            marker.setPosition(latlng);
+
+            geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+                if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
+                    addressInput.value = result[0].address.address_name;
+                    latitudeInput.value = latlng.getLat();
+                    longitudeInput.value = latlng.getLng();
+                } else {
+                    alert("주소 변환 실패. 한글 주소를 입력해주세요.");
+                    latitudeInput.value = latlng.getLat();
+                    longitudeInput.value = latlng.getLng();
+                }
+            });
         });
-    } else {
-        map.setCenter(center);
     }
 
-    // 마커 이미지 설정
-    const imageSrc = "{% static 'img/stores.png' %}"; // 마커 이미지 경로
-    const imageSize = new kakao.maps.Size(20, 20);    // 이미지 크기 (원하는 크기로 변경 가능)
-    const imageOption = { offset: new kakao.maps.Point(20, 40) }; // 중심 좌표 기준 위치 조정
+    const imageIcon = document.querySelector('.upload_icon');
+    const tooltip = document.querySelector('.text_box_text');
 
-    const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+    // 초기 로드 시 3초 보여주기
+    tooltip.classList.add("show");
+    setTimeout(() => {
+        tooltip.classList.remove("show");
+    }, 3000);
 
-    if (!marker) {
-        marker = new kakao.maps.Marker({
-            position: center,
-            map: map,
-            image: markerImage // 커스텀 이미지 적용
-        });
-    } else {
-        marker.setPosition(center);
-        marker.setImage(markerImage); // 이미 있는 마커에도 이미지 적용
-    }
-
-    map.relayout();
-
-    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-        const latlng = mouseEvent.latLng;
-        marker.setPosition(latlng);
-
-        geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
-            if (status === kakao.maps.services.Status.OK && result[0].address.address_name) {
-                addressInput.value = result[0].address.address_name;
-                latitudeInput.value = latlng.getLat();
-                longitudeInput.value = latlng.getLng();
-            } else {
-                alert("주소 변환 실패. 한글 주소를 입력해주세요.");
-                latitudeInput.value = latlng.getLat();
-                longitudeInput.value = latlng.getLng();
-            }
-        });
+    // 호버 시 보여주기
+    imageIcon.addEventListener("mouseenter", () => {
+        tooltip.classList.add("show");
     });
-}
 
+    imageIcon.addEventListener("mouseleave", () => {
+        tooltip.classList.remove("show");
+    });
 
     // 음성 인식 관련 코드
     const reportVoiceBtn = document.getElementById('voiceBtn');
     const reportVoiceStatus = document.getElementById('voiceStatus');
-    const reportVoiceTexts = document.querySelector('.voice_texts');
+    const textbox = document.querySelector('.voice_texts');
+
     let mediaRecorderReport = null;
     let audioChunksReport = [];
     let currentStreamReport = null;
+    let hideTimeout = null;
+    let isProcessing = false; // 서버 처리 중 상태
 
+    // 공통 함수 - 요소 표시
+    function showElements() {
+        textbox.classList.add("show");
+        reportVoiceStatus.classList.add("show");
+        textbox.style.opacity = 1;
+        reportVoiceStatus.style.opacity = 1;
+    }
+
+    // 공통 함수 - 요소 숨김
+    function hideElementsAfterDelay(delay=0) {
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+            // 녹음 중이거나 서버 처리 중일 땐 숨기지 않음
+            if (isProcessing || (mediaRecorderReport && mediaRecorderReport.state === "recording")) return;
+            textbox.classList.remove("show");
+            reportVoiceStatus.classList.remove("show");
+            textbox.style.opacity = 0;
+            reportVoiceStatus.style.opacity = 0;
+        }, delay);
+    }
+
+    // ✅ 초기 로드 시 3초간 말풍선 표시
+    function showInitialTooltip() {
+        textbox.classList.add("show");
+        reportVoiceStatus.classList.add("show");
+        hideElementsAfterDelay(3000);
+    }
+    showInitialTooltip();
+
+    // ✅ 호버 시 동작 (녹음 중/처리 중이면 무시)
+    reportVoiceBtn.addEventListener("mouseenter", () => {
+        if (isProcessing) return;
+        showElements();
+        clearTimeout(hideTimeout); // hover 시 기존 숨김 타이머 제거
+    });
+    reportVoiceBtn.addEventListener("mouseleave", () => {
+        hideElementsAfterDelay(30); // hover 해제 후 3초 뒤 숨김
+    });
+
+    // 음성 녹음 버튼 클릭 시 
     reportVoiceBtn.addEventListener('click', async () => {
+        // 브라우저 지원 여부 체크 
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             alert("브라우저가 음성 입력을 지원하지 않습니다.");
             return;
         }
+
         // 녹음 중이면 종료 
         if (mediaRecorderReport && mediaRecorderReport.state === "recording") {
             mediaRecorderReport.stop();
-            if (currentStreamReport) {
-                currentStreamReport.getTracks().forEach(track => track.stop());
-                currentStreamReport = null;
-            }
+            currentStreamReport.getTracks().forEach(track => track.stop());
+            currentStreamReport = null;          
             return;
         }
 
+        // 새로운 녹음 시작하기 전에 상태 초기화
+        clearTimeout(hideTimeout);                 // 기존 숨김 타이머 제거
+        isProcessing = false;                      // 서버 처리 상태 초기화
+        reportVoiceStatus.textContent = "🎤 준비 중...";
+        showElements();
+
         try {
+            //오디오 스트림 가져오기 
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             currentStreamReport = stream; 
             mediaRecorderReport = new MediaRecorder(stream);
             audioChunksReport = [];
 
+            //녹음 데이터 수집
             mediaRecorderReport.ondataavailable = e => audioChunksReport.push(e.data);
 
+            // 녹음 시작 
             mediaRecorderReport.onstart = () => {
-                reportVoiceTexts.classList.add('show'); // 녹음 중 항상 표시
+                showElements();
                 reportVoiceStatus.textContent = "🎤 녹음 중...";
+                isProcessing = false;
             };
 
+            // 녹음 종료 이벤트 
             mediaRecorderReport.onstop = async () => {
-                if (currentStreamReport) {
-                    currentStreamReport.getTracks().forEach(track => track.stop());
-                    currentStreamReport = null;
-                }
+                currentStreamReport?.getTracks().forEach(track => track.stop());
+                currentStreamReport = null;
+
                 const audioBlob = new Blob(audioChunksReport);
                 const reader = new FileReader();
                 reader.readAsDataURL(audioBlob);
 
                 reader.onloadend = async () => {
                     const base64Audio = reader.result;
+
                     reportVoiceStatus.textContent = "⏳ 서버 처리 중...";
+                    showElements();
+                    isProcessing = true; // 서버 처리 중 상태
+
 
                     try {
                         const response = await fetch("{% url 'stores:voice_input' %}", {
@@ -142,12 +217,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
 
                         const data = await response.json();
+
                         if (!data.form_data) {
                             reportVoiceStatus.textContent = "⚠️ 음성 처리 실패";
+                            isProcessing = false; // 서버 처리 완료 상태
+                            hideElementsAfterDelay(3000);
                             return;
                         }
 
                         const formData = data.form_data;
+
                         if (formData.store_name) document.getElementById('id_store_name').value = formData.store_name;
                         if (formData.report_items) document.getElementById('id_report_items').value = formData.report_items;
                         if (formData.time) document.getElementById('id_time').value = formData.time;
@@ -181,13 +260,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
 
                         reportVoiceStatus.textContent = "✅ 음성 입력 완료";
-                        // 녹음/서버 처리 완료 후 3초 후 숨김
-                        setTimeout(() => reportVoiceTexts.classList.remove('show'), 3000);
-
                     } catch (err) {
                         console.error(err);
                         reportVoiceStatus.textContent = "❌ 서버 오류";
-                        setTimeout(() => reportVoiceTexts.classList.remove('show'), 3000);
+                    } finally {
+                        isProcessing = false; // 서버 처리 완료 상태
+                        hideElementsAfterDelay(3000);
                     }
                 };
             };
@@ -196,80 +274,75 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (err) {
             console.error(err);
             reportVoiceStatus.textContent = "❌ 마이크 접근 거부됨";
-            reportVoiceTexts.classList.remove('show'); // 오류 시 숨김
+            hideElementsAfterDelay(3000);
         }
     });
 
+    
+
+
+
     // ★ 키워드 선택 처리 ★
-    const keywordLabels = document.querySelectorAll('.keyword-option');
-    keywordLabels.forEach(label => {
-        const checkbox = label.querySelector('input[type="checkbox"]');
+    // ★ 키워드 선택 처리 ★
+const keywordLabels = document.querySelectorAll('.keyword-option');
+keywordLabels.forEach(label => {
+    const checkbox = label.querySelector('input[type="checkbox"]');
 
-        // 초기 체크 상태 반영
-        if (checkbox.checked) label.classList.add('selected');
+    // 초기 체크 상태 반영
+    if (checkbox.checked) label.classList.add('selected');
 
-        // 라벨 클릭 시 체크박스 토글
-        label.addEventListener('click', e => {
-            checkbox.checked = !checkbox.checked;
-            label.classList.toggle('selected', checkbox.checked);
-        });
-        const fileInput = document.getElementById('id_image');
-const fileInfoWrap = document.querySelector('.file_info_wrap');
-const fileNameSpan = document.querySelector('.file_name');
-const uploadIcon = document.querySelector('.upload_icon');
-const textBoxText = document.querySelector('.text_box_text');
-const deleteFileBtn = document.querySelector('.delete_file_btn');
+    // 라벨 클릭 시 체크박스 토글
+    label.addEventListener('click', e => {
+        e.preventDefault(); // 기본 체크 토글 방지
 
-fileInput.addEventListener('change', function() {
-    if (fileInput.files.length > 0) {
-        // 파일명 표시
-        fileNameSpan.textContent = fileInput.files[0].name;
+        const checkedCount = document.querySelectorAll('.keyword-option input[type="checkbox"]:checked').length;
 
-        // 업로드 아이콘과 말풍선 숨기기
-        uploadIcon.style.display = 'none';
-        textBoxText.style.display = 'none';
+        if (!checkbox.checked && checkedCount >= 3) {
+            alert("최대 3개의 키워드만 선택할 수 있습니다.");
+            return;
+        }
 
-        // 파일 정보 영역 표시
-        fileInfoWrap.style.display = 'flex';
-    }
+        checkbox.checked = !checkbox.checked;
+        label.classList.toggle('selected', checkbox.checked);
+    });
 });
 
-// 삭제 버튼 클릭 시 초기화
-deleteFileBtn.addEventListener('click', function() {
-    fileInput.value = ''; // 파일 초기화
-    fileNameSpan.textContent = '';
 
-    // 업로드 아이콘과 말풍선 다시 표시
-    uploadIcon.style.display = 'inline-block';
-    textBoxText.style.display = 'block';
 
-    // 파일 정보 영역 숨기기
-    fileInfoWrap.style.display = 'none';
-});
+    const fileInput = document.getElementById('id_image');
+    const fileInfoWrap = document.querySelector('.file_info_wrap');
+    const fileNameSpan = document.querySelector('.file_name');
+    const uploadIcon = document.querySelector('.upload_icon');
+    const textBoxText = document.querySelector('.text_box_text');
+    const deleteFileBtn = document.querySelector('.delete_file_btn');
 
+    fileInput.addEventListener('change', function() {
+        if (fileInput.files.length > 0) {
+            // 파일명 표시
+            fileNameSpan.textContent = fileInput.files[0].name;
+
+            // 업로드 아이콘과 말풍선 숨기기
+            uploadIcon.style.display = 'none';
+            textBoxText.style.display = 'none';
+
+            // 파일 정보 영역 표시
+            fileInfoWrap.style.display = 'flex';
+        }
     });
 
-});
+    // 삭제 버튼 클릭 시 초기화
+    deleteFileBtn.addEventListener('click', function() {
+        fileInput.value = ''; // 파일 초기화
+        fileNameSpan.textContent = '';
 
-document.addEventListener("DOMContentLoaded", () => {
-  // 페이지 로드 시 말풍선 div 전체 선택
-  const tooltips = document.querySelectorAll(".text_box_text, .voice_texts");
+        // 업로드 아이콘과 말풍선 다시 표시
+        uploadIcon.style.display = 'inline-block';
+        textBoxText.style.display = 'block';
 
-  // 3초 동안 동시에 보이기
-  tooltips.forEach(t => t.classList.add("show"));
+        // 파일 정보 영역 숨기기
+        fileInfoWrap.style.display = 'none';
+    });
 
-  setTimeout(() => {
-    tooltips.forEach(t => t.classList.remove("show"));
-  }, 3000);
-
-  // 호버 시 다시 보이도록 (voice_texts는 제외)
-  tooltips.forEach(t => {
-    if (t.classList.contains('voice_texts')) return; // ★ 제외
-
-    const parent = t.parentElement;
-    parent.addEventListener("mouseenter", () => t.classList.add("show"));
-    parent.addEventListener("mouseleave", () => t.classList.remove("show"));
-  });
 });
 
 </script>

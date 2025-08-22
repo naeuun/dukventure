@@ -529,3 +529,51 @@ body {
   font-weight:700;
   border:none;
 }
+#searchResult{
+    list-style: none;
+    padding: 20px 10px;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+
+    /* 스크롤바 숨기기 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+
+}
+#searchResult li{
+  border-bottom: 1px solid white;
+}
+#searchResult li:last-child{
+  border-bottom:none;
+}
+#searchResult::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+#closeSearchModal{
+  background-color: transparent;
+  position:absolute;
+  font-size:20px;
+  color:white;
+  right:10px;
+  top:10px;
+  z-index:1001;
+  font-weight:700;
+  border:none;
+}
+#searchModal{
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 257px;
+    background-color: rgba(0, 0, 0, 0.679);
+    z-index: 2000;
+    border: 1px solid #ccc;
+    border-radius:20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+}

@@ -1,38 +1,27 @@
 [
 {
-  "model": "users.user",
-  "fields": {
-    "password": "pbkdf2_sha256$1000000$moIgCCVd9UQsiUbWbtYnTO$XIbwrCXL0ePJBFPZ/UZx52Yz2WjH3ycmnemg+VVAYNc=",
-    "last_login": "2025-08-11T04:24:48.197Z",
-    "is_superuser": false,
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2025-08-08T15:01:46Z",
-    "username": "김OO",
-    "usertype": "BUYER",
-    "groups": [],
-    "user_permissions": []
-  }
+   "model": "users.user",
+   "fields": {
+      "password": "pbkdf2_sha256$1000000$moIgCCVd9UQsiUbWbtYnTO$XIbwrCXL0ePJBFPZ/UZx52Yz2WjH3ycmnemg+VVAYNc=",
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "username": "김현지",
+      "usertype": "BUYER",
+      "profile_image": "",
+      "phone": "010-1234-5678"
+   }
 },
 {
-  "model": "users.user",
-  "fields": {
-    "password": "pbkdf2_sha256$1000000$7Q8n5FvzgBpxQcnJB4aK3D$jJX/1SCda8rMWrNK48AUiCSj/hHwXor2gAE/E2IsWwE=",
-    "last_login": "2025-08-11T04:21:24Z",
-    "is_superuser": false,
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2025-08-08T15:02:36Z",
-    "username": "박OO",
-    "usertype": "SELLER",
-    "groups": [],
-    "user_permissions": []
-  }
+   "model": "users.user",
+   "fields": {
+      "password": "pbkdf2_sha256$1000000$7Q8n5FvzgBpxQcnJB4aK3D$jJX/1SCda8rMWrNK48AUiCSj/hHwXor2gAE/E2IsWwE=",
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "username": "박승자",
+      "usertype": "SELLER",
+      "phone": "010-0000-0000"
+   }
 }
 ]

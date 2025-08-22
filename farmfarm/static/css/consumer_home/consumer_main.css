@@ -402,6 +402,23 @@ body {
   margin-bottom: 20px;
 }
 
+.reservation {
+  background: #C1FF52;
+  width: 150px;
+  height: 46px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid black;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
 .cha_check {
   width: 30px;
   margin-left: 10px;
@@ -456,6 +473,7 @@ body {
   align-items: flex-end;
   /* 아래쪽 정렬 */
   width: 100%;
+  padding-bottom: 19px;
 
 }
 
@@ -475,6 +493,7 @@ body {
   gap: 8px;
   margin-left: 10px;
   margin-top: 20px;
+  z-index:2;
 }
 
 .thumbnail-row {
@@ -557,8 +576,8 @@ body {
 
 /* 오른쪽 정보 */
 .information_detail {
-  width: 100px;
-  height: 208px;
+  width: 94px;
+  height: 201px;
   background: rgba(55, 61, 45, 0.5);
   border: 0.5px solid #C1FF52;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
@@ -571,6 +590,9 @@ body {
   align-items: flex-start;
   margin-top: 80px;
   margin-left: 0;
+  z-index: 1;
+  padding-left: 82px;
+  transform: translateX(-66px);
 }
 
 .cha_name {
@@ -724,7 +746,7 @@ body {
   border-radius: 35px;
   overflow: hidden;
   width: 373px;
-  height: 332px;
+  height: 340px;
   box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.25);
   border: 3px solid #C1FF52;
   display: flex;
@@ -769,11 +791,12 @@ body {
   justify-content: center;
   align-items: center;
   width: auto;
-  height: 200px;
   margin: 20px;
+  height: 235px;
   width: 260px;
   margin-top: 30px;
   padding: 15px;
+  margin-left: 0px;
 }
 
 .rew_total img {
@@ -847,7 +870,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: 8px;
-  position: relative;
+  position: absolute;
+  left:23%;
   z-index: 3;
   /* 맨 위 */
 }
@@ -895,9 +919,33 @@ body {
   padding: 5px;
   margin: 0 10px;
   /* 양 옆 여백 */
-
+  position:absolute;
+  right:0;
 }
-
+.second_detail{
+  width: 130px;
+  height: 170px;
+  border-radius: 23px;
+  border: 2px solid #C1FF52;
+  /* 같은 강조 색 */
+  background: linear-gradient(180deg,
+      rgba(244, 245, 239, 0.4) 5.44%,
+      rgba(164, 255, 0, 0.4) 100%),
+    #f4f5ef;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.5);
+  opacity: 0.4;
+  filter: blur(2px);
+  transform: scale(0.9);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  margin: 0 10px;
+  position:absolute;
+  left:0;
+}
 .egg,
 .pota {
   width: 118.017px;
@@ -923,11 +971,12 @@ body {
   font-size: 6px;
   font-weight: 600;
   padding: 4px;
+  text-align: center;
 }
 
 
 .rev_section {
-  margin-top: 80px;
+  margin-top: 20px;
   align-self: flex-start;
   margin-left: 5px;
 }
@@ -1010,29 +1059,29 @@ body {
 }
 
 .review_content {
-  width: 150px;
-  height: 54px;
-  display: flex;
+  width:120px;
+  height:53px;
+  display:flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 28px;
-  left: 10px;
+  position:absolute;
+  top:28px;
+  left:10px;
   background-color: #FFFFFF;
-  border: 1px solid black;
+  border:1px solid black;
   opacity: 70%;
   border-radius: 16px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 0 20px;
-  color: #0b2401;
+  padding:0 30px;
+  color:#0b2401;
 }
 
 .date {
   position: absolute;
   top: 10px;
   right: 20px;
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   color: #828282;
 }
@@ -1050,8 +1099,8 @@ body {
 /* 섹션 프레임 (첫 번째 참고 이미지 비율/느낌) */
 .information4-card {
   position: relative;
-  width: 373px;
-  height: 332px;
+  width: 363px;
+  height: 370px;
   padding: 6px 16px 16px 16px;
   /* 오른쪽 장식 열 공간 확보 */
   background: #000;
@@ -1088,7 +1137,7 @@ body {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  margin-top: 42px;
   justify-content: center;
   perspective: 1200px;
   z-index: 1;
@@ -1189,7 +1238,7 @@ body {
 }
 
 .card--2 {
-  transform: translate(-26px, 66px) scale(.985);
+  transform: translate(-26px, 61px) scale(.985);
   /* 기준 카드 */
   opacity: .9;
   z-index: 2;
@@ -1197,7 +1246,7 @@ body {
 }
 
 .card--3 {
-  transform: translate(-26px, 198px) scale(.965);
+  transform: translate(-26px, 114px) scale(.965);
   /* card-2보다 132px 아래 */
   opacity: .75;
   z-index: 1;
@@ -1220,14 +1269,12 @@ body {
   filter: blur(2px);
 }
 
-
-/* 하단네비게이션 */
 .bottom_nav {
   position: fixed;
+  height: 74px;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 74px;
   max-width: 401px;
   margin: auto;
   background: inherit;
@@ -1245,15 +1292,6 @@ body {
   z-index: 1000;
 }
 
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  box-sizing: border-box;
-}
-
 .bottom_nav a {
   text-decoration: none;
   color: #888;
@@ -1261,14 +1299,20 @@ body {
   font-weight: 500;
 }
 
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+}
+
 .map_page {
   width: 16px;
-  margin: 3px 0 -3px;
 }
 
 .home_page {
   width: 24px;
-  margin: 3px 0 -3px;
 }
 
 .shopping_page {
@@ -1281,6 +1325,9 @@ body {
   background-color: #C1FF52;
   border: 1px solid black;
   border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: black;
 }
 
@@ -1299,13 +1346,14 @@ body {
   left: 195px;
 }
 
+
 .r_store_info {
-  width: auto;
+  width: 95px;
   height: auto;
   display: block;
   position: absolute;
   top: 28px;
-  left: 211px;
+  left: 197px;
   opacity: 0.7;
   border-radius: 16px;
   font-size: 8px;
@@ -1317,14 +1365,23 @@ body {
 .r_store_info p {
   margin: 0 0 4px 0;
   font-weight: 700;
+  font-size: 10px;
 }
 
 .r_store_info_small {
-  font-size: 5.3px;
+  font-size: 7.3px;
   color: #828282;
   margin: 0;
-  padding-left: 5px;
-  list-style-type: disc;
+  padding-left: 0;
+  list-style: none;
+  font-weight: 780;
+}
+
+.r_store_info_small li::before {
+  content: "•";
+  /* 커스텀 점 */
+  position: absolute;
+  left: 0;
 }
 
 .logoutbtn {
@@ -1377,4 +1434,7 @@ body {
   transition: left 0.4s ease;
   /* 부드러운 이동 효과 */
   z-index: 10;
+}
+.reservation{
+  width:150px;
 }

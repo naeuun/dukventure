@@ -355,13 +355,18 @@ document.addEventListener("DOMContentLoaded", function() {
       <div class="per_res" id="res-card-seller-{{ r.pk }}">
         <div class="reservation-card">
           <div class="product-img-wrap">
-            {% for item in r.items.all %}
-            {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.item_name }}" class="product-img">
-            {% else %}
-            <img src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}" class="product-img">
-            {% endif %}
-            {% endfor %}
+              {% for item in r.items.all %}
+                  {% if item.original_item and item.original_item.store_items.first.photo %}
+                      <!-- 항상 원본 아이템의 최신 이미지 사용 -->
+                      <img src="{{ item.original_item.store_items.first.photo.url }}" alt="{{ item.item_name }}" class="product-img">
+                  {% elif item.image %}
+                      <!-- 예약 당시 스냅샷 이미지 (백업용) -->
+                      <img src="{{ item.image.url }}" alt="{{ item.item_name }}" class="product-img">
+                  {% else %}
+                      <!-- 이미지가 완전히 없을 때 -->
+                      <img src="https://placehold.co/60x60/2a2a2a/cccccc?text={{ item.item_name|default:'상품'|urlencode }}" alt="{{ item.item_name }}" class="product-img">
+                  {% endif %}
+              {% endfor %}
             <div class="profile-circle">
               <img 
               src="{% if r.buyer.profile_image %}{{ r.buyer.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" 

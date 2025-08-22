@@ -8,7 +8,6 @@
 
 {% block script %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/consumer_home/buyer_home.js' %}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // --- 프로필 수정 관련 로직 ---
@@ -371,7 +370,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
-
 {% endblock script %} 
 
 {% block body %}
@@ -450,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="image-row">
                 <div class="image-preview">
                     <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 미리보기" class="preview_img">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 미리보기" class="preview_img">
                     <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
                 </div>
             </div>
@@ -516,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="character">리워드 현황 🧩</div>
         </div>
         <div class="information2-card">
-            <div class="rew_total" id="stamps-grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; align-content: center; padding: 20px;">
+            <div class="rew_total" id="stamps-grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; align-content: center; padding: 20px;">
                 </div>
             <div class="more">
                 <img class="rew_gra" src="{% static 'img/rew_gra.png' %}" alt="장식">
@@ -524,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
 
         <div class="res_section">
-            <div class="character">예약 현황<img src="{% static 'img/res_icon.png' %}" alt="예약 현황 아이콘" class="res_check"></div>
+            <div class="reservation">진행중인 예약<img src="{% static 'img/res_icon.png' %}" alt="예약 현황 아이콘" class="res_check"></div>
         </div>
         <div class="information_zone">
             <div class="res_res">
@@ -532,17 +530,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="more">
                         <a href="{% url 'reservations:list' %}"><img src="{% static 'img/res_more.png' %}" alt="예약 현황 더보기" class="res_more"></a>
                     </div>
-                    {% for r in active_reservations|slice:":3" %}
-                    <div class="{% if forloop.counter == 2 %}res_detial{% else %}back_detail{% endif %}">
+                    {% for r in active_reservations|dictsortreversed:"created_at"|slice:":3" %}
+                    <div class="{% if forloop.counter == 1 %}res_detial{% elif forloop.counter == 2 %}second_detail{% else %}back_detail{% endif %}">
                         {% for item in r.items.all %}
-                        <div class="{% if forloop.parentloop.counter == 2 %}detail_img{% else %}details_img{% endif %}">
+                        <div class="{% if forloop.parentloop.counter == 1 %}detail_img{% else %}details_img{% endif %}">
                             {% if item.image %}
                             <img src="{{ item.image.url }}" alt="{{ item.item_name }}" class="tomato">
                             {% else %}
                             <img src="https://placehold.co/300x150/2a2a2a/cccccc?text={{ item.item_name|default:'상품' }}" alt="{{ item.item_name }}" class="tomato">
                             {% endif %}
                         </div>
-                        <div class="{% if forloop.parentloop.counter == 2 %}detail_txt{% else %}details_txt{% endif %}">
+                        <div class="{% if forloop.parentloop.counter == 1 %}detail_txt{% else %}details_txt{% endif %}">
                             <span>
                                 판매자: {{ r.store.name }} <br>
                                 위치: {{ r.store.address }} <br>
@@ -553,6 +551,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                         {% endfor %}
                     </div>
+                    {% empty %}
+                    <p style="color:white;">예약내역이 없습니다.</p>
                     {% endfor %}
                 </div>
             </div>
@@ -587,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                             </article>
                             {% empty %}
-                            <p style="text-align:center; color: #aaa;">지난 예약 내역이 없습니다.</p>
+                            <p style="text-align:center; color: #aaa;">지난 구매 내역이 없습니다.</p>
                             {% endfor %}
                             <div class="card_reflection" aria-hidden="true"></div>
                         </div>
@@ -609,7 +609,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 {% for review in reviews %}
                 <div class="per_review" id="review-card-{{ review.id }}">
                     <div class="reviewer_profile">
-                        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="내 프로필" class="r_profile_p">
+                        <img src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/smiling_brocoli.png{% endif %}" alt="내 프로필" class="r_profile_p">
                     </div>
                     <div class="stars">
                         {% for i in "12345" %}
@@ -627,11 +627,18 @@ document.addEventListener("DOMContentLoaded", function() {
                             <li>판매 시간: {{ review.store.sale_hours }}</li>
                         </ul>
                     </div>
-                    <div class="review_content">{{ review.content|truncatewords:20 }}</div>
+                    <div class="review_content">
+                        {{ review.content|truncatewords:20 }}
+                        <div class="keywords">
+                        {% for keyword in review.get_keywords_as_list %}
+                        <span>#{{ keyword }}</span>
+                    {% endfor %}
+                    </div>
+                    </div>
                     <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
                 </div>
                 {% empty %}
-                <p style="text-align:center; color:white;">작성한 리뷰가 없습니다.</p>
+                <p style="text-align:center; color:#999;">작성한 리뷰가 없습니다.</p>
                 {% endfor %}
             </div>
         </div>

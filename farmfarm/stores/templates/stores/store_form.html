@@ -3,12 +3,13 @@
 {% load static %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
-
+<link rel="stylesheet" href="{% static 'css/stores_form.css' %}" />
 {% endblock style %}
 {% block script %}
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     // 삭제된 기존 아이템 ID를 저장할 히든 필드 컨테이너
     const itemList = document.getElementById('itemList');
     const deletedItemsContainer = document.createElement('div');
@@ -20,6 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function removeItem(btn) {
         const div = btn.closest('.item_detail_hugger');
         if (!div) return;
+
+        // 현재 남은 아이템 개수 확인
+        const allItems = document.querySelectorAll('#itemList .per_row .item_detail_hugger');
+        if (allItems.length <= 1) {
+            alert("최소 1개의 품목은 작성해주세요.");
+            return; // 삭제하지 않고 종료
+        }
 
         // 기존 아이템이면 삭제 목록에 추가
         const itemIdInput = div.querySelector('input[name^="item_id_"]');
@@ -76,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCoordsFromAddress() {
         const address = addressInput.value.trim();
         if (!address) return;
+
         geocoder.addressSearch(address, function(result, status) {
             if (status === kakao.maps.services.Status.OK && result.length > 0) {
                 const lat = result[0].y;
@@ -86,7 +95,10 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 latitudeInput.value = "";
                 longitudeInput.value = "";
-                alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
+
+                if (searchModal.style.display === 'none' && address !== ''){
+                    alert("주소를 찾을 수 없습니다. 정확히 입력해주세요.");
+                }
             }
         });
     }
@@ -100,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 커스텀 이미지
     const imageSrc = "{% static 'img/stores.png' %}";
     const imageSize = new kakao.maps.Size(20, 20);
-    const imageOption = { offset: new kakao.maps.Point(10, 20) }; // 마커 중심 조정
+    const imageOption = { offset: new kakao.maps.Point(10, 10) }; // 마커 중심 조정
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
     if (!marker) {
@@ -134,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 커스텀 이미지 생성
     const imageSrc = "{% static 'img/stores.png' %}"; // 사용할 이미지 경로
     const imageSize = new kakao.maps.Size(20, 20); // 마커 이미지 크기
-    const imageOption = { offset: new kakao.maps.Point(20, 50) }; // 마커 기준점 (이미지 아래 중심)
+    const imageOption = { offset: new kakao.maps.Point(10, 10) }; // 마커 기준점 (이미지 아래 중심)
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
     if (!map) initMap(lat, lng);
@@ -149,13 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
         marker.setPosition(loc);
         marker.setImage(markerImage);
     }
-
-    map.setCenter(loc);
 }
-
-
-    addressInput.addEventListener('blur', updateCoordsFromAddress);
-    addressInput.addEventListener('keydown', function(e) { if (e.key==='Enter') { e.preventDefault(); updateCoordsFromAddress(); } });
 
     document.getElementById('mapBtn').onclick = function() {
         document.getElementById('mapModal').style.display='block';
@@ -165,30 +171,60 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     document.getElementById('closeModal').onclick = function(){ document.getElementById('mapModal').style.display='none'; };
 
+    let isSelectingFromSearch = false; // 검색 결과 선택 플래그 
+
     document.getElementById('searchBtn').onclick = function() {
         const query = addressInput.value.trim();
-        if (!query) return;
+
+        // 수정 
+        if (!query){
+            searchResult.innerHTML = '<li>검색어를 입력해주세요.</li>';
+            searchModal.style.display='block';
+            return;
+        }
+
         ps.keywordSearch(query, function(data, status) {
             searchResult.innerHTML = '';
-            if (status === kakao.maps.services.Status.OK) {
+
+            if (status === kakao.maps.services.Status.OK && data.length > 0) {
+                //  검색 성공하면 리스트 생성 
                 data.forEach(place => {
                     const li = document.createElement('li');
                     li.textContent = place.place_name+' ('+place.address_name+')';
                     li.style.cursor='pointer';
                     li.style.padding='5px 0';
                     li.onclick = function() {
+                        isSelectingFromSearch = true; // 검색 결과 선택 플래그 설정
                         addressInput.value = place.address_name;
                         latitudeInput.value = place.y;
                         longitudeInput.value = place.x;
                         setMarkerAndCenter(place.y, place.x);
                         searchModal.style.display='none';
+                        setTimeout(() => { isSelectingFromSearch = false; }, 300); // 짧게 초기화
                     };
                     searchResult.appendChild(li);
                 });
-            } else searchResult.innerHTML='<li>검색 결과가 없습니다.</li>';
+            } else {
+                searchResult.innerHTML='<li>검색 결과가 없습니다.</li>';
+            }
+
+            // 항상 모달 열기
             searchModal.style.display='block';
         });
     };
+
+    // Enter 이벤트: 입력값이 있으면 검색 버튼 클릭과 동일하게 실행
+    addressInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = addressInput.value.trim();
+            if (query) { 
+                document.getElementById('searchBtn').click(); // 검색 버튼 클릭과 동일
+            }
+            // 값이 없으면 아무 것도 하지 않음
+        }
+    });
+
     closeSearchModal.onclick = function(){ searchModal.style.display='none'; };
 
     document.getElementById('storePhoto').addEventListener('change', function(e){
@@ -283,12 +319,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             const div = document.createElement('div');
                             div.className = 'item_detail_hugger';
                             div.innerHTML = `
+                            <div>
                                 <input type="text" name="item_name_${idx}" placeholder="품목명" value="${item.name||''}">
                                 <input type="text" name="item_unit_${idx}" placeholder="단위" value="${item.unit||''}">
+                            </div>
+                            <div>
                                 <input type="number" name="item_price_${idx}" placeholder="가격" value="${item.price||''}">
                                 <input type="text" name="item_desc_${idx}" placeholder="설명" value="${item.description||''}">
-                                <input type="file" name="item_photo_${idx}" accept="image/*">
-                                <button type="button" onclick="removeItem(this)">제거</button>
+                            </div>
+                            <div>
+                                <input id="itemPhoto_voiced" type="file" name="item_photo_${idx}" accept="image/*" style="display:none;">
+                                        <label for="itemPhoto_voiced">
+                                            <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
+                                        </label>
+                                <button type="button" class="deleteitem" onclick="removeItem(this)">×</button>
+                            </div>
                             `;
                             perRow.appendChild(div);
                         });
@@ -354,19 +399,12 @@ voiceBtn.addEventListener('mouseleave', () => {
 {% block body %}
 <div class="big_hugger">
     <div class="container_2">
-        {% if mode == 'register' %}
-        <div class="progress_bar">
-            <div class="now_step" style="width: 270px;"></div>
-        </div>
-        {% endif %}
         <div class="content">
             <p class="bigger_content">
                 <div class="textboxarea">
-                    <img src="{% static 'img/textbox/side_vertical_text_box.png' %}" alt="말풍선" class="brocoli_says">
                     <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli_2">
-                    <div class="text">음성녹음 <span style="color:grey;">등록이 가능해요!</span></div>
                 </div>
-                <span class="title">{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</span>
+                <span class="title">{% if mode == 'edit' %}가게 수정{% else %}가게 등록{% endif %}</span>
                 
 <div class="maphugger">
 <div id="mapModal">
@@ -387,13 +425,13 @@ voiceBtn.addEventListener('mouseleave', () => {
                     <!-- 1. 가게 이름 -->
                     <div class="form_row">
                         <label for="nameInput">1. 가게 이름</label>
-                        <input type="text" name="name" id="nameInput" value="{{ form.name.value|default_if_none:'' }}" placeholder="입력하시오..." />
+                        <input type="text" name="name" id="nameInput" value="{{ form.name.value|default_if_none:'' }}" placeholder="입력하시오..." required/>
                     </div>
 
                     <!-- 2. 사업자 등록번호 -->
                     <div class="form_row">
                         <label for="businessNumberInput">2. 사업자 등록번호</label>
-                        <input type="text" name="business_number" id="businessNumberInput" value="{{ request.user.seller.business_number }}" readonly placeholder="입력하시오..." />
+                        <input type="text" name="business_number" id="businessNumberInput" value="{{ request.user.seller.business_number }}" readonly placeholder="입력하시오..." required/>
                     </div>
 
                     <!-- 판매 장소 -->
@@ -402,18 +440,19 @@ voiceBtn.addEventListener('mouseleave', () => {
                         <div class="place">
                             <input type="text" id="addressInput" name="address"
                                 value="{{ form.address.value|default_if_none:'' }}"
-                                placeholder="주소를 입력하거나, 검색/지도에서 선택하세요">
+                                placeholder="주소를 입력하거나, 검색/지도에서 선택하세요" required>
                             <button type="button" id="searchBtn">
                                 <img src="{% static 'img/search.png' %}" alt="upload" class="search" />
                             </button>
                             <button type="button" id="mapBtn">🗺</button>
 
                             <!-- 검색 결과 모달 -->
-                            <div id="searchModal" style="display:none; position:fixed; top:20%; left:30%; width:40%; background:#fff; z-index:2000; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+                            <div id="searchModal" style="display:none;">
                                 <div style="text-align:right; padding:5px;">
-                                    <button id="closeSearchModal">닫기</button>
+                                    <button type="button" id="closeSearchModal">×</button>
+
                                 </div>
-                                <ul id="searchResult" style="list-style:none; padding:10px; margin:0; max-height:250px; overflow-y:auto;"></ul>
+                                <ul id="searchResult"></ul>
                             </div>
                         </div>
                     </div>
@@ -430,12 +469,12 @@ voiceBtn.addEventListener('mouseleave', () => {
 
                                     <div>
                                         <input type="hidden" name="item_id_{{ forloop.counter0 }}" value="{{ store_item.id }}">
-                                        <input type="text" name="item_name_{{ forloop.counter0 }}" id="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명">
-                                        <input type="text" name="item_unit_{{ forloop.counter0 }}" id="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위">
+                                        <input type="text" name="item_name_{{ forloop.counter0 }}" id="item_name_{{ forloop.counter0 }}" value="{{ store_item.item.name }}" placeholder="품목명" required>
+                                        <input type="text" name="item_unit_{{ forloop.counter0 }}" id="item_unit_{{ forloop.counter0 }}" value="{{ store_item.unit }}" placeholder="단위" required>
                                     </div>
                                     <div>
-                                        <input type="number" name="item_price_{{ forloop.counter0 }}" id="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격">
-                                        <input type="text" name="item_desc_{{ forloop.counter0 }}" id="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명">
+                                        <input type="number" name="item_price_{{ forloop.counter0 }}" id="item_price_{{ forloop.counter0 }}" value="{{ store_item.price }}" placeholder="가격" required>
+                                        <input type="text" name="item_desc_{{ forloop.counter0 }}" id="item_desc_{{ forloop.counter0 }}" value="{{ store_item.description }}" placeholder="설명" required>
                                     </div>
                                     <div>
                                         <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
@@ -449,12 +488,12 @@ voiceBtn.addEventListener('mouseleave', () => {
                                 {% else %}
                                 <div class="item_detail_hugger">
                                     <div>
-                                        <input type="text" name="item_name_0" id="item_name_0" placeholder="품목명">
-                                        <input type="text" name="item_unit_0" id="item_unit_0" placeholder="단위">
+                                        <input type="text" name="item_name_0" id="item_name_0" placeholder="품목명" required>
+                                        <input type="text" name="item_unit_0" id="item_unit_0" placeholder="단위" required>
                                     </div>
                                     <div>
-                                        <input type="number" name="item_price_0" id="item_price_0" placeholder="가격">
-                                        <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명">
+                                        <input type="number" name="item_price_0" id="item_price_0" placeholder="가격" required>
+                                        <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명" required>
                                     </div>
                                     <div>
                                         <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
@@ -472,25 +511,25 @@ voiceBtn.addEventListener('mouseleave', () => {
                     <!-- 5. 판매 요일 -->
                     <div class="form_row">
                         <label for="field4">5. 판매 요일</label>
-                        <input type="text"  name="sale_days" id="saleDaysInput" value="{{ form.sale_days.value|default_if_none:'' }}" placeholder="예: 월,수,금" />
+                        <input type="text"  name="sale_days" id="saleDaysInput" value="{{ form.sale_days.value|default_if_none:'' }}" placeholder="예: 월,수,금"  required/>
                     </div>
 
                     <!-- 6. 판매 시간대 -->
                     <div class="form_row">
                         <label for="saleHoursInput">6. 판매 시간대</label>
-                        <input type="text" name="sale_hours" id="saleHoursInput" value="{{ form.sale_hours.value|default_if_none:'' }}" placeholder="예: 10:00~18:00" />
+                        <input type="text" name="sale_hours" id="saleHoursInput" value="{{ form.sale_hours.value|default_if_none:'' }}" placeholder="예: 10:00~18:00" required/>
                     </div>
 
                     <!-- 7. 결제 수단 -->
                     <div class="form_row">
                         <label for="paymentMethodsInput">7. 결제 수단</label>
-                        <input type="text" name="payment_methods" id="paymentMethodsInput" value="{{ form.payment_methods.value|default_if_none:'' }}" placeholder="예: 현금, 카드" />
+                        <input type="text" name="payment_methods" id="paymentMethodsInput" value="{{ form.payment_methods.value|default_if_none:'' }}" placeholder="예: 현금, 카드"  required/>
                     </div>
 
                     <!-- 8. 판매자 연락 수단 -->
                     <div class="form_row">
                         <label for="contactInput">8. 판매자 연락 수단</label>
-                        <input  type="text" name="contact" id="contactInput" value="{{ form.contact.value|default_if_none:'' }}" placeholder="예: 010-1234-5678" />
+                        <input  type="text" name="contact" id="contactInput" value="{{ form.contact.value|default_if_none:'' }}" placeholder="예: 010-1234-5678" required/>
                     </div>
 
                     <!-- 9. 가게 사진 업로드 -->
