@@ -283,19 +283,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ★ 키워드 선택 처리 ★
-    const keywordLabels = document.querySelectorAll('.keyword-option');
-    keywordLabels.forEach(label => {
-        const checkbox = label.querySelector('input[type="checkbox"]');
+    // ★ 키워드 선택 처리 ★
+const keywordLabels = document.querySelectorAll('.keyword-option');
+keywordLabels.forEach(label => {
+    const checkbox = label.querySelector('input[type="checkbox"]');
 
-        // 초기 체크 상태 반영
-        if (checkbox.checked) label.classList.add('selected');
+    // 초기 체크 상태 반영
+    if (checkbox.checked) label.classList.add('selected');
 
-        // 라벨 클릭 시 체크박스 토글
-        label.addEventListener('click', e => {
-            checkbox.checked = !checkbox.checked;
-            label.classList.toggle('selected', checkbox.checked);
-        });
+    // 라벨 클릭 시 체크박스 토글
+    label.addEventListener('click', e => {
+        e.preventDefault(); // 기본 체크 토글 방지
+
+        const checkedCount = document.querySelectorAll('.keyword-option input[type="checkbox"]:checked').length;
+
+        if (!checkbox.checked && checkedCount >= 3) {
+            alert("최대 3개의 키워드만 선택할 수 있습니다.");
+            return;
+        }
+
+        checkbox.checked = !checkbox.checked;
+        label.classList.toggle('selected', checkbox.checked);
     });
+});
+
 
 
     const fileInput = document.getElementById('id_image');
