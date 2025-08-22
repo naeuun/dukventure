@@ -587,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                             </article>
                             {% empty %}
-                            <p style="text-align:center; color: #aaa;">지난 구매 내역이 없습니다.</p>
+                            <p style="text-align:center; color: #aaa;">지난 예약 내역이 없습니다.</p>
                             {% endfor %}
                             <div class="card_reflection" aria-hidden="true"></div>
                         </div>
@@ -627,14 +627,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <li>판매 시간: {{ review.store.sale_hours }}</li>
                         </ul>
                     </div>
-                    <div class="review_content">
-                        {{ review.content|truncatewords:20 }}
-                        <div class="keywords">
-                        {% for keyword in review.get_keywords_as_list %}
-                        <span>#{{ keyword }}</span>
-                    {% endfor %}
-                    </div>
-                    </div>
+                    <div class="review_content">{{ review.content|truncatewords:20 }}</div>
                     <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
                 </div>
                 {% empty %}
