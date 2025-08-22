@@ -6,7 +6,7 @@
       "is_superuser": false,
       "is_staff": false,
       "is_active": true,
-      "username": "김OO",
+      "username": "김현지",
       "usertype": "BUYER",
       "profile_image": "",
       "phone": "010-1234-5678"
@@ -19,7 +19,7 @@
       "is_superuser": false,
       "is_staff": false,
       "is_active": true,
-      "username": "박OO",
+      "username": "박승자",
       "usertype": "SELLER",
       "phone": "010-0000-0000"
    }

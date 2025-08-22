@@ -98,10 +98,10 @@ def auto_login(request):
     if request.method == 'POST':
         role = request.POST.get('role')
         if role == 'buyer':
-            username = '김OO'
+            username = '김현지'
             password = settings.BUYER_PASSWORD
         elif role == 'seller':
-            username = '박OO'
+            username = '박승자'
             password = settings.SELLER_PASSWORD
         else:
             return redirect('users:onboarding')
