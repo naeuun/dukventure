@@ -1166,13 +1166,14 @@ body {
 
 /* 좌측 이미지 프레임 (정확 수치) */
 .history_card .card_img {
-  width: 102.116px;
-  height: 159.967px;
+  width: 112.116px;
+  height: 180.967px;
   flex: 0 0 102.116px;
   border-radius: 17px;
   border: 2px solid #000;
   overflow: hidden;
   background: #d9d9d9;
+  z-index: 2;
 }
 
 .history_card .card_img img {
@@ -1184,41 +1185,41 @@ body {
 /* 우측 초록 패널 (네온 보더 + 반투명) */
 .history_card .panel {
   position: relative;
-  width: 278.955px;
+  width: 281.955px;
   height: 129.381px;
-  margin-left: -43px;
+  margin-left: -24px;
   border-radius: 35px;
   border: 2px solid var(--neon);
   background: rgba(0, 0, 0, .30);
   box-shadow: 0 3px 1px rgba(0, 0, 0, .20);
-  padding: 10px 12px;
+  padding: 10px 15px;
   color: #b6ff90;
   display: flex;
-  top: 28px;
+  top: 30px;
   flex-direction: column;
   justify-content: flex-start;
   overflow: hidden;
-  transform: translateX(1px);
-  padding-left: 40px;
+  transform: translateX(-11px);
+  padding-left: 46px;
   z-index: 1;
 }
 
 
 /* 텍스트 스타일 (시안 맞춤) */
 .history_card .panel h3 {
-  margin: 22px 0 6px;
-  font-size: 14px;
-  font-weight: 800;
-  color: #C1FF52;
+    margin: 21px 0 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #C1FF52;
 }
 
 .history_card .panel .date {
   position: absolute;
-  right: 12px;
+  right: 19px;
   top: 8px;
-  font-size: 12px;
+  font-size: 10px;
   color: rgba(255, 255, 255, .85);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .history_card .panel ul {
@@ -1231,7 +1232,7 @@ body {
 }
 
 .history_card .panel li {
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .card--1 {
