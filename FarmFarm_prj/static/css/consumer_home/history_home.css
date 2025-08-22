@@ -76,6 +76,19 @@ body {
   height: 100%;
 }
 
+/* 지난 예약 내역 없음 문구: 상단 데코 아래에 고정 */
+.history_container #no-past-reservations {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(36px + var(--deco-offset));
+  /* 카드1 텍스트와 동일 기준 */
+  text-align: center;
+  z-index: 2;
+  margin: 0;
+  /* 여백 초기화 */
+}
+
 /* 카드 공통 */
 .history_card {
   position: absolute;
