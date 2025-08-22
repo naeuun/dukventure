@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
-import environ
+#import environ
 
 # 기존 변수
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -21,11 +21,11 @@ SELLER_PASSWORD = os.getenv('SELLER_PASSWORD')
 
 # =================================================
 # 추가: django-environ으로 .env 읽기
-env = environ.Env()
-environ.Env.read_env()  # 프로젝트 루트의 .env 읽기
+#env = environ.Env()
+#environ.Env.read_env()  # 프로젝트 루트의 .env 읽기
 
 # Google STT 환경 변수
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = env("GOOGLE_APPLICATION_CREDENTIALS")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 
 
@@ -49,7 +49,7 @@ SECRET_KEY = "django-insecure-rza6t9*(iklz6&$2xigxwj01$&*_5ikj=*$ztg#p*(*o*u++z+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "frontend", # 프론트엔드에서 추가한 부분
+#    "frontend.apps.FrontendConfig", # 프론트엔드에서 추가한 부분
     'stores',
     'items',
     'users',
