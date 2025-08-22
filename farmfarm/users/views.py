@@ -17,19 +17,21 @@ import json
 
 @never_cache
 def onboarding(request):
+    # 만약 사용자가 로그인했다면,
     if request.user.is_authenticated:
-                # --- 이 아래 디버깅 코드를 추가하세요! ---
-        print("="*50)
-        print(f"로그인된 사용자: {request.user.username}")
-        print(f"사용자 타입(usertype): '{request.user.usertype}'")
-        print(f"타입 비교 (BUYER): {request.user.usertype == 'BUYER'}")
-        print(f"타입 비교 (SELLER): {request.user.usertype == 'SELLER'}")
-        print("="*50)
-        # --- 여기까지 ---
         if request.user.usertype == 'BUYER':
             return redirect('users:buyer_home')
         elif request.user.usertype == 'SELLER':
             return redirect('users:seller_home')
+        else:
+            # 로그인했지만 BUYER도 SELLER도 아닌 모든 경우에 대한 처리
+            # (예: 관리자, 또는 usertype이 없는 초기 사용자)
+            # 일단 온보딩 화면을 보여주거나, 로그아웃 처리 후 온보딩을 보여줄 수 있습니다.
+            # 여기서는 온보딩 화면을 보여주겠습니다.
+            return render(request, 'users/onboarding.html')
+    
+    # 만약 사용자가 로그인하지 않았다면,
+    else:
         return render(request, 'users/onboarding.html')
 
 @never_cache
