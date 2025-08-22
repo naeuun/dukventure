@@ -317,3 +317,39 @@ body {
   background-color: #C1FF52;
   color:black;
 }
+.onboarding_textbox_hugger{
+  position:relative;
+  margin-top:-30%;
+  width:100%;
+  height:50px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 3s; /* 3초 뒤에 시작 */
+}
+.onboarding_textbox{
+  position:absolute;
+  width:200px;
+}
+.persona_textbox{
+  position:absolute;
+  z-index: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color:black;
+  top:9px;
+
+}
+.graytext{
+  color:#888888;
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+.brocoli{
+  width:120px;
+  margin-bottom:-20px;
+}

@@ -15,6 +15,13 @@
   <div class="container">
     <div class="progress_bar"></div>
     <div class="content">
+      <div class="onboarding_textbox_hugger">
+        <img src="{% static 'img/textbox/onboarding_textbox.png' %}" alt="말풍선" class="onboarding_textbox">
+        <span class="persona_textbox">
+          <span class="graytext">페르소나</span>로 <span class="graytext">팜팜</span>을 체험하세요!
+        </span>
+      </div>
+        <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli">
       <p class="bigger_content">당신은 무엇인가요?</p>
       <form action="{% url 'users:auto_login' %}" method="post">
         {% csrf_token %}
