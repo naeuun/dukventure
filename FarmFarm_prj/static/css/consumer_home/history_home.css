@@ -33,6 +33,11 @@ body {
   --card-pad: 18px;
   --gap: 0;
   --deco-offset: 48px;
+  --stack-x: -20px;
+  --gap-y: 220px;
+  /* 카드 간 세로 간격 */
+  --bottom-safe: 140px;
+  /* 하단 네비+여유 */
 }
 
 /* 프레임 */
@@ -95,31 +100,11 @@ body {
   /* 여백 초기화 */
 }
 
-/* 카드 공통 */
-/* .history_card {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: var(--card-w);
-  height: var(--card-h);
-  border-radius: 0 0 35px 35px;
-  border-top: none;
-  border: 1px solid #000;
-  background:
-    linear-gradient(180deg,
-      rgba(164, 255, 0, 0.40) 0%,
-      rgba(244, 245, 239, 0.40) 100%),
-    #F4F5EF;
-  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.40);
-  padding: var(--card-pad);
-  transform: scale(0.92);
-  opacity: 0;
-  transition: transform 0.35s ease, opacity 0.35s ease;
-} */
-/* 모든 카드 공통: 인덱스 기반 배치 */
+
+/* 모든 카드 공통 */
 .history_card {
   position: absolute;
-  left: 0;
+  left: var(--stack-x);
   top: 0;
   width: var(--card-w);
   height: var(--card-h);
@@ -132,7 +117,17 @@ body {
   box-shadow: 0 2px 20px rgba(0, 0, 0, .40);
   padding: var(--card-pad);
 
-  transform: translate(-26px, calc(var(--i) * var(--gap-y))) scale(calc(1 - var(--i) * 0.015));
+  /* 핵심: 너무 작아지지 않도록 최소 스케일 보장 */
+  --scale: clamp(0.96, calc(1 - var(--i) * 0.012), 1);
+
+  transform-origin: left top;
+  /* 왼쪽 기준 */
+  transform:
+    scale(var(--scale))
+    /* 먼저 스케일 */
+    translateY(calc(var(--i) * var(--gap-y)));
+  /* 세로만 이동 */
+
   opacity: 1;
   z-index: calc(100 - var(--i));
   transition: transform .35s ease, opacity .35s ease;
@@ -160,7 +155,7 @@ body {
   background: lightgray 50% / cover no-repeat;
   overflow: hidden;
   z-index: 5;
-  transform: translateY(10px);
+  transform: translateY(5px);
 }
 
 .history_card .card_img img {
