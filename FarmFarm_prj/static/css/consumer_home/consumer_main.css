@@ -473,6 +473,7 @@ body {
   align-items: flex-end;
   /* 아래쪽 정렬 */
   width: 100%;
+  padding-bottom: 19px;
 
 }
 
@@ -492,6 +493,7 @@ body {
   gap: 8px;
   margin-left: 10px;
   margin-top: 20px;
+  z-index:2;
 }
 
 .thumbnail-row {
@@ -574,8 +576,8 @@ body {
 
 /* 오른쪽 정보 */
 .information_detail {
-  width: 100px;
-  height: 208px;
+  width: 94px;
+  height: 201px;
   background: rgba(55, 61, 45, 0.5);
   border: 0.5px solid #C1FF52;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
@@ -588,6 +590,9 @@ body {
   align-items: flex-start;
   margin-top: 80px;
   margin-left: 0;
+  z-index: 1;
+  padding-left: 82px;
+  transform: translateX(-66px);
 }
 
 .cha_name {
@@ -741,7 +746,7 @@ body {
   border-radius: 35px;
   overflow: hidden;
   width: 373px;
-  height: 332px;
+  height: 340px;
   box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.25);
   border: 3px solid #C1FF52;
   display: flex;
@@ -786,11 +791,12 @@ body {
   justify-content: center;
   align-items: center;
   width: auto;
-  height: 200px;
   margin: 20px;
+  height: 235px;
   width: 260px;
   margin-top: 30px;
   padding: 15px;
+  margin-left: 0px;
 }
 
 .rew_total img {
@@ -970,7 +976,7 @@ body {
 
 
 .rev_section {
-  margin-top: 80px;
+  margin-top: 20px;
   align-self: flex-start;
   margin-left: 5px;
 }
@@ -1093,8 +1099,8 @@ body {
 /* 섹션 프레임 (첫 번째 참고 이미지 비율/느낌) */
 .information4-card {
   position: relative;
-  width: 373px;
-  height: 332px;
+  width: 363px;
+  height: 370px;
   padding: 6px 16px 16px 16px;
   /* 오른쪽 장식 열 공간 확보 */
   background: #000;
@@ -1131,7 +1137,7 @@ body {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  margin-top: 42px;
   justify-content: center;
   perspective: 1200px;
   z-index: 1;
@@ -1232,7 +1238,7 @@ body {
 }
 
 .card--2 {
-  transform: translate(-26px, 66px) scale(.985);
+  transform: translate(-26px, 61px) scale(.985);
   /* 기준 카드 */
   opacity: .9;
   z-index: 2;
@@ -1240,7 +1246,7 @@ body {
 }
 
 .card--3 {
-  transform: translate(-26px, 198px) scale(.965);
+  transform: translate(-26px, 114px) scale(.965);
   /* card-2보다 132px 아래 */
   opacity: .75;
   z-index: 1;

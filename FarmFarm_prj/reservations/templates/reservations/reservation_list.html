@@ -3,7 +3,8 @@
   rel="stylesheet"
   href="{% static 'css/consumer_home/reservation_home.css' %}"
 />
-{% endblock style %} {% block body %}
+{% endblock style %}
+{% block body %}
 <div class="page">
   <!-- 상단바 -->
   <header class="topbar">
@@ -40,27 +41,38 @@
                 {{ first_item.unit }}× {{ first_item.quantity }}
             {% endwith %}
             </li>
-            <li>상태: {{ r.get_status_display }}</li>
+            <li>요청 픽업 시간 : {{ r.requested_pickup_at|date:"Y-m-d H:i" }}</li>
         </ul>
         </div>
     </section>
 
     <div class="card-actions-row">
-        {# Buyer가 가능한 전이: ACCEPTED/PREPARING/READY -> PICKED_UP #}
-        {% if r.status != 'PICKED_UP' and r.status != 'CANCELLED' and r.status != 'REJECTED' and r.status != 'EXPIRED' and r.status != 'PENDING' %}
-            <button class="btn btn-lime pickup-complete-btn"
-                    data-pk="{{ r.pk }}">픽업 완료</button>
+      <!-- 수락 대기 중일 때 -->
+      {% if r.status == 'PENDING' %}
+        <button type="button" class="btn status-btn">수락 대기중</button>
+        <button class="btn action-btn" type="button" disabled aria-disabled="true">픽업 전</button>
+      <!-- 판매자가 수락했을 때 -->
+      {% elif r.status == 'ACCEPTED' %}
+        {% if r.remaining_minutes > 0 %}
+            <button type="button" class="btn status-btn">{{ r.remaining_minutes }}분 후 픽업 가능</button>
+            <button class="btn action-btn" type="button" disabled aria-disabled="true">픽업 전</button>
+        {% else %}
+            <button type="button" class="btn status-btn">픽업 가능</button>
+            <button type="button" class="btn action-btn pickup-complete-btn" data-pk="{{ r.pk }}">픽업 완료</button>
         {% endif %}
-        {% if r.status == 'PICKED_UP' %}
-            <button class="btn btn-black write-review-btn"
-                    data-pk="{{ r.pk }}"
-                    data-store-name="{{ r.store.name }}">리뷰쓰기</button>
+      <!-- 픽업 완료 후 -->
+      {% elif r.status == 'PICKED_UP' %}
+        <button type="button" class="btn status-btn">픽업 완료</button>
+        {% if not r.review %}
+          <button type="button" class="btn action-btn write-review-btn" data-pk="{{ r.pk}}" data-store-name="{{ r.store.name }}">리뷰 쓰기</button>
+        {% else %}
+          <button class="btn action-btn" style="cursor: not-allowed;" disabled aria-disabled="true">리뷰 작성 완료</button>
         {% endif %}
+      {% elif r.status == 'REJECTED' %}
+        <button type="button" class="btn status-btn">예약이 거절됨</button>
+        <button class="btn action-btn" type="button" disabled aria-disabled="true">{{ r.get_rejected_reason_display }}</button>
+      {% endif %}
     </div>
-
-
-
-
     {% endfor %}
     </main>
 
