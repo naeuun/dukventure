@@ -564,9 +564,10 @@ body {
 #searchModal{
     display: none;
     position: fixed;
-    top: 20%;
-    left: 30%;
-    width: 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 257px;
     background-color: rgba(0, 0, 0, 0.679);
     z-index: 2000;
     border: 1px solid #ccc;
