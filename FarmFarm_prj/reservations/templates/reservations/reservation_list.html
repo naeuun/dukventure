@@ -46,44 +46,16 @@
     </section>
 
     <div class="card-actions-row">
-
-    {# 왼쪽: 상태표시 버튼(항상 표시) #}
-    <button class="btn status-btn" type="button">
-    {% if r.status == 'PICKED_UP' %}
-        픽업 완료
-    {% elif r.status == 'READY' %}
-        픽업 가능
-    {% elif r.can_mark_picked %}
-        {% if r.remaining_minutes <= 0 %}
-        픽업 가능
-        {% elif r.remaining_minutes <= 10 %}
-        10분후 픽업가능
-        {% else %}
-        픽업 전
+        {# Buyer가 가능한 전이: ACCEPTED/PREPARING/READY -> PICKED_UP #}
+        {% if r.status != 'PICKED_UP' and r.status != 'CANCELLED' and r.status != 'REJECTED' and r.status != 'EXPIRED' and r.status != 'PENDING' %}
+            <button class="btn btn-lime pickup-complete-btn"
+                    data-pk="{{ r.pk }}">픽업 완료</button>
         {% endif %}
-    {% else %}
-        픽업 전
-    {% endif %}
-    </button>
-
-    {# 오른쪽: 행동 버튼 (픽업 완료 / 리뷰쓰기 / 픽업 전) #}
-    {% if r.status == 'PICKED_UP' %}
-        <button class="btn action-btn write-review-btn"
-                data-pk="{{ r.pk }}"
-                data-store-name="{{ r.store.name }}">
-        리뷰쓰기
-        </button>
-    {% elif r.can_mark_picked %}
-        <button class="btn action-btn pickup-complete-btn"
-                data-pk="{{ r.pk }}">
-        픽업 완료
-        </button>
-    {% else %}
-        <button class="btn action-btn" type="button" disabled aria-disabled="true">
-        픽업 전
-        </button>
-    {% endif %}
-
+        {% if r.status == 'PICKED_UP' %}
+            <button class="btn btn-black write-review-btn"
+                    data-pk="{{ r.pk }}"
+                    data-store-name="{{ r.store.name }}">리뷰쓰기</button>
+        {% endif %}
     </div>
 
 
