@@ -472,7 +472,7 @@ body {
   position: relative; /* 절대 위치 제거 */
   top: 0;
   width: 366.6px;
-  height:606px;
+  height: 638px;
   background: linear-gradient(black, #0b2401);
   border:1px solid #C1FF52;
   border-radius: 35px 35px 0 0;

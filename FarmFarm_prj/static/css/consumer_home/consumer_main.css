@@ -1002,14 +1002,15 @@ body {
   position: relative;
   margin-top: 20px;
   width: 373.852px;
-  height: 646.007px;
   background: linear-gradient(black, #0b2401);
   border: 1px solid #C1FF52;
   border-radius: 35px;
   display: flex;
   padding: 10px;
   flex-direction: column;
-
+  padding-bottom: 100px;
+  height: auto;     /* 높이 자동 */
+  min-height: 500px;    /* 필요하면 최소 높이 초기화 */
 }
 
 .review_deco {
@@ -1022,7 +1023,7 @@ body {
 .per_review {
   margin: 10px;
   width: 302px;
-  height: 94px;
+  height: 88px;
   background: linear-gradient(#ffffff, #daf6cf);
   border: 1px solid black;
   border-radius: 23px;
@@ -1059,22 +1060,22 @@ body {
 }
 
 .review_content {
-  width:120px;
-  height:53px;
-  display:flex;
+  width: 153px;
+  height: 53px;
+  display: flex;
   flex-direction: column;
   justify-content: center;
-  position:absolute;
-  top:28px;
-  left:10px;
+  position: absolute;
+  top: 28px;
+  left: 10px;
   background-color: #FFFFFF;
-  border:1px solid black;
+  border: 1px solid black;
   opacity: 70%;
   border-radius: 16px;
   font-size: 11px;
-  font-weight: 700;
-  padding:0 30px;
-  color:#0b2401;
+  font-weight: 500;
+  padding: 0px 10px;
+  color: #0b2401;
 }
 
 .date {
