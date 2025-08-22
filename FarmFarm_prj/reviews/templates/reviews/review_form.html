@@ -1,22 +1,46 @@
-<div class="modal-content">
+{% load static %}
+<!-- 리뷰 모달 폼 -->
+<div class="modal-content" id="reviewModal">
+    <!-- 닫기 버튼 -->
+    <span class="close-modal-btn">&times;</span>
+    <button type="button" class="title">리뷰 작성</button>
     <form method="post" action="{% url 'reviews:create' reservation.pk %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <h3>{{ reservation.store.name }} 어떠셨나요?</h3>
-        
-        <!-- 별점 입력 (JS 라이브러리 사용 권장) -->
-        <div>{{ form.rating }}</div>
-        
         <!-- 사진 업로드 -->
-        <div>{{ form.photo.label_tag }} {{ form.photo }}</div>
-        
-        <!-- 키워드 선택 -->
-        <div class="keywords">
-            {{ form.keywords }}
+        <input type="file" name="photo" id="modal_id_photo" accept="image/*" style="display: none;" />
+
+        <!-- 업로드 아이콘 -->
+        <label for="modal_id_photo" class="modal_upload_label">
+            <img class="modal_upload_icon" src="{% static 'img/add_photo.png' %}" width="22" height="22" alt="upload"/>
+            <span class="modal_file_name"></span>
+        </label>
+        <span class="modal_file_name"></span>
+
+
+        <!-- 별점 -->
+        <div class="rv-star-rating">
+            <input type="hidden" name="rating" id="ratingInput" value="{{ form.rating.value|default:0 }}"/>
+            <span class="star" data-value="1">&#9733;</span>
+            <span class="star" data-value="2">&#9733;</span>
+            <span class="star" data-value="3">&#9733;</span>
+            <span class="star" data-value="4">&#9733;</span>
+            <span class="star" data-value="5">&#9733;</span>
         </div>
 
         <!-- 상세 내용 -->
-        <div>{{ form.content }}</div>
+        <div>
+            <textarea name="content" placeholder="리뷰를 작성해주세요." class="rv-modal-content" required></textarea>
+        </div>
+
+        <!-- 키워드 선택 -->
+        <div class="keywords">
+            <div>
+                <button class="keywords-title" type="button" class="keyword-btn" data-value="맛있어요">#키워드</button>
+            </div>
+            {{ form.keywords }}
+        </div>
 
         <button type="submit">리뷰 등록</button>
     </form>
 </div>
+

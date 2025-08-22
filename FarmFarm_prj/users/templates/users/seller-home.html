@@ -563,7 +563,7 @@ document.addEventListener("DOMContentLoaded", function () {
       />
 
       
-      {% for review in reviews %}
+      {% for review in reviews|slice:":6" %}
       <div class="per_review">
         <div class="reviewer_profile">
           <img

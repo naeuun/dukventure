@@ -229,7 +229,7 @@ def buyer_home(request):
     # 내가 쓴 리뷰 목록
     my_reviews = Review.objects.filter(
         author=buyer
-    ).select_related('store', 'author__user').order_by('-created_at')[:5]
+    ).select_related('store', 'author__user').order_by('-created_at')
 
     # 픽업 완료된 예약 내역만 추출 = 구매 내역 
     past_reservations = Reservation.objects.filter(

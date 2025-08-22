@@ -83,7 +83,7 @@
         </div>
     </div>
 
-<!-- 네비게이션 -->
+    <!-- 네비게이션 -->
     <div class="nav_box">
         {% if user.usertype == 'BUYER' %}
         <nav class="bottom_nav">
@@ -106,38 +106,6 @@
 <script src="{% static 'js/consumer_home/reservation_home.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // 서버 템플릿에서 CSRF 토큰 주입
-  const csrftoken = '{{ csrf_token }}';
-
-  const reviewModal = document.getElementById('reviewModal');
-  const reviewModalContent = document.getElementById('review-modal-content');
-
-  // document 레벨로 위임
-  document.body.addEventListener('click', async function(event) {
-    const target = event.target;
-
-    // 픽업 완료
-    if (target.classList.contains('pickup-complete-btn')) {
-      const reservationId = target.dataset.pk;
-      await handlePickupComplete(reservationId);
-      return;
-    }
-
-    // 리뷰쓰기
-    if (target.classList.contains('write-review-btn')) {
-      const reservationId = target.dataset.pk;
-      const storeName = target.dataset.storeName || '';
-      await openReviewModal(reservationId, storeName);
-      return;
-    }
-
-    // 모달 닫기 (X 버튼 또는 바깥 영역 클릭)
-    if (target.classList.contains('close-modal-btn') || target === reviewModal) {
-      closeReviewModal();
-      return;
-    }
-  });
-
   // 픽업 완료 처리
   async function handlePickupComplete(reservationId) {
     if (!confirm('픽업을 완료하시겠습니까?')) return;
@@ -171,6 +139,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+
+  // 서버 템플릿에서 CSRF 토큰 주입
+  const csrftoken = '{{ csrf_token }}';
+
+  const reviewModal = document.getElementById('reviewModal');
+  const reviewModalContent = document.getElementById('review-modal-content');
+
+  // document 레벨로 위임
+  document.body.addEventListener('click', async function(event) {
+    const target = event.target;
+
+    // 픽업 완료
+    if (target.classList.contains('pickup-complete-btn')) {
+      const reservationId = target.dataset.pk;
+      await handlePickupComplete(reservationId);
+      return;
+    }
+
+    // 리뷰쓰기
+    if (target.classList.contains('write-review-btn')) {
+      const reservationId = target.dataset.pk;
+      const storeName = target.dataset.storeName || '';
+      await openReviewModal(reservationId, storeName);
+      return;
+    }
+
+    // 모달 닫기 (X 버튼 또는 바깥 영역 클릭)
+    if (target.classList.contains('close-modal-btn') || target === reviewModal) {
+      closeReviewModal();
+      return;
+    }
+  });
+
   // 리뷰 모달 열기 (서버에서 폼 HTML 받아와서 주입)
   async function openReviewModal(reservationId, storeName) {
     try {
@@ -189,17 +190,79 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const formHtml = await response.text();
+      reviewModalContent.innerHTML = formHtml;
 
-      reviewModalContent.innerHTML = `
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-          <strong style="font-size:18px;">리뷰작성 ${storeName ? '(' + storeName + ')' : ''}</strong>
-          <span class="close-modal-btn" style="color:#aaa; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        </div>
-        ${formHtml}
-      `;
-
+      // 모달 열기
       reviewModal.style.display = 'flex';
       reviewModal.setAttribute('aria-hidden', 'false');
+
+      // 리뷰 모달 열기 후
+      const form = reviewModalContent.querySelector('form');
+      const fileInput = reviewModalContent.querySelector('#modal_id_photo');
+      const fileInfoWrap = reviewModalContent.querySelector('.modal_file_info_wrap');
+      const fileNameSpan = reviewModalContent.querySelector('.modal_file_name');
+      const stars = reviewModalContent.querySelectorAll(".rv-star-rating .star");
+      const ratingInput = reviewModalContent.querySelector("#ratingInput");
+      const keywordCheckboxes = reviewModalContent.querySelectorAll('#id_keywords input[type="checkbox"]');
+
+      // === 파일 이름 표시 ===
+      if (fileInput) {
+          fileInput.addEventListener('change', () => {
+              if (fileInput.files.length > 0) {
+                  let fileName = fileInput.files[0].name;
+                  if (fileName.length > 15) fileName = fileName.slice(0, 15) + '…';
+                  fileNameSpan.textContent = fileName;
+                  fileInfoWrap.style.display = 'block';
+              } else {
+                  fileNameSpan.textContent = '';
+                  fileInfoWrap.style.display = 'none';
+              }
+          });
+      }
+
+      // === 별점 클릭 ===
+      function setStars(rating) {
+          stars.forEach(star => star.classList.toggle("filled", star.dataset.value <= rating));
+          ratingInput.value = rating;
+      }
+      stars.forEach(star => {
+          star.addEventListener("click", () => setStars(star.dataset.value));
+      });
+      // 초기값 반영
+      setStars(ratingInput.value);
+
+      // === 키워드 선택 제한 ===
+      keywordCheckboxes.forEach(cb => {
+          cb.addEventListener('change', () => {
+              const checked = Array.from(keywordCheckboxes).filter(k => k.checked);
+              if (checked.length > 3) {
+                  cb.checked = false; // 마지막 선택 취소
+                  alert('키워드는 최대 3개까지 선택 가능합니다.');
+              }
+          });
+      });
+
+      // === 리뷰 제출 전 검증 ===
+      if (form) {
+          form.addEventListener('submit', (e) => {
+              const rating = parseInt(ratingInput.value);
+              const checkedKeywords = Array.from(keywordCheckboxes).filter(cb => cb.checked);
+
+              if (!rating || rating < 1 || rating > 5) {
+                  e.preventDefault();
+                  alert('별점을 선택해주세요.');
+                  return;
+              }
+
+              if (checkedKeywords.length < 1) {
+                  e.preventDefault();
+                  alert('키워드를 최소 1개 선택해주세요.');
+                  return;
+              }
+          });
+      }
+    
+
     } catch (error) {
       console.error('Error opening review modal:', error);
       alert(error.message);
@@ -228,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   updateEmptyMessages();
+
 });
 </script>
 {% endblock script %}
