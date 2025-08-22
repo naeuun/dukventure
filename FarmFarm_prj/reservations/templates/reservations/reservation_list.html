@@ -54,7 +54,7 @@
       <!-- 판매자가 수락했을 때 -->
       {% elif r.status == 'ACCEPTED' %}
         {% if r.remaining_minutes > 0 %}
-            <button type="button" class="btn status-btn">{{ r.remaining_minutes|floatformat:"0" }}분 후 픽업 가능</button>
+            <button type="button" class="btn status-btn">{{ r.remaining_minutes }}분 후 픽업 가능</button>
             <button class="btn action-btn" type="button" disabled aria-disabled="true">픽업 전</button>
         {% else %}
             <button type="button" class="btn status-btn">픽업 가능</button>

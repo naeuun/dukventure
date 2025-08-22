@@ -19,6 +19,8 @@ from stores.models import Store, StoreItem
 from items.models import Item   
 from reviews.forms import ReviewForm
 
+import math
+
 # ... _require_buyer, _require_seller 등 헬퍼 함수 ...
 
 
@@ -122,7 +124,7 @@ def reservation_list(request):
         # ACCEPTED 상태일 때만 남은 시간 계산
         if r.status == 'ACCEPTED' and r.requested_pickup_at:
             diff = r.requested_pickup_at - now
-            r.remaining_minutes = int(diff.total_seconds() // 60)
+            r.remaining_minutes = math.ceil(diff.total_seconds() / 60)
             if r.remaining_minutes < 0:
                 r.remaining_minutes = 0
         else:
