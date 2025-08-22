@@ -3,12 +3,13 @@
 {% load static %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/seller_onboardings/seller_onboarding_3.css' %}" />
-
+<link rel="stylesheet" href="{% static 'css/stores_form.css' %}" />
 {% endblock style %}
 {% block script %}
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=99fb650695dceb9f3c38f165656fe2c8&libraries=services"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     // 삭제된 기존 아이템 ID를 저장할 히든 필드 컨테이너
     const itemList = document.getElementById('itemList');
     const deletedItemsContainer = document.createElement('div');
@@ -20,6 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function removeItem(btn) {
         const div = btn.closest('.item_detail_hugger');
         if (!div) return;
+
+        // 현재 남은 아이템 개수 확인
+        const allItems = document.querySelectorAll('#itemList .per_row .item_detail_hugger');
+        if (allItems.length <= 1) {
+            alert("최소 1개의 품목은 작성해주세요.");
+            return; // 삭제하지 않고 종료
+        }
 
         // 기존 아이템이면 삭제 목록에 추가
         const itemIdInput = div.querySelector('input[name^="item_id_"]');
@@ -391,19 +399,12 @@ voiceBtn.addEventListener('mouseleave', () => {
 {% block body %}
 <div class="big_hugger">
     <div class="container_2">
-        {% if mode == 'register' %}
-        <div class="progress_bar">
-            <div class="now_step" style="width: 270px;"></div>
-        </div>
-        {% endif %}
         <div class="content">
             <p class="bigger_content">
                 <div class="textboxarea">
-                    <img src="{% static 'img/textbox/side_vertical_text_box.png' %}" alt="말풍선" class="brocoli_says">
                     <img src="{% static 'img/voice_brocoli.png' %}" alt="브로콜리" class="brocoli_2">
-                    <div class="text">음성녹음 <span style="color:grey;">등록이 가능해요!</span></div>
                 </div>
-                <span class="title">{% if mode == 'edit' %}가게 정보 수정{% else %}가게 등록{% endif %}</span>
+                <span class="title">{% if mode == 'edit' %}가게 수정{% else %}가게 등록{% endif %}</span>
                 
 <div class="maphugger">
 <div id="mapModal">
