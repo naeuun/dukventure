@@ -1157,7 +1157,6 @@ body {
       rgba(164, 255, 0, .40) 100%), #F4F5EF;
   box-shadow: 0 2px 20px rgba(0, 0, 0, .40);
   display: flex;
-  gap: 12px;
   padding: 14px;
   /* 내부 여백으로 정확한 배치 */
   transform: scale(.92);
@@ -1185,11 +1184,9 @@ body {
 /* 우측 초록 패널 (네온 보더 + 반투명) */
 .history_card .panel {
   position: relative;
-  width: 260.955px;
-  /* 시안 수치 기준 */
-  height: 154.381px;
-  margin-left: 6px;
-  /* 이미지와 간격 */
+  width: 278.955px;
+  height: 129.381px;
+  margin-left: -43px;
   border-radius: 35px;
   border: 2px solid var(--neon);
   background: rgba(0, 0, 0, .30);
@@ -1197,14 +1194,19 @@ body {
   padding: 10px 12px;
   color: #b6ff90;
   display: flex;
+  top: 28px;
   flex-direction: column;
   justify-content: flex-start;
   overflow: hidden;
+  transform: translateX(1px);
+  padding-left: 40px;
+  z-index: 1;
 }
+
 
 /* 텍스트 스타일 (시안 맞춤) */
 .history_card .panel h3 {
-  margin: 16px 0 6px;
+  margin: 22px 0 6px;
   font-size: 14px;
   font-weight: 800;
   color: #C1FF52;
@@ -1223,8 +1225,9 @@ body {
   margin: 0;
   padding-left: 16px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.35;
+  opacity: 0.8;
 }
 
 .history_card .panel li {
