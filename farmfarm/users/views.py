@@ -18,11 +18,19 @@ import json
 @never_cache
 def onboarding(request):
     if request.user.is_authenticated:
+                # --- 이 아래 디버깅 코드를 추가하세요! ---
+        print("="*50)
+        print(f"로그인된 사용자: {request.user.username}")
+        print(f"사용자 타입(usertype): '{request.user.usertype}'")
+        print(f"타입 비교 (BUYER): {request.user.usertype == 'BUYER'}")
+        print(f"타입 비교 (SELLER): {request.user.usertype == 'SELLER'}")
+        print("="*50)
+        # --- 여기까지 ---
         if request.user.usertype == 'BUYER':
             return redirect('users:buyer_home')
         elif request.user.usertype == 'SELLER':
             return redirect('users:seller_home')
-    return render(request, 'users/onboarding.html')
+        return render(request, 'users/onboarding.html')
 
 @never_cache
 def signup_type(request):
