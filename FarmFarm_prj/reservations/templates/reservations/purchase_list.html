@@ -25,10 +25,10 @@
         />
       </div>
 
-      <div class="history_container">
+      <div class="history_container" style="--count: {{ past_reservations|length }};">
         <!-- 카드 1 -->
         {% for r in past_reservations %}
-        <article class="history_card card--{{ forloop.counter }}">
+        <article class="history_card" style="--i: {{ forloop.counter0 }};">
           <div class="card_img">
             {% with item=r.items.first %}
               {% if item.image %}
@@ -55,7 +55,7 @@
           </div>
         </article>
           {% empty %}
-            <p id="no-past-reservations" style="text-align:center; color: #aaa;">지난 예약 내역이 없습니다.</p>
+            <p id="no-past-reservations" style="text-align:center; color: #aaa;">지난 구매 내역이 없습니다.</p>
           {% endfor %}
 
         <div class="card_reflection" aria-hidden="true"></div>
