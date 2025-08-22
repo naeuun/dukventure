@@ -1,0 +1,26 @@
+.brocoli_says,
+.text {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    position: absolute; /* 필요 시 위치 조정 */
+}
+
+.brocoli_says.show,
+.text.show {
+    opacity: 1;
+}
+
+.title{
+    margin-left:15px;
+    margin-top: -14px;
+}
+
+.brocoli_2{
+    top:20px;
+    left: 78px;
+
+}
+
+.register_box{
+    top: -10px;
+}
