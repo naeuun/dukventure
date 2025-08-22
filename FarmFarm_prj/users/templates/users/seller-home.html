@@ -590,7 +590,12 @@ document.addEventListener("DOMContentLoaded", function () {
           {% endfor %}
         </div>
         <div class="review_content">
-          {{ review.content }}
+          {{ review.content|truncatewords:20 }}
+        <div class="keywords">
+        {% for keyword in review.get_keywords_as_list %}
+          <span>#{{ keyword }}</span>
+        {% endfor %}
+        </div>
         </div>
         <div class="date">{{ review.created_at|date:"Y.m.d" }}</div>
         
