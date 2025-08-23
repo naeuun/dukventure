@@ -628,7 +628,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </ul>
                     </div>
                     <div class="review_content">
-                        {{ review.content|truncatewords:20 }}
+                        {{ review.content|truncatechars:15 }}
                         <div class="keywords">
                         {% for keyword in review.get_keywords_as_list %}
                         <span>#{{ keyword }}</span>
