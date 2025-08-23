@@ -317,6 +317,7 @@ body {
   font-size: 17px;
   font-weight:800;
   color:black;
+  margin-bottom: 13px;
 }
 
 .modal {
@@ -350,7 +351,7 @@ body {
   24px 24px 24px rgba(42, 42, 42, 0.3),
   18px 18px 18px rgba(109, 109, 109, 0.12),
   inset 0 0 8px rgba(255, 255, 255, 0.35);
-  transform: translateY(8px) scale(.98);
+  transform: translateY(-63px) scale(.98);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
 }
