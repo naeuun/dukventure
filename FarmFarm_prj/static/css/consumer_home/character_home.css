@@ -306,12 +306,14 @@ body {
   border-bottom: 1px solid #000;
 }
 
-.bottom-section {
+.bottom-section2 {
   display: flex;
   margin-top: 45px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  gap: 24px;
+  margin-bottom: 100px;
 }
 
 /* 3등 카드 */
@@ -328,7 +330,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  gap: 20px;
 }
 
 .cha_3th img {
@@ -351,7 +352,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  /* gap: 20px; */
 }
 
 .cha_2th img {
@@ -404,7 +404,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  gap: 20px;
 }
 
 .cha_1th img {
@@ -436,17 +435,19 @@ body {
 /* 각 카드 안의 4칸 스탬프 줄 */
 .stamps-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  width: 200px;
-  /* 필요시 조절 */
+  grid-template-columns: repeat(4, 40px);
+  /* 4칸 고정 너비 */
+  gap: 30px;
+  width: auto;
+  /* ← 200px 고정 해제 */
   padding: 10px 0;
-  margin-left: auto;
-  /* 오른쪽 정렬 느낌이면 */
-  margin-right: 20px;
-  /* 카드 우측 여백 */
-  align-items: center;
   justify-items: center;
+  /* 각 칸 내부 중앙 */
+  justify-content: center;
+  /* 그리드 자체 중앙 */
+  margin: 4px auto 0;
+  /* 컨테이너를 카드 안에서 중앙 배치 */
+  box-sizing: border-box;
 }
 
 .stamps-row img {
