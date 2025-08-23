@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="character1">내가 쓴 리뷰<img src="{% static 'img/rev_icon.png' %}" alt="리뷰 아이콘" class="rev_icon"></div>
             <div class="review_hugger">
                 <img src="{% static 'img/review_deco.png' %}" alt="리뷰데코" class="review_deco">
-                {% for review in reviews|slice:":6" %}
+                {% for review in reviews %}
                 <div class="per_review" id="review-card-{{ review.id }}">
                     <div class="reviewer_profile">
                         <img src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/smiling_brocoli.png{% endif %}" alt="내 프로필" class="r_profile_p">
@@ -628,7 +628,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </ul>
                     </div>
                     <div class="review_content">
-                        {{ review.content|truncatewords:20 }}
+                        {{ review.content|truncatechars:15 }}
                         <div class="keywords">
                         {% for keyword in review.get_keywords_as_list %}
                         <span>#{{ keyword }}</span>
