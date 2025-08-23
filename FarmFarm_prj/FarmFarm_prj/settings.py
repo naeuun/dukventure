@@ -38,7 +38,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-
+# 배포 환경에서 collectstatic을 실행하면 static 파일들이 모일 최종 목적지 경로
+# 이 한 줄을 추가해주세요.
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
