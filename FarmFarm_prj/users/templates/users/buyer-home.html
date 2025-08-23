@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="character1">내가 쓴 리뷰<img src="{% static 'img/rev_icon.png' %}" alt="리뷰 아이콘" class="rev_icon"></div>
             <div class="review_hugger">
                 <img src="{% static 'img/review_deco.png' %}" alt="리뷰데코" class="review_deco">
-                {% for review in reviews %}
+                {% for review in reviews|slice:":6" %}
                 <div class="per_review" id="review-card-{{ review.id }}">
                     <div class="reviewer_profile">
                         <img src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/smiling_brocoli.png{% endif %}" alt="내 프로필" class="r_profile_p">
