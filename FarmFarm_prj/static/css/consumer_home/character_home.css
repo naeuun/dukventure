@@ -92,6 +92,19 @@ body {
   /* 가로·세로 중앙 */
 }
 
+.character-image img[src*="level2"] {
+  transform: translateY(4px) scale(0.55) !important;
+  /* 65% 정도 */
+  margin: 0 !important;
+}
+
+.character-image img[src*="level3"] {
+  transform: translate(25px, 80px) scale(1.15) !important;
+  /* = translateX(14px) translateY(10px) scale(1.1) */
+  transform-origin: center bottom !important;
+  margin: 0 !important;
+}
+
 /* 오른쪽 정보 */
 .information_detail {
   position: relative;
@@ -115,7 +128,7 @@ body {
 .name-pop-open {
   position: absolute;
   top: 12px;
-  right: 6px;
+  right: 13px;
   border: none;
   background: transparent;
   padding: 0;
@@ -330,6 +343,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+
 }
 
 .cha_3th img {
@@ -463,8 +477,8 @@ body {
 .cha_2th .checkbox,
 .cha_1th .checkbox {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 18px;
 }
 
 .cha_3th .checkbox .check,
