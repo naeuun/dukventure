@@ -127,11 +127,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- 리워드 및 캐릭터 정보 로딩 로직 ---
     const characterMainImages = {
+        0: "{% static 'img/level0.png' %}", // Level 0 이미지 추가
         1: "{% static 'img/level1.png' %}",
         2: "{% static 'img/level2.png' %}",
         3: "{% static 'img/level3.png' %}",
     };
     const characterStyles = {
+        0: { transform: 'scale(0.5)', marginTop: '40px', marginLeft: '0px' }, // Level 0 스타일
         1: { transform: 'scale(1.0)', marginTop: '40px', marginLeft: '0px' },
         2: { transform: 'scale(0.9)', marginTop: '30px', marginLeft: '0px' },
         3: { transform: 'scale(1.1)', marginTop: '30px', marginLeft: '0px' }
@@ -141,12 +143,13 @@ document.addEventListener("DOMContentLoaded", function() {
         2: { transform: 'scale(1.0)' },
         3: { transform: 'scale(3.0)', marginTop: '50px' },
     };
-     const stampOnImages = [
+    const stampOnImages = [
         "{% static 'img/stamps/stamp_on.png' %}",
         "{% static 'img/stamps/stamp_on2.png' %}",
         "{% static 'img/stamps/stamp_on3.png' %}",
     ];
-    const stampOffImages =[
+    // 오타 수정되었는지 확인
+    const stampOffImages = [
         "{% static 'img/stamps/stamp_off.png' %}",
         "{% static 'img/stamps/stamp_off2.png' %}",
         "{% static 'img/stamps/stamp_off3.png' %}",
@@ -163,33 +166,46 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateRewardUI(data) {
-        const levelText = document.getElementById('character-level-text');
-        if(levelText) levelText.textContent = data.character_level;
-        
-        const characterLevel = data.character_level;
-        const mainImage = document.getElementById('character-main-image');
+        // [수정] 총 스탬프 개수를 기준으로 모든 UI를 업데이트
+        const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
+        const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
 
+        // 1. 총 스탬프 개수에 따라 화면에 표시할 레벨 결정 (0, 1, 2, 3)
+        let displayLevel;
+        if (totalStamps < 4) {
+            displayLevel = 0;
+        } else if (totalStamps < 8) {
+            displayLevel = 1;
+        } else if (totalStamps < 12) {
+            displayLevel = 2;
+        } else {
+            displayLevel = 3;
+        }
+        
+        const levelText = document.getElementById('character-level-text');
+        if(levelText) levelText.textContent = data.character_level; // DB 레벨은 그대로 표시
+
+        // 2. 메인 캐릭터 이미지 및 스타일 업데이트
+        const mainImage = document.getElementById('character-main-image');
         if (mainImage) {
-            mainImage.src = characterMainImages[characterLevel] || characterMainImages[1];
-            const styles = characterStyles[characterLevel] || characterStyles[1];
+            mainImage.src = characterMainImages[displayLevel];
+            const styles = characterStyles[displayLevel];
             mainImage.style.transform = styles.transform;
             mainImage.style.marginTop = styles.marginTop;
             mainImage.style.marginLeft = styles.marginLeft;
         }
         
+        // 3. 썸네일 및 화살표 업데이트
         const arrow = document.getElementById('level-arrow');
-        document.querySelectorAll('.level-thumbnail').forEach((thumb, index) => {
-            const level = index + 1;
-            
-            const thumbStyle = thumbnailStyles[level] || { transform: 'scale(1.0)' };
-            thumb.style.transform = thumbStyle.transform;
+        document.querySelectorAll('.level-thumbnail').forEach((thumb) => {
+            // HTML에 data-level="1", data-level="2" 등을 추가해야 정확히 동작합니다.
+            const thumbLevel = parseInt(thumb.id.split('-')[2], 10);
             thumb.style.border = 'none';
-
-            if (level === characterLevel) {
+            if (thumbLevel === displayLevel) {
                 thumb.style.opacity = '1';
                 if(arrow) {
                     setTimeout(() => {
-                        const arrowOffset = thumb.offsetLeft + (thumb.offsetWidth / 2) - (arrow.offsetWidth / 2);
+                        const arrowOffset = thumb.parentElement.offsetLeft + (thumb.parentElement.offsetWidth / 2) - (arrow.offsetWidth / 2);
                         arrow.style.left = `${arrowOffset}px`;
                         arrow.style.display = 'block';
                     }, 50);
@@ -198,42 +214,34 @@ document.addEventListener("DOMContentLoaded", function() {
                 thumb.style.opacity = '0.6';
             }
         });
-
-        const basePercentage = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
-        let growthPercentage = (basePercentage[data.medal_tier] || 0) + (data.stamp_count * 6.25);
-        if (data.medal_tier === 'GOLD') {
-             growthPercentage = 100;
-        }
-        growthPercentage = Math.min(Math.floor(growthPercentage) + 25, 100);
-
+        // 4. 성장률 퍼센트 업데이트
+        const growthPercentage = Math.floor((totalStamps / 12) * 100);
         const circleBar = document.getElementById('growth_chart_circle');
         const circleText = document.getElementById('growth_percent_text');
         if (circleBar && circleText) {
             const radius = circleBar.r.baseVal.value;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (growthPercentage / 100) * circumference;
-            
             circleBar.style.strokeDashoffset = offset;
             circleText.textContent = `${growthPercentage}%`;
         }
 
+        // 5. 리워드 스탬프 그리드 업데이트
         const stampsGrid = document.getElementById('stamps-grid-container');
         if (stampsGrid) {
             stampsGrid.innerHTML = '';
-            const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
-            const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
-
             for (let i = 0; i < 12; i++) {
                 const img = document.createElement('img');
+                
+                // [오류 수정] 단수형 변수(stampOnImage) 대신 복수형 배열(stampOnImages)에서 무작위로 선택하는 로직으로 수정
                 if (i < totalStamps) {
-                    // 획득한 스탬프일 경우, ON 이미지 배열에서 무작위로 하나를 선택
                     const randomIndex = Math.floor(Math.random() * stampOnImages.length);
                     img.src = stampOnImages[randomIndex];
                 } else {
-                    // 획득하지 못한 스탬프일 경우, OFF 이미지 배열에서 무작위로 하나를 선택
                     const randomIndex = Math.floor(Math.random() * stampOffImages.length);
                     img.src = stampOffImages[randomIndex];
                 }
+
                 img.style.width = '100%';
                 img.style.objectFit = 'contain';
                 stampsGrid.appendChild(img);
@@ -471,7 +479,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="information_cha">
                         <div class="thumbnail-row">
                             <img id="level-arrow" src="{% static 'img/arrow.png' %}" alt="current level">
-                             <div class="thumbnail-wrapper">
+                             
+                            <div class="thumbnail-wrapper">
                                 <img id="level-thumb-1" class="level-thumbnail" src="{% static 'img/level1.png' %}" alt="Lv.1">
                             </div>
 
