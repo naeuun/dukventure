@@ -28,6 +28,25 @@
           <div class="cha_name" id="character-name">이름:</div>
           <div class="cha_nic">{{ user.username }}</div>
 
+          <button type="button" class="name-pop-open" aria-controls="nameEditPopover" aria-expanded="false">
+            <img src="{% static 'img/edit.png' %}" alt="이름 수정" class="edit" />
+          </button>
+
+          <!-- 이름 수정 팝업 -->
+          <!-- .information_detail 내부 어딘가(연필 버튼 근처)에 배치 -->
+        <div id="profileEditModal" class="name-edit-popover" role="dialog" aria-modal="true" aria-hidden="true">
+            <button type="button" class="name-pop-close" id="closeModalBtn">×</button>
+
+            <div class="nickname-row">
+                <input type="text" id="nicknameInput" class="name-input"
+                    value="{{ request.user.username }}" name="username">
+                <button type="button" class="name-pop-save" name="edit_type" value="name">
+                    <img class="edit" src="{% static 'img/edit.png' %}" alt="닉네임 저장">
+                </button>
+            </div>
+        </div>
+
+
           <div class="cha_growth">성장퍼센트:</div>
           <div class="growth_chart">
             <svg width="80" height="80" viewBox="0 0 100 100">
@@ -101,6 +120,8 @@
 
 {# ---------- SCRIPT ---------- #}
 {% block script %}
+<script src="{% static 'js/consumer_home/character_home.js' %}"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // --- 리워드 및 캐릭터 정보 로딩 로직 ---
@@ -204,4 +225,5 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchRewardStatus();
 });
 </script>
+
 {% endblock script %}

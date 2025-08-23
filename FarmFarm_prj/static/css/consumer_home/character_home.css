@@ -82,8 +82,9 @@ body {
 
 .character-image img {
   margin-top: 50px;
+  margin-bottom: 50px;
   margin-left: 30px;
-  width: 500px;
+  width: 450px;
   height: auto;
   object-fit: cover;
   /* 비율 유지하며 박스 채우기 */
@@ -95,7 +96,7 @@ body {
 .information_detail {
   position: relative;
   width: 120px;
-  height: 270x;
+  height: auto;
   background: #373D2D;
   border: 0.5px solid #C1FF52;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
@@ -111,19 +112,42 @@ body {
   margin-top: 60px;
 }
 
-/* 이름 수정 팝업 (기본: 숨김) */
+.name-pop-open {
+  position: absolute;
+  top: 12px;
+  right: 6px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  z-index: 60;
+}
+
+.name-pop-open .edit {
+  position: static;
+  width: 16px;
+  height: 16px;
+}
+
+/* 부모는 기준점 */
+.information_detail {
+  position: relative;
+}
+
+/* 이름 수정 팝업: 트리거(연필) '아래'에 붙게 */
 .name-edit-popover {
   position: absolute;
-  top: -8px;
-  /* 위치는 상황에 맞게 미세조정 */
-  right: -6px;
+  top: 24px;
+  /* ↑ 기존 -4px → 버튼 아래로 내림 (필요하면 24~36px로 미세조정) */
+  right: 6px;
 
   width: 105.528px;
-  min-height: 58.881px;
+  height: 58.881px;
+  flex-shrink: 0;
   padding: 10px 12px;
 
   border-radius: 16px;
-  border: 0.6px solid rgba(255, 255, 255, 0.35);
+  border: 0.6px solid rgba(255, 255, 255, .35);
   background: rgba(255, 255, 255, 0.07);
   background-blend-mode: plus-lighter;
   box-shadow:
@@ -131,18 +155,26 @@ body {
     -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
     1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
     0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
-  backdrop-filter: blur(2.72px);
-
+  backdrop-filter: blur(2.7200000286102295px);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   color: #FFF;
   font-family: Pretendard, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: normal;
+  align-items: stretch;
 
   display: none;
   flex-direction: column;
   gap: 6px;
-  z-index: 50;
+
+  z-index: 60;
+  /* 모달이 트리거/카드보다 위로 오게 */
+  box-sizing: border-box;
+  /* 정확한 width/height 유지 */
 }
 
 /* 보임 상태 */
@@ -152,30 +184,35 @@ body {
 
 /* 닫기(X) 버튼 */
 .name-pop-close {
-  position: absolute;
-  top: 6px;
-  right: 6px;
   width: 18px;
   height: 18px;
-  border-radius: 999px;
-  /* border 제거 */
   border: none;
   background: transparent;
   color: #fff;
-  font-size: 12px;
-  line-height: 16px;
+  line-height: 18px;
+  padding: 0;
   cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: right;
+  justify-content: flex-end;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  position: absolute;
+  right: 12px;
+  top: 4px;
 }
 
-/* 인풋 */
+/* 인풋/저장 버튼은 기존 그대로 사용 */
 .name-input {
   width: 75%;
   height: 28px;
   padding: 4px 8px;
-  /* border 제거 */
   border: none;
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.18);
+  background: transparent;
   color: #fff;
   font-size: 12px;
   font-weight: 700;
@@ -186,25 +223,28 @@ body {
   color: rgba(255, 255, 255, .65);
 }
 
-/* 저장 버튼 */
 .name-pop-save {
   align-self: flex-end;
   height: 12px;
   padding: 0 10px;
-  /* border 제거 */
   border: none;
   background: transparent;
   position: relative;
-  left: 10px;
+  left: 67px;
   cursor: pointer;
+  width: 14px;
+  position: absolute;
+
+  top: 22px;
 }
+
 
 /* 연필 아이콘 클릭 영역 */
 .edit {
   cursor: pointer;
-  position: absolute;
+  /* position: absolute;
   top: 6px;
-  right: 6px;
+  right: 6px; */
 
 }
 
