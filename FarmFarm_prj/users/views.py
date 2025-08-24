@@ -295,3 +295,5 @@ def reservation_card(request):
     return render(request, 'users/reservation_card.html')
 
 
+
+

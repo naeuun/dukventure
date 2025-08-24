@@ -18,6 +18,9 @@ class Reward(models.Model):
         related_name='reward'
     )
 
+    # 캐릭터 이름을 저장하는 필드
+    character_name = models.CharField(max_length=50, default='브로브로콜리')
+
     # 현재 스탬프 개수 (0-3개)
     stamp_count = models.IntegerField(default=0)
 
@@ -32,7 +35,8 @@ class Reward(models.Model):
     character_level = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.user.username}님의 리워드"
+        return f"{self.user.username}님의 리워드 ({self.character_name})"
+
 
     # 스탬프를 추가하고, 4개가 모이면 레벨업하는 메서드
     def add_stamp(self):
