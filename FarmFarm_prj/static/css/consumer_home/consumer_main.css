@@ -450,8 +450,8 @@ body {
 /* 우상단 "더보기" 버튼 */
 .information-card .cha_more {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 3px;
   height: 24px;
   width: auto;
   cursor: pointer;
@@ -462,7 +462,7 @@ body {
 .information-card .cha_gra {
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  right: 20px;
   width: auto;
   height: 230px;
   z-index: 5;
@@ -493,7 +493,7 @@ body {
   gap: 8px;
   margin-left: 10px;
   margin-top: 20px;
-  z-index:2;
+  z-index: 2;
 }
 
 .thumbnail-row {
@@ -502,6 +502,8 @@ body {
   justify-content: center;
   gap: 4px;
   height: auto;
+
+  position: relative;
 }
 
 
@@ -526,8 +528,8 @@ body {
 
 /* 첫 번째 썸네일: 크게 */
 #level-thumb-1 {
-  width: 90px;
-  height: 90px;
+  width: 140px;
+  height: 140px;
 }
 
 /* 두 번째 썸네일: 중간 */
@@ -538,9 +540,10 @@ body {
 
 /* 세 번째 썸네일: 작게 */
 #level-thumb-3 {
-  width: 70px;
-  height: 70px;
+  width: 210px;
+  height: 210px;
   margin-top: 20px;
+  margin-left: 10px;
 }
 
 
@@ -549,29 +552,41 @@ body {
 .main-image-container {
   margin-bottom: 30px;
   width: 400px;
-  /* 원하는 영역 크기 */
   height: auto;
-  /* 원하는 높이 */
   overflow: hidden;
-  /* 부모 영역을 벗어난 이미지 숨김 */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.cha_tra {
-  width: 11px;
-  height: auto;
-}
+
 
 .main-character {
   width: 100%;
-  /* 부모 너비에 맞춤 */
   height: auto;
   object-fit: contain;
-  /* 이미지 비율 유지, 잘리지 않음 */
   cursor: pointer;
   margin-left: 30px;
+  margin-bottom: 10px;
+}
+
+
+#character-main-image[src*="level2"] {
+  transform: translateY(4px) scale(0.55) !important;
+  /* 65% 정도 */
+  margin: 0 !important;
+}
+
+#character-main-image[src*="level3"] {
+  transform: translate(20px, 70px) scale(1.15) !important;
+  /* = translateX(14px) translateY(10px) scale(1.1) */
+  transform-origin: center bottom !important;
+  margin: 0 !important;
+}
+
+.cha_tra {
+  width: 11px;
+  height: auto;
 }
 
 /* 오른쪽 정보 */
@@ -606,7 +621,7 @@ body {
   font-weight: 800;
   color: #C1FF52;
   text-align: left;
-  margin-bottom: 5px;
+  margin-bottom: 30px;
 }
 
 
@@ -637,12 +652,12 @@ body {
   color: #C1FF52;
 }
 
-.cha_more {
+/* .cha_more {
   width: auto;
   height: 24px;
   margin-bottom: 300px;
   margin-left: 10px;
-}
+} */
 
 .cha_gra {
   display: flex;
@@ -670,9 +685,10 @@ body {
   border: 1px solid #C1FF52;
   background: #C1FF52;
   color: #000;
-  font-family: Pretendard, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: Pretendard;
   font-size: 13px;
   font-weight: 700;
+  font-style: normal;
   line-height: normal;
   text-align: center;
   display: flex;
@@ -871,7 +887,7 @@ body {
   justify-content: flex-start;
   padding: 8px;
   position: absolute;
-  left:23%;
+  left: 23%;
   z-index: 3;
   /* 맨 위 */
 }
@@ -919,10 +935,11 @@ body {
   padding: 5px;
   margin: 0 10px;
   /* 양 옆 여백 */
-  position:absolute;
-  right:0;
+  position: absolute;
+  right: 0;
 }
-.second_detail{
+
+.second_detail {
   width: 130px;
   height: 170px;
   border-radius: 23px;
@@ -943,9 +960,10 @@ body {
   justify-content: flex-start;
   padding: 5px;
   margin: 0 10px;
-  position:absolute;
-  left:0;
+  position: absolute;
+  left: 0;
 }
+
 .egg,
 .pota {
   width: 118.017px;
@@ -1009,8 +1027,10 @@ body {
   padding: 10px;
   flex-direction: column;
   padding-bottom: 100px;
-  height: auto;     /* 높이 자동 */
-  min-height: 500px;    /* 필요하면 최소 높이 초기화 */
+  height: auto;
+  /* 높이 자동 */
+  min-height: 500px;
+  /* 필요하면 최소 높이 초기화 */
 }
 
 .review_deco {
@@ -1207,10 +1227,10 @@ body {
 
 /* 텍스트 스타일 (시안 맞춤) */
 .history_card .panel h3 {
-    margin: 21px 0 4px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #C1FF52;
+  margin: 21px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #C1FF52;
 }
 
 .history_card .panel .date {
@@ -1423,23 +1443,30 @@ body {
   position: relative;
   /* 화살표가 들어갈 공간 확보 */
   padding-top: 15px;
+  display: flex;
+  /* 썸네일 가로 배치 */
+  gap: 8px;
+  padding-top: 18px;
+  /* 화살표 들어갈 공간 */
+  align-items: center;
 }
 
 #level-arrow {
   display: none;
-  /* 평소에는 숨김 */
   position: absolute;
-  top: -5px;
-  /* 썸네일 위쪽에 위치 */
-  left: 0;
-  /* JS가 위치를 계산하여 설정 */
+  top: -2px;
+  left: 30px;
   width: 15px;
-  /* 화살표 크기 */
   height: auto;
-  transition: left 0.4s ease;
-  /* 부드러운 이동 효과 */
+  transition: left .25s ease;
+  pointer-events: none;
   z-index: 10;
+
+  left: 50%;
+  transform: translateX(-50%);
+  /* 정중앙 정렬 */
 }
-.reservation{
-  width:150px;
+
+.reservation {
+  width: 150px;
 }

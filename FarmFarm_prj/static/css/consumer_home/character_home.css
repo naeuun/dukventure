@@ -82,8 +82,9 @@ body {
 
 .character-image img {
   margin-top: 50px;
+  margin-bottom: 50px;
   margin-left: 30px;
-  width: 500px;
+  width: 450px;
   height: auto;
   object-fit: cover;
   /* 비율 유지하며 박스 채우기 */
@@ -91,11 +92,24 @@ body {
   /* 가로·세로 중앙 */
 }
 
+.character-image img[src*="level2"] {
+  transform: translateY(4px) scale(0.55) !important;
+  /* 65% 정도 */
+  margin: 0 !important;
+}
+
+.character-image img[src*="level3"] {
+  transform: translate(25px, 80px) scale(1.15) !important;
+  /* = translateX(14px) translateY(10px) scale(1.1) */
+  transform-origin: center bottom !important;
+  margin: 0 !important;
+}
+
 /* 오른쪽 정보 */
 .information_detail {
   position: relative;
   width: 120px;
-  height: 270x;
+  height: auto;
   background: #373D2D;
   border: 0.5px solid #C1FF52;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
@@ -111,19 +125,42 @@ body {
   margin-top: 60px;
 }
 
-/* 이름 수정 팝업 (기본: 숨김) */
+.name-pop-open {
+  position: absolute;
+  top: 12px;
+  right: 13px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  z-index: 60;
+}
+
+.name-pop-open .edit {
+  position: static;
+  width: 16px;
+  height: 16px;
+}
+
+/* 부모는 기준점 */
+.information_detail {
+  position: relative;
+}
+
+/* 이름 수정 팝업: 트리거(연필) '아래'에 붙게 */
 .name-edit-popover {
   position: absolute;
-  top: -8px;
-  /* 위치는 상황에 맞게 미세조정 */
-  right: -6px;
+  top: 24px;
+  /* ↑ 기존 -4px → 버튼 아래로 내림 (필요하면 24~36px로 미세조정) */
+  right: 6px;
 
   width: 105.528px;
-  min-height: 58.881px;
+  height: 58.881px;
+  flex-shrink: 0;
   padding: 10px 12px;
 
   border-radius: 16px;
-  border: 0.6px solid rgba(255, 255, 255, 0.35);
+  border: 0.6px solid rgba(255, 255, 255, .35);
   background: rgba(255, 255, 255, 0.07);
   background-blend-mode: plus-lighter;
   box-shadow:
@@ -131,18 +168,26 @@ body {
     -1.858px -1.732px 12px -8px rgba(0, 0, 0, 0.15),
     1.896px 1.767px 8.16px 0 rgba(255, 255, 255, 0.13) inset,
     0.966px 0.901px 4.08px 0 rgba(255, 255, 255, 0.13) inset;
-  backdrop-filter: blur(2.72px);
-
+  backdrop-filter: blur(2.7200000286102295px);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   color: #FFF;
   font-family: Pretendard, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: normal;
+  align-items: stretch;
 
   display: none;
   flex-direction: column;
   gap: 6px;
-  z-index: 50;
+
+  z-index: 60;
+  /* 모달이 트리거/카드보다 위로 오게 */
+  box-sizing: border-box;
+  /* 정확한 width/height 유지 */
 }
 
 /* 보임 상태 */
@@ -152,30 +197,35 @@ body {
 
 /* 닫기(X) 버튼 */
 .name-pop-close {
-  position: absolute;
-  top: 6px;
-  right: 6px;
   width: 18px;
   height: 18px;
-  border-radius: 999px;
-  /* border 제거 */
   border: none;
   background: transparent;
   color: #fff;
-  font-size: 12px;
-  line-height: 16px;
+  line-height: 18px;
+  padding: 0;
   cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: right;
+  justify-content: flex-end;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  position: absolute;
+  right: 12px;
+  top: 4px;
 }
 
-/* 인풋 */
+/* 인풋/저장 버튼은 기존 그대로 사용 */
 .name-input {
   width: 75%;
   height: 28px;
   padding: 4px 8px;
-  /* border 제거 */
   border: none;
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.18);
+  background: transparent;
   color: #fff;
   font-size: 12px;
   font-weight: 700;
@@ -186,25 +236,28 @@ body {
   color: rgba(255, 255, 255, .65);
 }
 
-/* 저장 버튼 */
 .name-pop-save {
   align-self: flex-end;
   height: 12px;
   padding: 0 10px;
-  /* border 제거 */
   border: none;
   background: transparent;
   position: relative;
-  left: 10px;
+  left: 67px;
   cursor: pointer;
+  width: 14px;
+  position: absolute;
+
+  top: 22px;
 }
+
 
 /* 연필 아이콘 클릭 영역 */
 .edit {
   cursor: pointer;
-  position: absolute;
+  /* position: absolute;
   top: 6px;
-  right: 6px;
+  right: 6px; */
 
 }
 
@@ -266,12 +319,14 @@ body {
   border-bottom: 1px solid #000;
 }
 
-.bottom-section {
+.bottom-section2 {
   display: flex;
   margin-top: 45px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  gap: 24px;
+  margin-bottom: 100px;
 }
 
 /* 3등 카드 */
@@ -288,7 +343,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  gap: 20px;
+
 }
 
 .cha_3th img {
@@ -311,7 +366,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  /* gap: 20px; */
 }
 
 .cha_2th img {
@@ -364,7 +418,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  gap: 20px;
 }
 
 .cha_1th img {
@@ -396,17 +449,19 @@ body {
 /* 각 카드 안의 4칸 스탬프 줄 */
 .stamps-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  width: 200px;
-  /* 필요시 조절 */
+  grid-template-columns: repeat(4, 40px);
+  /* 4칸 고정 너비 */
+  gap: 30px;
+  width: auto;
+  /* ← 200px 고정 해제 */
   padding: 10px 0;
-  margin-left: auto;
-  /* 오른쪽 정렬 느낌이면 */
-  margin-right: 20px;
-  /* 카드 우측 여백 */
-  align-items: center;
   justify-items: center;
+  /* 각 칸 내부 중앙 */
+  justify-content: center;
+  /* 그리드 자체 중앙 */
+  margin: 4px auto 0;
+  /* 컨테이너를 카드 안에서 중앙 배치 */
+  box-sizing: border-box;
 }
 
 .stamps-row img {
@@ -422,8 +477,8 @@ body {
 .cha_2th .checkbox,
 .cha_1th .checkbox {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 18px;
 }
 
 .cha_3th .checkbox .check,
