@@ -45,18 +45,6 @@ jobs:
             EOF
             # --- uwsgi.ini 파일 생성 끝 ---
 
-            # --- .env 파일 생성 시작 (이 부분이 추가되었습니다!) ---
-            echo "Creating .env file..."
-            cat << EOF > .env
-            GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PATH }}
-            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-            BUYER_PASSWORD=${{ secrets.BUYER_PASSWORD }}
-            SELLER_PASSWORD=${{ secrets.SELLER_PASSWORD }}
-          
-            EOF
-            # --- .env 파일 생성 끝 ---
-
             # 2) 장고 앱 폴더에서 migrate 및 기타 작업
             cd ${{ secrets.APP_DIR }}
             if [ -d "myvenv" ]; then
