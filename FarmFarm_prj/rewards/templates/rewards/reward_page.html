@@ -34,7 +34,7 @@
 
           <!-- 이름 수정 팝업 -->
           <!-- .information_detail 내부 어딘가(연필 버튼 근처)에 배치 -->
-        <div id="profileEditModal" class="name-edit-popover" role="dialog" aria-modal="true" aria-hidden="true">
+        {% comment %} <div id="profileEditModal" class="name-edit-popover" role="dialog" aria-modal="true" aria-hidden="true">
           
             <button type="button" class="name-pop-close" id="closeModalBtn">×</button>
 
@@ -45,6 +45,30 @@
                     <img class="edit" src="{% static 'img/edit.png' %}" alt="닉네임 저장">
                 </button>
             </div>
+        </div> {% endcomment %}
+        
+        <div class="modal-overlay" id="profileEditModal" style="display: none;">
+          <div class="modal-content">
+            <form id="profileEditForm" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <!-- ✅ 서버 분기용 hidden 필드 꼭 필요 -->
+              <input type="hidden" name="edit_type" value="name" />
+
+              <div class="modal-actions">
+                <button type="button" id="closeModalBtn">×</button>
+              </div>
+
+              <div class="nickname-row">
+                <input type="text" id="nicknameInput" name="username" value="{{ request.user.username }}">
+                <!-- ✅ JS가 찾는 id 부여 -->
+                <button type="button" id="saveNicknameBtn" style="background:none;border:none;cursor:pointer;">
+                  <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
+                </button>
+              </div>
+
+              
+            </form>
+          </div>
         </div>
 
 
@@ -133,6 +157,83 @@
 <script src="{% static 'js/consumer_home/character_home.js' %}"></script>
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("profileEditModal");
+  const openBtn = document.querySelector(".name-pop-open");
+  const closeBtn = document.getElementById("closeModalBtn");
+  const form = document.getElementById("profileEditForm");
+  const nicknameInput = document.getElementById("nicknameInput");
+  const saveBtn = document.getElementById("saveNicknameBtn");
+  const nicDisplay = document.querySelector(".cha_nic");
+
+  function getCsrfToken() {
+    const inp = form.querySelector('input[name="csrfmiddlewaretoken"]');
+    return inp ? inp.value : "";
+  }
+
+  function openModal() {
+    if (modal) modal.style.display = "block";
+    nicknameInput && nicknameInput.focus();
+  }
+  function closeModal() {
+    if (modal) modal.style.display = "none";
+  }
+
+  openBtn && openBtn.addEventListener("click", openModal);
+  closeBtn && closeBtn.addEventListener("click", closeModal);
+  modal && modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+  async function saveNickname() {
+    const username = (nicknameInput?.value || "").trim();
+    if (!username) { alert("닉네임을 입력하세요."); nicknameInput?.focus(); return; }
+    const fd = new FormData(form);
+    fd.set('edit_type', 'name'); // 안전망
+    const res = await fetch("{% url 'users:profile_edit' %}", {
+      method: "POST",
+      headers: { "X-CSRFToken": getCsrfToken() },
+      body: fd,
+    });
+    try {
+      const res = await fetch("{% url 'users:profile_edit' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": getCsrfToken() },
+        body: new FormData(form), // includes edit_type=name & username
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        const msg = data.errors ? JSON.stringify(data.errors) : "저장에 실패했습니다.";
+        throw new Error(msg);
+      }
+
+      // 서버가 내려준 username 우선 사용 (뷰 보완 반영)
+      const newName = data.username || username;
+      if (nicDisplay) nicDisplay.textContent = newName;
+
+      // (선택) 다른 탭/페이지와 동기화
+      try {
+        localStorage.setItem("usernameUpdatedAt", Date.now().toString());
+        localStorage.setItem("usernameValue", newName);
+      } catch (e) {}
+
+      closeModal();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  saveBtn && saveBtn.addEventListener("click", saveNickname);
+  nicknameInput && nicknameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); saveNickname(); }
+  });
+
+  // (선택) 다른 탭에서 변경되면 현재 화면도 갱신
+  window.addEventListener("storage", (e) => {
+    if (e.key === "usernameUpdatedAt") {
+      const v = localStorage.getItem("usernameValue");
+      if (v && nicDisplay) nicDisplay.textContent = v;
+    }
+  });
+});
 document.addEventListener("DOMContentLoaded", function() {
     // --- 리워드 및 캐릭터 정보 로딩 로직 ---
     const characterMainImages = {
