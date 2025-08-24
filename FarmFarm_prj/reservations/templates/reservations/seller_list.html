@@ -103,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const card = document.getElementById(`res-card-seller-${reservationId}`);
                     card.querySelector('.status').textContent = result.new_status;
                     card.querySelector('.button-group').innerHTML = '<span>수락 완료</span>';
+                    location.reload();
                 } else {
                     alert('오류: ' + (result.message || '알 수 없는 오류'));
                 }
