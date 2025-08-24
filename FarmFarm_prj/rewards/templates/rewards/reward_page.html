@@ -26,7 +26,7 @@
         <!-- 오른쪽 정보 -->
         <div class="information_detail">
           <div class="cha_name" id="character-name">이름:</div>
-          <div class="cha_nic">{{ user.username }}</div>
+          <div class="cha_nic"  id="character-nic">{{ reward.character_name }}</div>
 
           <button type="button" class="name-pop-open" aria-controls="nameEditPopover" aria-expanded="false">
             <img src="{% static 'img/edit.png' %}" alt="이름 수정" class="edit" />
@@ -59,8 +59,8 @@
               </div>
 
               <div class="nickname-row">
-                <input type="text" id="nicknameInput" name="username" value="{{ request.user.username }}">
-                <!-- ✅ JS가 찾는 id 부여 -->
+                <input type="text" id="nicknameInput" name="username" value="{{ reward.character_name }}">
+                
                 <button type="button" id="saveNicknameBtn" style="background:none;border:none;cursor:pointer;">
                   <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
                 </button>
@@ -90,10 +90,10 @@
       <!-- 리워드 하단 -->
       <div class="bottom-section2">
         <!-- 3등(동) -->
-        <div class="cha_3th" style="background-color: rgba(193, 255, 82, 0.40); background-image:url('{% static "img/level1.png" %}');
+        <div class="cha_3th" style="background-image:url('{% static "img/level1.png" %}');
             background-repeat:no-repeat;
             background-position:-20px center;
-            background-size:90% auto;background-blend-mode: multiply;">
+            background-size:90% auto;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
           <div class="stamps-row" id="stamps-bronze"></div>
@@ -103,10 +103,10 @@
         </div>
 
         <!-- 2등(은) -->
-        <div class="cha_2th" style="background-color: rgba(193, 255, 82, 0.40); background-image:url('{% static "img/level2.png" %}');
+        <div class="cha_2th" style="background-image:url('{% static "img/level2.png" %}');
             background-repeat:no-repeat;
             background-position:78px center;
-            background-size:40% auto;background-blend-mode: multiply;">
+            background-size:40% auto;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
           <div class="stamps-row" id="stamps-silver"></div>
@@ -116,7 +116,7 @@
         </div>
 
         <!-- 1등(금) -->
-        <div class="cha_1th" style="background-color: #000; background-image:url('{% static "img/level3.png" %}');
+        <div class="cha_1th" style="background-image:url('{% static "img/level3.png" %}');
             background-repeat:no-repeat;
             background-position:-9px calc(50% + 20px); 
             background-size:90% auto;">
@@ -162,58 +162,59 @@ document.addEventListener("DOMContentLoaded", function () {
   const openBtn = document.querySelector(".name-pop-open");
   const closeBtn = document.getElementById("closeModalBtn");
   const form = document.getElementById("profileEditForm");
-  const nicknameInput = document.getElementById("nicknameInput");
+
+  // 모달 내부 input만 정확히 잡기
+  const nicknameInput = document.querySelector("#profileEditModal #nicknameInput");
   const saveBtn = document.getElementById("saveNicknameBtn");
-  const nicDisplay = document.querySelector(".cha_nic");
+
+  // 업데이트 대상: 각 페이지에서 존재하는 것만 갱신
+  const nicTargets = [
+    document.getElementById("character-nic"),   // reward_page.html 또는 buyer-home에서 사용
+    document.getElementById("buyer-home-nic"),  // (있을 수 있음) 예전 아이디 호환
+  ].filter(Boolean);
 
   function getCsrfToken() {
-    const inp = form.querySelector('input[name="csrfmiddlewaretoken"]');
+    const inp = form?.querySelector('input[name="csrfmiddlewaretoken"]');
     return inp ? inp.value : "";
   }
 
-  function openModal() {
-    if (modal) modal.style.display = "block";
-    nicknameInput && nicknameInput.focus();
-  }
-  function closeModal() {
-    if (modal) modal.style.display = "none";
-  }
+  function openModal() { if (modal) { modal.style.display = "block"; nicknameInput?.focus(); } }
+  function closeModal() { if (modal) modal.style.display = "none"; }
 
   openBtn && openBtn.addEventListener("click", openModal);
   closeBtn && closeBtn.addEventListener("click", closeModal);
   modal && modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-  async function saveNickname() {
-    const username = (nicknameInput?.value || "").trim();
-    if (!username) { alert("닉네임을 입력하세요."); nicknameInput?.focus(); return; }
-    const fd = new FormData(form);
-    fd.set('edit_type', 'name'); // 안전망
-    const res = await fetch("{% url 'users:profile_edit' %}", {
-      method: "POST",
-      headers: { "X-CSRFToken": getCsrfToken() },
-      body: fd,
-    });
+  async function saveCharacterName() {
+    const name = (nicknameInput?.value || "").trim();
+    if (!name) { alert("닉네임을 입력하세요."); nicknameInput?.focus(); return; }
+
     try {
-      const res = await fetch("{% url 'users:profile_edit' %}", {
+      const res = await fetch("{% url 'rewards:update_character_name' %}", {
         method: "POST",
-        headers: { "X-CSRFToken": getCsrfToken() },
-        body: new FormData(form), // includes edit_type=name & username
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: JSON.stringify({ character_name: name }),
       });
+
       const data = await res.json();
-      if (!res.ok || !data.success) {
-        const msg = data.errors ? JSON.stringify(data.errors) : "저장에 실패했습니다.";
-        throw new Error(msg);
+      if (!res.ok || data.status !== "success") {
+        throw new Error(data.message || "저장에 실패했습니다.");
       }
 
-      // 서버가 내려준 username 우선 사용 (뷰 보완 반영)
-      const newName = data.username || username;
-      if (nicDisplay) nicDisplay.textContent = newName;
+      const newName = data.character_name || name;
 
-      // (선택) 다른 탭/페이지와 동기화
+      // ✅ 현재 페이지에서 즉시 반영 (존재하는 타겟만)
+      nicTargets.forEach(el => el.textContent = newName);
+      if (nicknameInput) nicknameInput.value = newName;
+
+      // ✅ 다른 탭/페이지와 느슨한 동기화(옵션)
       try {
-        localStorage.setItem("usernameUpdatedAt", Date.now().toString());
-        localStorage.setItem("usernameValue", newName);
-      } catch (e) {}
+        localStorage.setItem("characterNameValue", newName);
+        localStorage.setItem("characterNameUpdatedAt", String(Date.now()));
+      } catch (_) {}
 
       closeModal();
     } catch (err) {
@@ -221,19 +222,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  saveBtn && saveBtn.addEventListener("click", saveNickname);
+  saveBtn && saveBtn.addEventListener("click", saveCharacterName);
   nicknameInput && nicknameInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") { e.preventDefault(); saveNickname(); }
+    if (e.key === "Enter") { e.preventDefault(); saveCharacterName(); }
   });
 
-  // (선택) 다른 탭에서 변경되면 현재 화면도 갱신
+  // ✅ 다른 탭/페이지에서 변경되면 이 페이지도 갱신
   window.addEventListener("storage", (e) => {
-    if (e.key === "usernameUpdatedAt") {
-      const v = localStorage.getItem("usernameValue");
-      if (v && nicDisplay) nicDisplay.textContent = v;
+    if (e.key === "characterNameUpdatedAt") {
+      const v = localStorage.getItem("characterNameValue");
+      if (!v) return;
+      nicTargets.forEach(el => el.textContent = v);
+      if (nicknameInput) nicknameInput.value = v;
     }
   });
 });
+
 document.addEventListener("DOMContentLoaded", function() {
     // --- 리워드 및 캐릭터 정보 로딩 로직 ---
     const characterMainImages = {
@@ -260,14 +264,30 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     async function fetchRewardStatus() {
-        try {
-            const response = await fetch("{% url 'rewards:get_reward_status' %}");
-            if (!response.ok) throw new Error('리워드 정보 로딩 실패');
-            const data = await response.json();
-            updateRewardUI(data);
-        } catch (error) {
-            console.error('리워드 정보 로딩 오류:', error);
+      try {
+        const response = await fetch("{% url 'rewards:get_reward_status' %}");
+        if (!response.ok) throw new Error('리워드 정보 로딩 실패');
+
+        const data = await response.json();
+
+        // ✅ 서버에서 내려준 캐릭터 이름으로 화면 초기화
+        if (data.character_name) {
+          const nameTargets = [
+            document.getElementById('character-nic'),
+            document.getElementById('buyer-home-nic'),
+          ].filter(Boolean);
+
+          nameTargets.forEach(el => el.textContent = data.character_name);
+
+          const modalInput = document.querySelector('#profileEditModal #nicknameInput');
+          if (modalInput) modalInput.value = data.character_name;
         }
+
+        // 리워드 UI 반영
+        updateRewardUI(data);
+      } catch (error) {
+        console.error('리워드 정보 로딩 오류:', error);
+      }
     }
 
     function updateRewardUI(data) {
@@ -316,6 +336,30 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('check-bronze').style.display = (totalStamps >= 4) ? 'block' : 'none';
         document.getElementById('check-silver').style.display = (totalStamps >= 8) ? 'block' : 'none';
         document.getElementById('check-gold').style.display = (totalStamps >= 12) ? 'block' : 'none';
+
+        // ✅ 배경색 동적 변경: 완료(체크 있음) -> 녹색 / 미완료·진행중 -> 검정
+        const bronzeDone = totalStamps >= 4;
+        const silverDone = totalStamps >= 8;
+        const goldDone   = totalStamps >= 12;
+
+        const bronzeBox = document.querySelector('.cha_3th');
+        const silverBox = document.querySelector('.cha_2th');
+        const goldBox   = document.querySelector('.cha_1th');
+
+        const GREEN_BG = 'rgba(193, 255, 82, 0.40)'; // 기존 녹색
+        const BLACK_BG = '#000000';
+        const GREEN_BORDER = '0.7px solid #000000';
+        const BLACK_BORDER = '2px solid #C1FF52';
+
+        function applyBoxStyle(box, done) {
+          if (!box) return;
+          box.style.backgroundColor = done ? GREEN_BG : BLACK_BG;
+          box.style.border = done ? GREEN_BORDER : BLACK_BORDER;
+        }
+
+        applyBoxStyle(bronzeBox, bronzeDone);
+        applyBoxStyle(silverBox, silverDone);
+        applyBoxStyle(goldBox, goldDone);
     }
 
     function renderStamps(containerId, filledCount) {

@@ -9,6 +9,29 @@
 {% block script %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+//캐릭터닉네임수정관련 
+document.addEventListener("DOMContentLoaded", async function () {
+    const nicEl = document.getElementById("character-nic");
+    if (!nicEl) return;
+
+    // 1) 로컬에 직전 저장값이 있으면 즉시 반영(옵션)
+    try {
+        const cached = localStorage.getItem("characterNameValue");
+        if (cached) nicEl.textContent = cached;
+    } catch (_) {}
+
+    // 2) 서버의 최신 값으로 확정 반영
+    try {
+        const res = await fetch("{% url 'rewards:get_reward_status' %}");
+        if (!res.ok) throw new Error("리워드 정보 로딩 실패");
+        const data = await res.json();
+        if (data.character_name) {
+        nicEl.textContent = data.character_name;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+});
 document.addEventListener("DOMContentLoaded", function() {
     // --- 프로필 수정 관련 로직 ---
     const fileInput = document.getElementById('modal_item_photo');
@@ -428,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <img id="profileImage" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필" />
                     </div>
                     <div class="level-box">
-                        <p class="nickname">
+                        <p class="nickname" id="buyer-home-nic">
                             {{ request.user.username }}
                             <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
                         </p>
@@ -447,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="modal-actions">
                 <button type="button" id="closeModalBtn">×</button>
             </div>
-            <div class="nickname-row">
+            <div class="nickname-row" id="buyer-home-nic">
                 <input type="text" id="nicknameInput" value="{{ request.user.username }}" name="username">
                 <button type="button" name="edit_type" value="name" style="background: none; border: none; cursor: pointer;">
                     <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
@@ -498,7 +521,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                     <div class="information_detail">
                         <div class="cha_name" id="character-name">이름:</div>
-                        <div class="cha_nic">{{ user.username }}</div>
+                        <div class="cha_nic"  id="character-nic">{{ reward.character_name }}</div>
                         <div class="cha_growth">성장퍼센트:</div>
                         <div class="growth_chart">
                             <svg width="80" height="80" viewBox="0 0 100 100">

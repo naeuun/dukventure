@@ -10,4 +10,5 @@ urlpatterns = [
     # API 엔드포인트 (기존과 동일)
     # ex: /rewards/status/
     path('status/', views.get_reward_status, name='get_reward_status'),
+    path('update-name/', views.update_character_name, name='update_character_name'),
 ]
