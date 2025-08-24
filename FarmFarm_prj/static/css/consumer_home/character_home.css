@@ -335,7 +335,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 0.7px solid #000;
-  background: rgba(193, 255, 82, 0.40) url("{% static 'img/3cha.png' %}") no-repeat 20px center;
+  background: rgba(193, 255, 82, 0.40);
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -345,6 +345,7 @@ body {
   padding: 0 20px;
 
 }
+
 
 .cha_3th img {
   width: 50px;
@@ -358,7 +359,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 0.7px solid #000;
-  background: rgba(193, 255, 82, 0.40) url("{% static 'img/2cha.png' %}") no-repeat 20px center;
+  background: rgba(193, 255, 82, 0.40);
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -410,7 +411,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 2px solid #C1FF52;
-  background: #000 url("{% static 'img/1cha.png' %}") no-repeat 20px center;
+  background: #000;
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;

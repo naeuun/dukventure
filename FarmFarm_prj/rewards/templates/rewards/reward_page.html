@@ -35,6 +35,7 @@
           <!-- 이름 수정 팝업 -->
           <!-- .information_detail 내부 어딘가(연필 버튼 근처)에 배치 -->
         <div id="profileEditModal" class="name-edit-popover" role="dialog" aria-modal="true" aria-hidden="true">
+          
             <button type="button" class="name-pop-close" id="closeModalBtn">×</button>
 
             <div class="nickname-row">
@@ -65,7 +66,10 @@
       <!-- 리워드 하단 -->
       <div class="bottom-section2">
         <!-- 3등(동) -->
-        <div class="cha_3th">
+        <div class="cha_3th" style="background-color: rgba(193, 255, 82, 0.40); background-image:url('{% static "img/level1.png" %}');
+            background-repeat:no-repeat;
+            background-position:-20px center;
+            background-size:90% auto;background-blend-mode: multiply;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
           <div class="stamps-row" id="stamps-bronze"></div>
@@ -75,7 +79,10 @@
         </div>
 
         <!-- 2등(은) -->
-        <div class="cha_2th">
+        <div class="cha_2th" style="background-color: rgba(193, 255, 82, 0.40); background-image:url('{% static "img/level2.png" %}');
+            background-repeat:no-repeat;
+            background-position:78px center;
+            background-size:40% auto;background-blend-mode: multiply;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
           <div class="stamps-row" id="stamps-silver"></div>
@@ -85,7 +92,10 @@
         </div>
 
         <!-- 1등(금) -->
-        <div class="cha_1th">
+        <div class="cha_1th" style="background-color: #000; background-image:url('{% static "img/level3.png" %}');
+            background-repeat:no-repeat;
+            background-position:-9px calc(50% + 20px); 
+            background-size:90% auto;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/1th.png' %}" alt="캐릭터 1등" class="th" />
           <div class="stamps-row" id="stamps-gold"></div>
