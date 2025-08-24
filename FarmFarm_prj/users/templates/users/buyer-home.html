@@ -428,7 +428,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <img id="profileImage" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필" />
                     </div>
                     <div class="level-box">
-                        <p class="nickname">
+                        <p class="nickname" id="buyer-home-nic">
                             {{ request.user.username }}
                             <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
                         </p>
@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="modal-actions">
                 <button type="button" id="closeModalBtn">×</button>
             </div>
-            <div class="nickname-row">
+            <div class="nickname-row" id="buyer-home-nic">
                 <input type="text" id="nicknameInput" value="{{ request.user.username }}" name="username">
                 <button type="button" name="edit_type" value="name" style="background: none; border: none; cursor: pointer;">
                     <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
@@ -498,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                     <div class="information_detail">
                         <div class="cha_name" id="character-name">이름:</div>
-                        <div class="cha_nic">{{ user.username }}</div>
+                        <div class="cha_nic"  id="character-nic">{{ user.username }}</div>
                         <div class="cha_growth">성장퍼센트:</div>
                         <div class="growth_chart">
                             <svg width="80" height="80" viewBox="0 0 100 100">

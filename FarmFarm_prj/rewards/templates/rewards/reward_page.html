@@ -90,10 +90,10 @@
       <!-- 리워드 하단 -->
       <div class="bottom-section2">
         <!-- 3등(동) -->
-        <div class="cha_3th" style="background-color: rgba(193, 255, 82, 0.40); background-image:url('{% static "img/level1.png" %}');
+        <div class="cha_3th" style="background-image:url('{% static "img/level1.png" %}');
             background-repeat:no-repeat;
             background-position:-20px center;
-            background-size:90% auto;background-blend-mode: multiply;">
+            background-size:90% auto;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
           <div class="stamps-row" id="stamps-bronze"></div>
@@ -103,10 +103,10 @@
         </div>
 
         <!-- 2등(은) -->
-        <div class="cha_2th" style="background-color: rgba(193, 255, 82, 0.40); background-image:url('{% static "img/level2.png" %}');
+        <div class="cha_2th" style="background-image:url('{% static "img/level2.png" %}');
             background-repeat:no-repeat;
             background-position:78px center;
-            background-size:40% auto;background-blend-mode: multiply;">
+            background-size:40% auto;">
           <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
           <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
           <div class="stamps-row" id="stamps-silver"></div>
@@ -116,7 +116,7 @@
         </div>
 
         <!-- 1등(금) -->
-        <div class="cha_1th" style="background-color: #000; background-image:url('{% static "img/level3.png" %}');
+        <div class="cha_1th" style="background-image:url('{% static "img/level3.png" %}');
             background-repeat:no-repeat;
             background-position:-9px calc(50% + 20px); 
             background-size:90% auto;">
@@ -316,6 +316,30 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('check-bronze').style.display = (totalStamps >= 4) ? 'block' : 'none';
         document.getElementById('check-silver').style.display = (totalStamps >= 8) ? 'block' : 'none';
         document.getElementById('check-gold').style.display = (totalStamps >= 12) ? 'block' : 'none';
+
+        // ✅ 배경색 동적 변경: 완료(체크 있음) -> 녹색 / 미완료·진행중 -> 검정
+        const bronzeDone = totalStamps >= 4;
+        const silverDone = totalStamps >= 8;
+        const goldDone   = totalStamps >= 12;
+
+        const bronzeBox = document.querySelector('.cha_3th');
+        const silverBox = document.querySelector('.cha_2th');
+        const goldBox   = document.querySelector('.cha_1th');
+
+        const GREEN_BG = 'rgba(193, 255, 82, 0.40)'; // 기존 녹색
+        const BLACK_BG = '#000000';
+        const GREEN_BORDER = '0.7px solid #000000';
+        const BLACK_BORDER = '2px solid #C1FF52';
+
+        function applyBoxStyle(box, done) {
+          if (!box) return;
+          box.style.backgroundColor = done ? GREEN_BG : BLACK_BG;
+          box.style.border = done ? GREEN_BORDER : BLACK_BORDER;
+        }
+
+        applyBoxStyle(bronzeBox, bronzeDone);
+        applyBoxStyle(silverBox, silverDone);
+        applyBoxStyle(goldBox, goldDone);
     }
 
     function renderStamps(containerId, filledCount) {
