@@ -53,7 +53,7 @@ jobs:
             OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
             BUYER_PASSWORD=${{ secrets.BUYER_PASSWORD }}
             SELLER_PASSWORD=${{ secrets.SELLER_PASSWORD }}
-            SECRET_KEY=${{ secrets.SECRET_KEY }}
+          
             EOF
             # --- .env 파일 생성 끝 ---
 
