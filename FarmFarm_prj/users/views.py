@@ -283,6 +283,8 @@ def profile_edit(request):
             elif edit_type == 'name':
                 user.username = form.cleaned_data['username']
                 user.save()
+                # ✅ 변경된 닉네임을 함께 반환
+                return JsonResponse({'success': True, 'username': user.username})
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     else:

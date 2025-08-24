@@ -148,7 +148,7 @@ body {
 }
 
 /* 이름 수정 팝업: 트리거(연필) '아래'에 붙게 */
-.name-edit-popover {
+.modal-overlay {
   position: absolute;
   top: 24px;
   /* ↑ 기존 -4px → 버튼 아래로 내림 (필요하면 24~36px로 미세조정) */
@@ -196,7 +196,7 @@ body {
 }
 
 /* 닫기(X) 버튼 */
-.name-pop-close {
+#closeModalBtn {
   width: 18px;
   height: 18px;
   border: none;
@@ -219,7 +219,7 @@ body {
 }
 
 /* 인풋/저장 버튼은 기존 그대로 사용 */
-.name-input {
+#nicknameInput {
   width: 75%;
   height: 28px;
   padding: 4px 8px;
@@ -232,11 +232,11 @@ body {
   outline: none;
 }
 
-.name-input::placeholder {
+#nicknameInput::placeholder {
   color: rgba(255, 255, 255, .65);
 }
 
-.name-pop-save {
+.nickname-edit-btn {
   align-self: flex-end;
   height: 12px;
   padding: 0 10px;
@@ -280,7 +280,7 @@ body {
   margin-bottom: 30px;
 }
 
-.edit {
+.nickname-edit-btn {
   align-items: end;
 }
 
@@ -335,7 +335,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 0.7px solid #000;
-  background: rgba(193, 255, 82, 0.40) url("{% static 'img/3cha.png' %}") no-repeat 20px center;
+  background: rgba(193, 255, 82, 0.40);
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -345,6 +345,7 @@ body {
   padding: 0 20px;
 
 }
+
 
 .cha_3th img {
   width: 50px;
@@ -358,7 +359,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 0.7px solid #000;
-  background: rgba(193, 255, 82, 0.40) url("{% static 'img/2cha.png' %}") no-repeat 20px center;
+  background: rgba(193, 255, 82, 0.40);
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
@@ -410,7 +411,7 @@ body {
   height: 134.605px;
   border-radius: 35px;
   border: 2px solid #C1FF52;
-  background: #000 url("{% static 'img/1cha.png' %}") no-repeat 20px center;
+  background: #000;
   background-size: auto 80%;
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.20);
   margin-top: 30px;
