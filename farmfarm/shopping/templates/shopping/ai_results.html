@@ -60,10 +60,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const csrftoken = getCookie('csrftoken');
 
     // 모달 열기
+    if (profileEditBtn) {
     profileEditBtn.addEventListener('click', function(e) {
         e.preventDefault();
         profileEditModal.style.display = 'block';
     });
+}
+
 
     // 모달 닫기
     if (closeModalBtn) {
@@ -220,6 +223,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- 모달 관련 함수 ---
     async function fetchStoreItems(storeId, storeName, distance) {
+      document.getElementById('modalStoreName').textContent = storeName;
+
         try {
             const resp = await fetch(`/reservations/api/store/${storeId}/items/`);
             if (!resp.ok) throw new Error('API response not OK');
@@ -406,12 +411,10 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="level-box">
             <p class="nickname">
               {{ request.user.username }}
-              <img
-                id="editProfileBtn"
-                src="{% static 'img/edit.png' %}"
-                alt="수정"
-                style="cursor: pointer"
-              />
+              
+                            {% if request.user.username != "김현지" %}
+                            <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
+                            {% endif %}
             </p>
                     <p class="level">
                     
@@ -500,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="storeModal" class="bottom_sheet" style="display:none;">
       <div class="sheet_content_v2">
         <div class="many_items_store">
-          <h3 id="modalStoreName"></h3>
+          <div id="modalStoreName"></div>
           <button class="closingbtn">×</button>
           <div id="modalItemList"></div>
         </div>

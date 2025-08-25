@@ -58,10 +58,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const csrftoken = getCookie('csrftoken');
 
     // 모달 열기
+    if (profileEditBtn) {
     profileEditBtn.addEventListener('click', function(e) {
         e.preventDefault();
         profileEditModal.style.display = 'block';
     });
+}
+
 
     // 모달 닫기
     closeModalBtn.addEventListener('click', function(e) {
@@ -349,12 +352,10 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="level-box">
             <p class="nickname">
               {{ request.user.username }}
-              <img
-                id="editProfileBtn"
-                src="{% static 'img/edit.png' %}"
-                alt="수정"
-                style="cursor: pointer"
-              />
+              
+                            {% if request.user.username != "박승자" %}
+                            <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
+                            {% endif %}
             </p>
           </div>
         </div>
