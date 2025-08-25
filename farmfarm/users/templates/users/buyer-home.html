@@ -9,6 +9,29 @@
 {% block script %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+//캐릭터닉네임수정관련 
+document.addEventListener("DOMContentLoaded", async function () {
+    const nicEl = document.getElementById("character-nic");
+    if (!nicEl) return;
+
+    // 1) 로컬에 직전 저장값이 있으면 즉시 반영(옵션)
+    try {
+        const cached = localStorage.getItem("characterNameValue");
+        if (cached) nicEl.textContent = cached;
+    } catch (_) {}
+
+    // 2) 서버의 최신 값으로 확정 반영
+    try {
+        const res = await fetch("{% url 'rewards:get_reward_status' %}");
+        if (!res.ok) throw new Error("리워드 정보 로딩 실패");
+        const data = await res.json();
+        if (data.character_name) {
+        nicEl.textContent = data.character_name;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+});
 document.addEventListener("DOMContentLoaded", function() {
     // --- 프로필 수정 관련 로직 ---
     const fileInput = document.getElementById('modal_item_photo');
@@ -127,11 +150,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- 리워드 및 캐릭터 정보 로딩 로직 ---
     const characterMainImages = {
+        0: "{% static 'img/level0.png' %}", // Level 0 이미지 추가
         1: "{% static 'img/level1.png' %}",
         2: "{% static 'img/level2.png' %}",
         3: "{% static 'img/level3.png' %}",
     };
     const characterStyles = {
+        0: { transform: 'scale(0.5)', marginTop: '40px', marginLeft: '0px' }, // Level 0 스타일
         1: { transform: 'scale(1.0)', marginTop: '40px', marginLeft: '0px' },
         2: { transform: 'scale(0.9)', marginTop: '30px', marginLeft: '0px' },
         3: { transform: 'scale(1.1)', marginTop: '30px', marginLeft: '0px' }
@@ -141,12 +166,13 @@ document.addEventListener("DOMContentLoaded", function() {
         2: { transform: 'scale(1.0)' },
         3: { transform: 'scale(3.0)', marginTop: '50px' },
     };
-     const stampOnImages = [
+    const stampOnImages = [
         "{% static 'img/stamps/stamp_on.png' %}",
         "{% static 'img/stamps/stamp_on2.png' %}",
         "{% static 'img/stamps/stamp_on3.png' %}",
     ];
-    const stampOffImages =[
+    // 오타 수정되었는지 확인
+    const stampOffImages = [
         "{% static 'img/stamps/stamp_off.png' %}",
         "{% static 'img/stamps/stamp_off2.png' %}",
         "{% static 'img/stamps/stamp_off3.png' %}",
@@ -163,33 +189,46 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateRewardUI(data) {
-        const levelText = document.getElementById('character-level-text');
-        if(levelText) levelText.textContent = data.character_level;
-        
-        const characterLevel = data.character_level;
-        const mainImage = document.getElementById('character-main-image');
+        // [수정] 총 스탬프 개수를 기준으로 모든 UI를 업데이트
+        const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
+        const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
 
+        // 1. 총 스탬프 개수에 따라 화면에 표시할 레벨 결정 (0, 1, 2, 3)
+        let displayLevel;
+        if (totalStamps < 4) {
+            displayLevel = 0;
+        } else if (totalStamps < 8) {
+            displayLevel = 1;
+        } else if (totalStamps < 12) {
+            displayLevel = 2;
+        } else {
+            displayLevel = 3;
+        }
+        
+        const levelText = document.getElementById('character-level-text');
+        if(levelText) levelText.textContent = data.character_level; // DB 레벨은 그대로 표시
+
+        // 2. 메인 캐릭터 이미지 및 스타일 업데이트
+        const mainImage = document.getElementById('character-main-image');
         if (mainImage) {
-            mainImage.src = characterMainImages[characterLevel] || characterMainImages[1];
-            const styles = characterStyles[characterLevel] || characterStyles[1];
+            mainImage.src = characterMainImages[displayLevel];
+            const styles = characterStyles[displayLevel];
             mainImage.style.transform = styles.transform;
             mainImage.style.marginTop = styles.marginTop;
             mainImage.style.marginLeft = styles.marginLeft;
         }
         
+        // 3. 썸네일 및 화살표 업데이트
         const arrow = document.getElementById('level-arrow');
-        document.querySelectorAll('.level-thumbnail').forEach((thumb, index) => {
-            const level = index + 1;
-            
-            const thumbStyle = thumbnailStyles[level] || { transform: 'scale(1.0)' };
-            thumb.style.transform = thumbStyle.transform;
+        document.querySelectorAll('.level-thumbnail').forEach((thumb) => {
+            // HTML에 data-level="1", data-level="2" 등을 추가해야 정확히 동작합니다.
+            const thumbLevel = parseInt(thumb.id.split('-')[2], 10);
             thumb.style.border = 'none';
-
-            if (level === characterLevel) {
+            if (thumbLevel === displayLevel) {
                 thumb.style.opacity = '1';
                 if(arrow) {
                     setTimeout(() => {
-                        const arrowOffset = thumb.offsetLeft + (thumb.offsetWidth / 2) - (arrow.offsetWidth / 2);
+                        const arrowOffset = thumb.parentElement.offsetLeft + (thumb.parentElement.offsetWidth / 2) - (arrow.offsetWidth / 2);
                         arrow.style.left = `${arrowOffset}px`;
                         arrow.style.display = 'block';
                     }, 50);
@@ -198,42 +237,34 @@ document.addEventListener("DOMContentLoaded", function() {
                 thumb.style.opacity = '0.6';
             }
         });
-
-        const basePercentage = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
-        let growthPercentage = (basePercentage[data.medal_tier] || 0) + (data.stamp_count * 6.25);
-        if (data.medal_tier === 'GOLD') {
-             growthPercentage = 100;
-        }
-        growthPercentage = Math.min(Math.floor(growthPercentage) + 25, 100);
-
+        // 4. 성장률 퍼센트 업데이트
+        const growthPercentage = Math.floor((totalStamps / 12) * 100);
         const circleBar = document.getElementById('growth_chart_circle');
         const circleText = document.getElementById('growth_percent_text');
         if (circleBar && circleText) {
             const radius = circleBar.r.baseVal.value;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (growthPercentage / 100) * circumference;
-            
             circleBar.style.strokeDashoffset = offset;
             circleText.textContent = `${growthPercentage}%`;
         }
 
+        // 5. 리워드 스탬프 그리드 업데이트
         const stampsGrid = document.getElementById('stamps-grid-container');
         if (stampsGrid) {
             stampsGrid.innerHTML = '';
-            const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
-            const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
-
             for (let i = 0; i < 12; i++) {
                 const img = document.createElement('img');
+                
+                // [오류 수정] 단수형 변수(stampOnImage) 대신 복수형 배열(stampOnImages)에서 무작위로 선택하는 로직으로 수정
                 if (i < totalStamps) {
-                    // 획득한 스탬프일 경우, ON 이미지 배열에서 무작위로 하나를 선택
                     const randomIndex = Math.floor(Math.random() * stampOnImages.length);
                     img.src = stampOnImages[randomIndex];
                 } else {
-                    // 획득하지 못한 스탬프일 경우, OFF 이미지 배열에서 무작위로 하나를 선택
                     const randomIndex = Math.floor(Math.random() * stampOffImages.length);
                     img.src = stampOffImages[randomIndex];
                 }
+
                 img.style.width = '100%';
                 img.style.objectFit = 'contain';
                 stampsGrid.appendChild(img);
@@ -420,12 +451,12 @@ document.addEventListener("DOMContentLoaded", function() {
                         <img id="profileImage" src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필" />
                     </div>
                     <div class="level-box">
-                        <p class="nickname">
+                        <p class="nickname" id="buyer-home-nic">
                             {{ request.user.username }}
                             <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
                         </p>
                         <p class="level">
-                            LV. <span id="character-level-text">1</span>
+                            LV. <span id="character-level-text">-</span>
                             <img src="{% static 'img/level.png' %}" alt="" class="medal"/>
 
                         </p>
@@ -439,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="modal-actions">
                 <button type="button" id="closeModalBtn">×</button>
             </div>
-            <div class="nickname-row">
+            <div class="nickname-row" id="buyer-home-nic">
                 <input type="text" id="nicknameInput" value="{{ request.user.username }}" name="username">
                 <button type="button" name="edit_type" value="name" style="background: none; border: none; cursor: pointer;">
                     <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
@@ -448,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="image-row">
                 <div class="image-preview">
                     <input type="file" name="profile_image" id="profileImageInput" style="display:none;">
-                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/edit.png{% endif %}" alt="프로필 미리보기" class="preview_img">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}/static/img/default_profile.png{% endif %}" alt="프로필 미리보기" class="preview_img">
                     <img class="image-edit-btn" src="{% static 'img/edit.png' %}" alt="이미지 수정" style="cursor: pointer;">
                 </div>
             </div>
@@ -471,7 +502,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="information_cha">
                         <div class="thumbnail-row">
                             <img id="level-arrow" src="{% static 'img/arrow.png' %}" alt="current level">
-                             <div class="thumbnail-wrapper">
+                             
+                            <div class="thumbnail-wrapper">
                                 <img id="level-thumb-1" class="level-thumbnail" src="{% static 'img/level1.png' %}" alt="Lv.1">
                             </div>
 
@@ -489,14 +521,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                     <div class="information_detail">
                         <div class="cha_name" id="character-name">이름:</div>
-                        <div class="cha_nic">{{ user.username }}</div>
+                        <div class="cha_nic"  id="character-nic">{{ reward.character_name }}</div>
                         <div class="cha_growth">성장퍼센트:</div>
                         <div class="growth_chart">
                             <svg width="80" height="80" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#5a6051" stroke-width="8"></circle>
                                 <circle id="growth_chart_circle" cx="50" cy="50" r="45" fill="none" stroke="#C1FF52" stroke-width="8" stroke-linecap="round" style="stroke-dasharray: 283; stroke-dashoffset: 283;"></circle>
                             </svg>
-                            <div id="growth_percent_text" class="growth_percent">0%</div>
+                            <div id="growth_percent_text" class="growth_percent">- %</div>
                         </div>
                     </div>
                 </div>
@@ -506,6 +538,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     
                         <img class="rew_gra" src="{% static 'img/cha_gra.png' %}" alt="장식">
                     </a>     
+                </div>
+                <!-- 말풍선 모달 -->
+                <div class="speech-bubble-modal" aria-hidden="true">
+                    <div class="speech-bubble">
+                        <span class="line1">가게등록 또는 리뷰를 쓰면</span><br />
+                        <span class="line2">리워드</span><span class="line1">가 주어지고<br />브로콜리가</span> <span class="line2">자라요!</span></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -606,7 +645,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="character1">내가 쓴 리뷰<img src="{% static 'img/rev_icon.png' %}" alt="리뷰 아이콘" class="rev_icon"></div>
             <div class="review_hugger">
                 <img src="{% static 'img/review_deco.png' %}" alt="리뷰데코" class="review_deco">
-                {% for review in reviews %}
+                {% for review in reviews|slice:":6" %}
                 <div class="per_review" id="review-card-{{ review.id }}">
                     <div class="reviewer_profile">
                         <img src="{% if review.photo %}{{ review.photo.url }}{% else %}/static/img/smiling_brocoli.png{% endif %}" alt="내 프로필" class="r_profile_p">
@@ -628,7 +667,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </ul>
                     </div>
                     <div class="review_content">
-                        {{ review.content|truncatewords:20 }}
+                        {{ review.content|truncatechars:15 }}
                         <div class="keywords">
                         {% for keyword in review.get_keywords_as_list %}
                         <span>#{{ keyword }}</span>

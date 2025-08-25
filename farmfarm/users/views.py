@@ -229,7 +229,7 @@ def buyer_home(request):
     # 내가 쓴 리뷰 목록
     my_reviews = Review.objects.filter(
         author=buyer
-    ).select_related('store', 'author__user').order_by('-created_at')[:5]
+    ).select_related('store', 'author__user').order_by('-created_at')
 
     # 픽업 완료된 예약 내역만 추출 = 구매 내역 
     past_reservations = Reservation.objects.filter(
@@ -283,6 +283,8 @@ def profile_edit(request):
             elif edit_type == 'name':
                 user.username = form.cleaned_data['username']
                 user.save()
+                # ✅ 변경된 닉네임을 함께 반환
+                # return JsonResponse({'success': True, 'username': user.username})
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     else:
@@ -291,5 +293,7 @@ def profile_edit(request):
     
 def reservation_card(request):
     return render(request, 'users/reservation_card.html')
+
+
 
 

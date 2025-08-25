@@ -45,29 +45,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 추가 버튼 클릭
     document.getElementById('addItemBtn').onclick = function() {
-        const existingItems = document.querySelectorAll('#itemList .per_row .item_detail_hugger');
-        const idx = existingItems.length;
-        const div = document.createElement('div');
-        div.className = 'item_detail_hugger';
-        div.innerHTML = `
-            <div>
-                <input type="text" name="item_name_${idx}" id="item_name_${idx}" placeholder="품목명">
-                <input type="text" name="item_unit_${idx}" id="item_unit_${idx}" placeholder="단위">
-            </div>
-            <div>
-                <input type="number" name="item_price_${idx}" id="item_price_${idx}" placeholder="가격">
-                <input type="text" name="item_desc_${idx}" id="item_desc_${idx}" placeholder="설명">
-            </div>
-            <div>
-                <input type="file" id="itemPhoto"  name="photo" accept="image/*" style="display: none;">
-                <label for="itemPhoto">
-                    <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
-                </label>
-                <button class="deleteitem" type="button" onclick="removeItem(this)">×</button>
-            </div>
-        `;
-        document.querySelector('#itemList .per_row').appendChild(div);
-    };
+    const existingItems = document.querySelectorAll('#itemList .per_row .item_detail_hugger');
+    const idx = existingItems.length;
+    const div = document.createElement('div');
+    div.className = 'item_detail_hugger';
+    div.innerHTML = `
+        <div>
+            <input type="text" name="item_name_${idx}" id="item_name_${idx}" placeholder="품목명">
+            <input type="text" name="item_unit_${idx}" id="item_unit_${idx}" placeholder="단위">
+        </div>
+        <div>
+            <input type="number" name="item_price_${idx}" id="item_price_${idx}" placeholder="가격">
+            <input type="text" name="item_desc_${idx}" id="item_desc_${idx}" placeholder="설명">
+        </div>
+        <div>
+            <input type="file" id="itemPhoto_${idx}" name="item_photo_${idx}" accept="image/*" style="display: none;">
+            <label for="itemPhoto_${idx}">
+                <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
+            </label>
+            <button class="deleteitem" type="button" onclick="removeItem(this)">×</button>
+        </div>
+    `;
+    document.querySelector('#itemList .per_row').appendChild(div);
+};
+
 
     // ------------------------- 지도/주소 관련 -------------------------
     const addressInput = document.getElementById('addressInput');

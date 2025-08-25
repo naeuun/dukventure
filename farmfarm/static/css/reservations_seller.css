@@ -317,6 +317,7 @@ body {
   font-size: 17px;
   font-weight:800;
   color:black;
+  margin-bottom: 13px;
 }
 
 .modal {
@@ -338,7 +339,7 @@ body {
   padding: 20px;
   border-radius: 14px;
   width: 100%;
-  height: 100%;
+  height: 400px;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -350,7 +351,7 @@ body {
   24px 24px 24px rgba(42, 42, 42, 0.3),
   18px 18px 18px rgba(109, 109, 109, 0.12),
   inset 0 0 8px rgba(255, 255, 255, 0.35);
-  transform: translateY(8px) scale(.98);
+  transform: translateY(-63px) scale(.98);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
 }
@@ -484,3 +485,37 @@ body {
 .logoutbtn img{
   width:27px;
 }
+/* 라디오 버튼 숨기기 */
+#id_rejected_reason input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+/* 라벨 스타일 */
+#id_rejected_reason label {
+  display: block; /* 각 항목 세로 배치 */
+  padding: 5px 25px;
+  width:180px;
+  border: 1px solid #C1FF52;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: black;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  color:#C1FF52;
+}
+
+/* hover 시 */
+#id_rejected_reason label:hover {
+  background-color: #C1FF52;
+  color:black;
+  font-weight:700;
+}
+
+/* 선택된 경우 */
+#id_rejected_reason label:has(input[type="radio"]:checked) {
+  background-color: #C1FF52;
+  color:black;
+  font-weight:700;
+}
+

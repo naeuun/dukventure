@@ -563,7 +563,7 @@ document.addEventListener("DOMContentLoaded", function () {
       />
 
       
-      {% for review in reviews %}
+      {% for review in reviews|slice:":6" %}
       <div class="per_review">
         <div class="reviewer_profile">
           <img
@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
           {% endfor %}
         </div>
         <div class="review_content">
-          {{ review.content|truncatewords:20 }}
+          {{ review.content|truncatechars:17 }}
         <div class="keywords">
         {% for keyword in review.get_keywords_as_list %}
           <span>#{{ keyword }}</span>

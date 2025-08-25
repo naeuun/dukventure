@@ -26,7 +26,51 @@
         <!-- 오른쪽 정보 -->
         <div class="information_detail">
           <div class="cha_name" id="character-name">이름:</div>
-          <div class="cha_nic">{{ user.username }}</div>
+          <div class="cha_nic"  id="character-nic">{{ reward.character_name }}</div>
+
+          <button type="button" class="name-pop-open" aria-controls="nameEditPopover" aria-expanded="false">
+            <img src="{% static 'img/edit.png' %}" alt="이름 수정" class="edit" />
+          </button>
+
+          <!-- 이름 수정 팝업 -->
+          <!-- .information_detail 내부 어딘가(연필 버튼 근처)에 배치 -->
+        {% comment %} <div id="profileEditModal" class="name-edit-popover" role="dialog" aria-modal="true" aria-hidden="true">
+          
+            <button type="button" class="name-pop-close" id="closeModalBtn">×</button>
+
+            <div class="nickname-row">
+                <input type="text" id="nicknameInput" class="name-input"
+                    value="{{ request.user.username }}" name="username">
+                <button type="button" class="name-pop-save" name="edit_type" value="name">
+                    <img class="edit" src="{% static 'img/edit.png' %}" alt="닉네임 저장">
+                </button>
+            </div>
+        </div> {% endcomment %}
+        
+        <div class="modal-overlay" id="profileEditModal" style="display: none;">
+          <div class="modal-content">
+            <form id="profileEditForm" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <!-- ✅ 서버 분기용 hidden 필드 꼭 필요 -->
+              <input type="hidden" name="edit_type" value="name" />
+
+              <div class="modal-actions">
+                <button type="button" id="closeModalBtn">×</button>
+              </div>
+
+              <div class="nickname-row">
+                <input type="text" id="nicknameInput" name="username" value="{{ reward.character_name }}">
+                
+                <button type="button" id="saveNicknameBtn" style="background:none;border:none;cursor:pointer;">
+                  <img class="nickname-edit-btn" src="{% static 'img/edit.png' %}" alt="닉네임 수정">
+                </button>
+              </div>
+
+              
+            </form>
+          </div>
+        </div>
+
 
           <div class="cha_growth">성장퍼센트:</div>
           <div class="growth_chart">
@@ -41,49 +85,51 @@
       </div>
     </div>
 
-          <div class="line"></div>
+      <div class="line"></div>
 
-          <!-- 리워드 하단 -->
-          <div class="bottom-section">
-            <!-- 3등(동) -->
-            <div class="cha_3th">
-            <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
+      <!-- 리워드 하단 -->
+      <div class="bottom-section2">
+        <!-- 3등(동) -->
+        <div class="cha_3th" style="background-image:url('{% static "img/level1.png" %}');
+            background-repeat:no-repeat;
+            background-position:-20px center;
+            background-size:90% auto;">
+          <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
+          <img src="{% static 'img/3th.png' %}" alt="캐릭터 3등" class="th" />
+          <div class="stamps-row" id="stamps-bronze"></div>
+          <div class="checkbox">
+              <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-bronze" style="display:none;" />
+          </div>
+        </div>
 
-            <!-- 동(브론즈) 4칸 -->
-            <div class="stamps-row" id="stamps-bronze"></div>
+        <!-- 2등(은) -->
+        <div class="cha_2th" style="background-image:url('{% static "img/level2.png" %}');
+            background-repeat:no-repeat;
+            background-position:78px center;
+            background-size:40% auto;">
+          <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
+          <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
+          <div class="stamps-row" id="stamps-silver"></div>
+          <div class="checkbox">
+              <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-silver" style="display:none;" />
+          </div>
+        </div>
 
-            <!-- 4칸 다 채우면 보일 체크 -->
-            <div class="checkbox">
-                <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-bronze" style="display:none;" />
-            </div>
-            </div>
-
-            <!-- 2등(은) -->
-            <div class="cha_2th">
-            <img src="{% static 'img/2th.png' %}" alt="캐릭터 2등" class="th" />
-
-            <!-- 은(실버) 4칸 -->
-            <div class="stamps-row" id="stamps-silver"></div>
-
-            <div class="checkbox">
-                <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-silver" style="display:none;" />
-            </div>
-            </div>
-
-            <!-- 1등(금) -->
-            <div class="cha_1th">
-            <img src="{% static 'img/1th.png' %}" alt="캐릭터 1등" class="th" />
-
-            <!-- 금(골드) 4칸 -->
-            <div class="stamps-row" id="stamps-gold"></div>
-
-            <div class="checkbox">
-                <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-gold" style="display:none;" />
-            </div>
-            </div>
+        <!-- 1등(금) -->
+        <div class="cha_1th" style="background-image:url('{% static "img/level3.png" %}');
+            background-repeat:no-repeat;
+            background-position:-9px calc(50% + 20px); 
+            background-size:90% auto;">
+          <!-- [수정된 부분] 이미지 경로를 올바르게 수정 -->
+          <img src="{% static 'img/1th.png' %}" alt="캐릭터 1등" class="th" />
+          <div class="stamps-row" id="stamps-gold"></div>
+          <div class="checkbox">
+              <img src="{% static 'img/check.png' %}" alt="체크박스" class="check" id="check-gold" style="display:none;" />
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
     <!-- 네비게이션 -->
     <div class="nav_box">
@@ -103,148 +149,110 @@
       </nav>
       {% endif %}
     </div>
-  </div>
 </div>
 {% endblock body %}
 
 {# ---------- SCRIPT ---------- #}
 {% block script %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/consumer_home/buyer_home.js' %}"></script>
+<script src="{% static 'js/consumer_home/character_home.js' %}"></script>
+
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("profileEditModal");
+  const openBtn = document.querySelector(".name-pop-open");
+  const closeBtn = document.getElementById("closeModalBtn");
+  const form = document.getElementById("profileEditForm");
+
+  // 모달 내부 input만 정확히 잡기
+  const nicknameInput = document.querySelector("#profileEditModal #nicknameInput");
+  const saveBtn = document.getElementById("saveNicknameBtn");
+
+  // 업데이트 대상: 각 페이지에서 존재하는 것만 갱신
+  const nicTargets = [
+    document.getElementById("character-nic"),   // reward_page.html 또는 buyer-home에서 사용
+    document.getElementById("buyer-home-nic"),  // (있을 수 있음) 예전 아이디 호환
+  ].filter(Boolean);
+
+  function getCsrfToken() {
+    const inp = form?.querySelector('input[name="csrfmiddlewaretoken"]');
+    return inp ? inp.value : "";
+  }
+
+  function openModal() { if (modal) { modal.style.display = "block"; nicknameInput?.focus(); } }
+  function closeModal() { if (modal) modal.style.display = "none"; }
+
+  openBtn && openBtn.addEventListener("click", openModal);
+  closeBtn && closeBtn.addEventListener("click", closeModal);
+  modal && modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+  async function saveCharacterName() {
+    const name = (nicknameInput?.value || "").trim();
+    if (!name) { alert("닉네임을 입력하세요."); nicknameInput?.focus(); return; }
+
+    try {
+      const res = await fetch("{% url 'rewards:update_character_name' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: JSON.stringify({ character_name: name }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.status !== "success") {
+        throw new Error(data.message || "저장에 실패했습니다.");
+      }
+
+      const newName = data.character_name || name;
+
+      // ✅ 현재 페이지에서 즉시 반영 (존재하는 타겟만)
+      nicTargets.forEach(el => el.textContent = newName);
+      if (nicknameInput) nicknameInput.value = newName;
+
+      // ✅ 다른 탭/페이지와 느슨한 동기화(옵션)
+      try {
+        localStorage.setItem("characterNameValue", newName);
+        localStorage.setItem("characterNameUpdatedAt", String(Date.now()));
+      } catch (_) {}
+
+      closeModal();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  saveBtn && saveBtn.addEventListener("click", saveCharacterName);
+  nicknameInput && nicknameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); saveCharacterName(); }
+  });
+
+  // ✅ 다른 탭/페이지에서 변경되면 이 페이지도 갱신
+  window.addEventListener("storage", (e) => {
+    if (e.key === "characterNameUpdatedAt") {
+      const v = localStorage.getItem("characterNameValue");
+      if (!v) return;
+      nicTargets.forEach(el => el.textContent = v);
+      if (nicknameInput) nicknameInput.value = v;
+    }
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function() {
-    // --- 프로필 수정 관련 로직 ---
-    const fileInput = document.getElementById('modal_item_photo');
-    const fileNamePreview = document.getElementById('fileNamePreview');
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if(file) {
-                fileNamePreview.textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const btn = document.querySelector('.edit-item-btn[data-id="'+modalId.value+'"]');
-                    const parent = btn.closest('.information_hugger');
-                    const imgTag = parent.querySelector('.product-img');
-                    imgTag.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            } else {
-                fileNamePreview.textContent = "선택된 파일 없음";
-            }
-        });
-    }
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken');
-
-    const profileEditModal = document.getElementById('profileEditModal');
-    const profileEditBtn = document.getElementById('editProfileBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const profileImageEditBtn = document.querySelector('.image-edit-btn');
-    const profileImageInput = document.getElementById('profileImageInput');
-    const profileEditForm = document.getElementById('profileEditForm');
-    
-    if (profileEditBtn) {
-        profileEditBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            if(profileEditModal) profileEditModal.style.display = 'flex';
-        });
-    }
-    
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if(profileEditModal) profileEditModal.style.display = 'none';
-        });
-    }
-
-    if(profileImageEditBtn && profileImageInput){
-        profileImageEditBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            profileImageInput.click();
-        });
-    }
-
-    if (profileImageInput) {
-        profileImageInput.addEventListener('change', function(){
-            var formData = new FormData(profileEditForm);
-            formData.append('edit_type', 'image');
-            $.ajax({
-                url: "{% url 'users:profile_edit' %}",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: { 'X-CSRFToken': csrftoken },
-                success: function(response){
-                    document.getElementById('profileImage').src = response.new_image_url + "?t=" + new Date().getTime();
-                    document.querySelector('.preview_img').src = response.new_image_url + "?t=" + new Date().getTime();
-                    location.reload();
-                },
-                error: function(err){
-                    console.log(err);
-                    alert("사진 업로드 실패");
-                }
-            });
-        });
-    }
-
-    const nicknameBtn = profileEditForm ? profileEditForm.querySelector('button[name="edit_type"][value="name"]') : null;
-    if (nicknameBtn) {
-        nicknameBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            var formData = new FormData(profileEditForm);
-            formData.append('edit_type', 'name');
-            $.ajax({
-                url: "{% url 'users:profile_edit' %}",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: { 'X-CSRFToken': csrftoken },
-                success: function(){
-                    alert("이름이 수정되었습니다.");
-                    location.reload();
-                },
-                error: function(err){
-                    console.log(err);
-                    alert("닉네임 수정 실패");
-                }
-            });
-        });
-    }
-
     // --- 리워드 및 캐릭터 정보 로딩 로직 ---
     const characterMainImages = {
+        0: "{% static 'img/level0.png' %}",
         1: "{% static 'img/level1.png' %}",
         2: "{% static 'img/level2.png' %}",
         3: "{% static 'img/level3.png' %}",
     };
     const characterStyles = {
+        0: { transform: 'scale(0.5)', marginTop: '40px', marginLeft: '0px' },
         1: { transform: 'scale(1.0)', marginTop: '40px', marginLeft: '0px' },
         2: { transform: 'scale(0.9)', marginTop: '30px', marginLeft: '0px' },
         3: { transform: 'scale(1.1)', marginTop: '30px', marginLeft: '0px' }
     };
-    const thumbnailStyles = {
-        1: { transform: 'scale(1.5)' },
-        2: { transform: 'scale(1.0)' },
-        3: { transform: 'scale(3.0)', marginTop: '50px' },
-    };
-     const stampOnImages = [
+    const stampOnImages = [
         "{% static 'img/stamps/stamp_on.png' %}",
         "{% static 'img/stamps/stamp_on2.png' %}",
         "{% static 'img/stamps/stamp_on3.png' %}",
@@ -254,347 +262,123 @@ document.addEventListener("DOMContentLoaded", function() {
         "{% static 'img/stamps/stamp_off2.png' %}",
         "{% static 'img/stamps/stamp_off3.png' %}",
     ];
+
     async function fetchRewardStatus() {
-        try {
-            const response = await fetch("{% url 'rewards:get_reward_status' %}");
-            if (!response.ok) throw new Error('리워드 정보 로딩 실패');
-            const data = await response.json();
-            updateRewardUI(data);
-        } catch (error) {
-            console.error('리워드 정보 로딩 오류:', error);
+      try {
+        const response = await fetch("{% url 'rewards:get_reward_status' %}");
+        if (!response.ok) throw new Error('리워드 정보 로딩 실패');
+
+        const data = await response.json();
+
+        // ✅ 서버에서 내려준 캐릭터 이름으로 화면 초기화
+        if (data.character_name) {
+          const nameTargets = [
+            document.getElementById('character-nic'),
+            document.getElementById('buyer-home-nic'),
+          ].filter(Boolean);
+
+          nameTargets.forEach(el => el.textContent = data.character_name);
+
+          const modalInput = document.querySelector('#profileEditModal #nicknameInput');
+          if (modalInput) modalInput.value = data.character_name;
         }
+
+        // 리워드 UI 반영
+        updateRewardUI(data);
+      } catch (error) {
+        console.error('리워드 정보 로딩 오류:', error);
+      }
     }
 
     function updateRewardUI(data) {
-        const levelText = document.getElementById('character-level-text');
-        if(levelText) levelText.textContent = data.character_level;
-        
-        const characterLevel = data.character_level;
-        const mainImage = document.getElementById('character-main-image');
+        // 총 스탬프 개수 계산
+        const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
+        const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
 
+        // 표시할 레벨 결정
+        let displayLevel;
+        if (totalStamps < 4) { displayLevel = 0; }
+        else if (totalStamps < 8) { displayLevel = 1; }
+        else if (totalStamps < 12) { displayLevel = 2; }
+        else { displayLevel = 3; }
+
+        // 메인 이미지 및 스타일 업데이트
+        const mainImage = document.getElementById('character-main-image');
         if (mainImage) {
-            mainImage.src = characterMainImages[characterLevel] || characterMainImages[1];
-            const styles = characterStyles[characterLevel] || characterStyles[1];
+            mainImage.src = characterMainImages[displayLevel];
+            const styles = characterStyles[displayLevel] || characterStyles[0];
             mainImage.style.transform = styles.transform;
             mainImage.style.marginTop = styles.marginTop;
             mainImage.style.marginLeft = styles.marginLeft;
         }
-        
-        const arrow = document.getElementById('level-arrow');
-        document.querySelectorAll('.level-thumbnail').forEach((thumb, index) => {
-            const level = index + 1;
-            
-            const thumbStyle = thumbnailStyles[level] || { transform: 'scale(1.0)' };
-            thumb.style.transform = thumbStyle.transform;
-            thumb.style.border = 'none';
 
-            if (level === characterLevel) {
-                thumb.style.opacity = '1';
-                if(arrow) {
-                    setTimeout(() => {
-                        const arrowOffset = thumb.offsetLeft + (thumb.offsetWidth / 2) - (arrow.offsetWidth / 2);
-                        arrow.style.left = `${arrowOffset}px`;
-                        arrow.style.display = 'block';
-                    }, 50);
-                }
-            } else {
-                thumb.style.opacity = '0.6';
-            }
-        });
-
-        const basePercentage = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
-        let growthPercentage = (basePercentage[data.medal_tier] || 0) + (data.stamp_count * 6.25);
-        if (data.medal_tier === 'GOLD') {
-             growthPercentage = 100;
-        }
-        growthPercentage = Math.min(Math.floor(growthPercentage) + 25, 100);
-
+        // 성장률 퍼센트 업데이트
+        const growthPercentage = Math.floor((totalStamps / 12) * 100);
         const circleBar = document.getElementById('growth_chart_circle');
         const circleText = document.getElementById('growth_percent_text');
         if (circleBar && circleText) {
             const radius = circleBar.r.baseVal.value;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (growthPercentage / 100) * circumference;
-            
             circleBar.style.strokeDashoffset = offset;
             circleText.textContent = `${growthPercentage}%`;
         }
 
-        const stampsGrid = document.getElementById('stamps-grid-container');
-        if (stampsGrid) {
-            stampsGrid.innerHTML = '';
-            const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
-            const totalStamps = data.medal_tier === 'GOLD' ? 12 : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
+        // 메달별 스탬프 및 체크박스 업데이트
+        const bronzeStamps = Math.min(totalStamps, 4);
+        const silverStamps = Math.min(Math.max(0, totalStamps - 4), 4);
+        const goldStamps = Math.min(Math.max(0, totalStamps - 8), 4);
 
-            for (let i = 0; i < 12; i++) {
-                const img = document.createElement('img');
-                if (i < totalStamps) {
-                    // 획득한 스탬프일 경우, ON 이미지 배열에서 무작위로 하나를 선택
-                    const randomIndex = Math.floor(Math.random() * stampOnImages.length);
-                    img.src = stampOnImages[randomIndex];
-                } else {
-                    // 획득하지 못한 스탬프일 경우, OFF 이미지 배열에서 무작위로 하나를 선택
-                    const randomIndex = Math.floor(Math.random() * stampOffImages.length);
-                    img.src = stampOffImages[randomIndex];
-                }
-                img.style.width = '100%';
-                img.style.objectFit = 'contain';
-                stampsGrid.appendChild(img);
-            }
+        renderStamps('stamps-bronze', bronzeStamps);
+        renderStamps('stamps-silver', silverStamps);
+        renderStamps('stamps-gold', goldStamps);
+
+        document.getElementById('check-bronze').style.display = (totalStamps >= 4) ? 'block' : 'none';
+        document.getElementById('check-silver').style.display = (totalStamps >= 8) ? 'block' : 'none';
+        document.getElementById('check-gold').style.display = (totalStamps >= 12) ? 'block' : 'none';
+
+        // ✅ 배경색 동적 변경: 완료(체크 있음) -> 녹색 / 미완료·진행중 -> 검정
+        const bronzeDone = totalStamps >= 4;
+        const silverDone = totalStamps >= 8;
+        const goldDone   = totalStamps >= 12;
+
+        const bronzeBox = document.querySelector('.cha_3th');
+        const silverBox = document.querySelector('.cha_2th');
+        const goldBox   = document.querySelector('.cha_1th');
+
+        const GREEN_BG = 'rgba(193, 255, 82, 0.40)'; // 기존 녹색
+        const BLACK_BG = '#000000';
+        const GREEN_BORDER = '0.7px solid #000000';
+        const BLACK_BORDER = '2px solid #C1FF52';
+
+        function applyBoxStyle(box, done) {
+          if (!box) return;
+          box.style.backgroundColor = done ? GREEN_BG : BLACK_BG;
+          box.style.border = done ? GREEN_BORDER : BLACK_BORDER;
         }
+
+        applyBoxStyle(bronzeBox, bronzeDone);
+        applyBoxStyle(silverBox, silverDone);
+        applyBoxStyle(goldBox, goldDone);
     }
-    fetchRewardStatus();
-    
-    const reviewModal = document.getElementById('review-modal');
-    const reviewModalContent = document.getElementById('review-modal-content');
 
-    document.addEventListener('DOMContentLoaded', () => {
-        function renderStamps(containerId, count, filledCount) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ""; // 초기화
-
-            for (let i = 0; i < count; i++) {
-            const stamp = document.createElement("div");
-            stamp.className = "stamp" + (i < filledCount ? " filled" : "");
-            container.appendChild(stamp);
-            }
-        }
-
-        // 브론즈, 실버, 골드 각각 4칸
-        renderStamps("stamps-bronze", 4, 2); // 총 4칸 중 2칸 채움
-        renderStamps("stamps-silver", 4, 4); // 4칸 다 채움
-        renderStamps("stamps-gold", 4, 1);   // 1칸만 채움
-
-        // 4칸 다 채우면 체크 보이게
-        if (document.querySelectorAll("#stamps-silver .stamp.filled").length === 4) {
-            document.getElementById("check-silver").style.display = "block";
-        }
-        });
-
-    document.body.addEventListener('click', async function(event) {
-        const target = event.target;
-
-        // '픽업 완료' 버튼 클릭 처리
-        if (target.classList.contains('pickup-complete-btn')) {
-            const reservationId = target.dataset.pk;
-            if (!confirm('픽업을 완료하시겠습니까?')) return;
-
-            const url = `/reservations/${reservationId}/change-status/`;
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const data = await response.json();
-                if (data.status === 'success') {
-                    window.location.reload();
-                } else {
-                    alert(data.message || '상태 변경 실패');
-                }
-            } catch(error) {
-                alert('상태 변경 중 오류가 발생했습니다.');
-            }
-        }
-
-        // '리뷰쓰기' 버튼 클릭 처리
-        if (target.classList.contains('write-review-btn')) {
-            const reservationId = target.dataset.pk;
-            const storeName = target.dataset.storeName;
-            openReviewModal(reservationId, storeName);
-        }
-        
-        // '리뷰 삭제' 버튼 클릭 처리
-        if (target.classList.contains('delete-review-btn')) {
-            const reviewId = target.dataset.reviewId;
-            if (confirm('정말로 이 리뷰를 삭제하시겠습니까? 되돌릴 수 없습니다.')) {
-                handleReviewDelete(reviewId);
-            }
-        }
-
-        // 모달 닫기 버튼 또는 모달 바깥 영역 클릭 처리
-        if (target.classList.contains('close-modal') || target === reviewModal) {
-            closeReviewModal();
-        }
-    });
-
-    // --- 리뷰 삭제를 서버에 요청하는 함수 ---
-    async function handleReviewDelete(reviewId) {
-        const url = `/reviews/${reviewId}/delete/`;
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' }
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                document.getElementById(`review-card-${reviewId}`).remove();
-                alert(data.message);
+    function renderStamps(containerId, filledCount) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = ""; // 초기화
+        for (let i = 0; i < 4; i++) {
+            const img = document.createElement('img');
+            if (i < filledCount) {
+                img.src = stampOnImages[Math.floor(Math.random() * stampOnImages.length)];
             } else {
-                alert('오류: ' + data.message);
+                img.src = stampOffImages[Math.floor(Math.random() * stampOffImages.length)];
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('리뷰 삭제 중 오류가 발생했습니다.');
+            container.appendChild(img);
         }
     }
 
-    // --- 리뷰 관련 함수들 ---
-    async function openReviewModal(reservationId, storeName) {
-        try {
-            const response = await fetch(`/reviews/create/${reservationId}/`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || '리뷰 폼을 불러올 수 없습니다.');
-            }
-            const formHtml = await response.text();
-            
-            if (reviewModalContent) {
-                 reviewModalContent.innerHTML = `
-                    <span class="close-modal" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-                    ${formHtml}
-                `;
-            }
-            if (reviewModal) reviewModal.style.display = 'flex';
-        } catch (error) {
-            console.error('Error opening review modal:', error);
-            alert(error.message);
-        }
-    }
-
-    function closeReviewModal() {
-        if (reviewModal) reviewModal.style.display = 'none';
-    }
-
-    // --- 리뷰 폼 제출 이벤트 처리 ---
-    if (reviewModal) {
-        reviewModal.addEventListener('submit', async function(event) {
-            if (event.target.tagName === 'FORM') {
-                event.preventDefault();
-                const form = event.target;
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
-                    });
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        alert(result.message);
-                        window.location.reload();
-                    } else {
-                        throw new Error(result.message || '리뷰 등록에 실패했습니다.');
-                    }
-                } catch (error) {
-                    console.error('Error submitting review:', error);
-                    alert(`오류: ${error.message}`);
-                }
-            }
-        });
-    }
+    fetchRewardStatus();
 });
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  // CSRF
-  function getCookie(name){
-    let v=null;
-    if(document.cookie){document.cookie.split(';').some(c=>{
-      c=c.trim(); if(c.startsWith(name+'=')){v=decodeURIComponent(c.slice(name.length+1)); return true;} return false;
-    });}
-    return v;
-  }
-  const csrftoken = getCookie('csrftoken');
 
-  // --- 리워드/캐릭터 로딩 ---
-  const characterMainImages = {
-    1: "{% static 'img/level1.png' %}",
-    2: "{% static 'img/level2.png' %}",
-    3: "{% static 'img/level3.png' %}",
-  };
-  const characterStyles = {
-    1: { transform: 'scale(1.0)', marginTop: '40px', marginLeft: '0px' },
-    2: { transform: 'scale(0.9)',  marginTop: '30px', marginLeft: '0px' },
-    3: { transform: 'scale(1.1)',  marginTop: '30px', marginLeft: '0px' },
-  };
-  const stampOnImages = [
-    "{% static 'img/stamps/stamp_on.png' %}",
-    "{% static 'img/stamps/stamp_on2.png' %}",
-    "{% static 'img/stamps/stamp_on3.png' %}",
-  ];
-  const stampOffImages = [
-    "{% static 'img/stamps/stamp_off.png' %}",
-    "{% static 'img/stamps/stamp_off2.png' %}",
-    "{% static 'img/stamps/stamp_off3.png' %}",
-  ];
-
-   // 3) 꽉 찼으면 체크 노출
-  show('check-bronze', filledBronze === 4);
-  show('check-silver', filledSilver === 4);
-  show('check-gold',   filledGold === 4);
-
-  async function fetchRewardStatus() {
-    const res = await fetch("{% url 'rewards:get_reward_status' %}");
-    if (!res.ok) throw new Error('리워드 정보 로딩 실패');
-    const data = await res.json();
-    updateRewardUI(data);
-  }
-
-  function updateRewardUI(data) {
-    // 레벨 텍스트(선택)
-    const levelText = document.getElementById('character-level-text');
-    if (levelText) levelText.textContent = data.character_level;
-
-    // 메인 이미지 + 스타일
-    const mainImage = document.getElementById('character-main-image');
-    if (mainImage) {
-      const lvl = data.character_level;
-      mainImage.src = characterMainImages[lvl] || characterMainImages[1];
-      const s = characterStyles[lvl] || characterStyles[1];
-      mainImage.style.transform = s.transform;
-      mainImage.style.marginTop = s.marginTop;
-      mainImage.style.marginLeft = s.marginLeft;
-    }
-
-    // 성장 퍼센트 (원형)
-    const base = { 'NONE': 0, 'BRONZE': 25, 'SILVER': 50, 'GOLD': 75 };
-    let growth = (base[data.medal_tier] || 0) + (data.stamp_count * 6.25);
-    if (data.medal_tier === 'GOLD') growth = 100;
-    growth = Math.min(Math.floor(growth) + 25, 100);
-
-    const circleBar = document.getElementById('growth_chart_circle');
-    const circleText = document.getElementById('growth_percent_text');
-    if (circleBar && circleText) {
-      const radius = circleBar.r.baseVal.value;
-      const circumference = 2 * Math.PI * radius; // 여기서는 2πr = 약 283
-      const offset = circumference - (growth / 100) * circumference;
-      circleBar.style.strokeDashoffset = offset;
-      circleText.textContent = `${growth}%`;
-    }
-
-    // 스탬프 12칸
-    const stampsGrid = document.getElementById('stamps-grid-container');
-    if (stampsGrid) {
-      stampsGrid.innerHTML = '';
-      const medalToStampCount = { 'NONE': 0, 'BRONZE': 4, 'SILVER': 8, 'GOLD': 12 };
-      const totalStamps = data.medal_tier === 'GOLD'
-        ? 12
-        : (medalToStampCount[data.medal_tier] || 0) + data.stamp_count;
-
-      for (let i = 0; i < 12; i++) {
-        const img = document.createElement('img');
-        const arr = (i < totalStamps) ? stampOnImages : stampOffImages;
-        img.src = arr[Math.floor(Math.random() * arr.length)];
-        img.style.width = '100%';
-        img.style.objectFit = 'contain';
-        stampsGrid.appendChild(img);
-      }
-    }
-  }
-
-  fetchRewardStatus().catch(console.error);
-});
-</script>
 {% endblock script %}

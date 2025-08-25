@@ -682,8 +682,8 @@ body {
   cursor: pointer;
   color:white;
   position:absolute;
-  right:30px;
-  top:30px;
+  right:20px;
+  top:15px;
 }
 .report-item-card, .item-card{
   background-color: white;
