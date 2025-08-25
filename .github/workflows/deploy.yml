@@ -20,19 +20,39 @@ jobs:
           script: |
             set -e
 
-            # 1) 깃 저장소 루트에서 최신 코드
+            # 1) 깃 저장소 폴더로 이동 후 최신 코드로 초기화
             cd ${{ secrets.REPO_DIR }}
             git fetch --all
             git reset --hard origin/main
             git clean -fd
 
-            # 2) 장고 앱 폴더에서 migrate
+            # --- uwsgi.ini 파일 생성 시작 (이 부분이 추가되었습니다!) ---
+            echo "Creating uwsgi.ini file..."
+            cat << EOF > uwsgi.ini
+            [uwsgi]
+            pythonpath = .
+            module = FarmFarm_prj.wsgi:application
+            home = ./myvenv
+            master = true
+            processes = 2
+            socket = ./uwsgi.sock
+            chmod-socket = 666
+            vacuum = true
+            post-buffering = 10485760
+            buffer-size = 65535
+            lazy-apps = true
+            tmp-dir = ./tmp
+            EOF
+            # --- uwsgi.ini 파일 생성 끝 ---
+
+            # 2) 장고 앱 폴더에서 migrate 및 기타 작업
             cd ${{ secrets.APP_DIR }}
-            if [ -d "myvenv" ]; then       # 여기선 자신이 쓰는 가상환경 이름을 써주세요
+            if [ -d "myvenv" ]; then
               source myvenv/bin/activate
               pip install --upgrade pip
               if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
               python manage.py migrate --noinput
+              python manage.py collectstatic --noinput
             fi
 
             # 3) 서비스 재시작
