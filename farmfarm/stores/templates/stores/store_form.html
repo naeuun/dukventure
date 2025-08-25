@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 };
 
 
+
     // ------------------------- 지도/주소 관련 -------------------------
     const addressInput = document.getElementById('addressInput');
     const latitudeInput = document.getElementById('latitudeInput');
@@ -497,10 +498,11 @@ voiceBtn.addEventListener('mouseleave', () => {
                                         <input type="text" name="item_desc_0" id="item_desc_0" placeholder="설명" required>
                                     </div>
                                     <div>
-                                        <input type="file" id="itemPhoto_{{ forloop.counter0 }}" name="item_photo_{{ forloop.counter0 }}" accept="image/*" style="display:none;">
-                                        <label for="itemPhoto_{{ forloop.counter0 }}">
+                                        <input type="file" id="itemPhoto_0" name="item_photo_0" accept="image/*" style="display:none;">
+                                        <label for="itemPhoto_0">
                                             <img src="{% static 'img/add_photo.png' %}" alt="upload" class="upload_icon_2" />
                                         </label>
+
                                         <button class="deleteitem" type="button" onclick="removeItem(this)">×</button>
                                     </div>
                                 </div>
