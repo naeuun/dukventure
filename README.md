@@ -1,34 +1,177 @@
-# 🔎 연동 시 세팅 방법 
+# 🍀 FarmFarm
+<img width="1277" height="716" alt="image" src="https://github.com/user-attachments/assets/67738bbb-9618-420d-9560-eae0fffd1486" />
 
-1. requirements.txt 다운로드 <br>
-  pip install -r requirements.txt
 
-2. .env 환경 변수 설정, 키 json 파일 생성 <br>
-   (노션 "키관리"참고)
-   
-3. 마이그레이션 적용 <br>
-   python manage.py makemigrations <br>
-   python manage.py migrate
+### “오늘 동네 장터에서 뭐 파밍했어?”
+오늘 뭐 먹을까? AI가 장바구니를 추천하고, 판매자는 목소리만으로 가게를 등록하는, <br>
+세대 간을 연결하는 새로운 로컬 장보기 플랫폼 . .  팜팜!
+<br />
 
-4. 마이그레이션 오류 발생 시 db삭제 후 다시 명령어 입력
+## 🍀 Member
 
-5. admin계정 생성 <br>
-   python manage.py createsuperuser <br>
-   -> 이름 : admin / 비밀번호 : admin 으로 통일 <br>
-   -> 비밀번호 짧다는 질문 나오면 y로 무시 처리 <br>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/naeuun">
+        <img alt="김나은" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/(이름)">
+        <img alt="김나은" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/(이름)">
+        <img alt="김나은" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/(이름)">
+        <img alt="김나은" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/(이름)">
+        <img alt="김나은" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/naeuun">
+        김나은
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/naeuun">
+        김나은
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/naeuun">
+        김나은
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/gjdbsdk">
+        허윤아
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/naeuun">
+        김나은
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">팀장<br />백엔드</td>
+    <td align="center">백엔드</td>
+    <td align="center">프론트엔드</td>
+    <td align="center">프론트엔드</td>
+    <td align="center">기획<br />디자인</td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+    </td>
+    <td valign="top">
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+    </td>
+    <td valign="top">
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+    </td>
+    <td valign="top">
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+    </td>
+    <td valign="top">
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+      <ul>
+        <b>[ 맡은 페이지 ]</b>
+        <li>맡은 기능1</li>
+        <li>맡은 기능2</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
-6. 페르소나 계정 정보 DB에 적용 <br>
-   python manage.py loaddata users/fixtures/users.json <br>
+<br />
 
-7. 가게 제보 키워드 리스트 DB에 적용 ➕ <br>
-   python manage.py loaddata stores/fixtures/keywords.json <br> 
+## 🍀 Stack
 
-8. 서버 돌리기 <br>
-   python manage.py runserver
+<table>
+  <tr>
+    <th align="center">Frontend</th>
+    <th align="center">Backend</th>
+    <th align="center">Design</th>
+    <th align="center">Collaboration</th>
+  </tr>
+  <tr>
+    <td valign="top">
+      <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white" /><br />
+      <img src="https://img.shields.io/badge/css-663399?style=for-the-badge&logo=css&logoColor=white" /><br />
+      <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" /><br />
+    </td>
+    <td valign="top">
+      <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white" /><br />
+      <img src="https://img.shields.io/badge/django-092E20?style=for-the-badge&logo=django&logoColor=white" /><br />
+      <img src="https://img.shields.io/badge/sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" /><br />
+    </td>
+    <td valign="top">
+      <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" /><br />
+    </td>
+    <td valign="top">
+      <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white" /><br />
+      <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" /><br />
+      <img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white" /><br />
+    </td>
+  </tr>
+</table>
 
-9. 페르소나 계정 자동 로그인 버튼 눌렀을 때 로그인 되는지 확인 
-    
-10. 음성 인식 기능 잘 작동하는지 확인 (키가 제대로 들어갔는지 확인하는겁니다!)
+<br />
 
-11. 장바구니 AI 잘 작동하는지 확인 <br>
-    예시 : 제육볶음에 들어가는 재료(돼지고기 등)를 파는 가게를 여러개 추가해놓고, 제육볶음을 검색했을 때 가게들이 나오는 지!
+## 🍀 Feature
+
+<br />
+
+## 🍀 Preview
