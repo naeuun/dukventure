@@ -23,7 +23,8 @@
     </td>
     <td align="center">
       <a href="https://github.com/kimjiwoo1223">
-        <img alt="김지우" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/1afba65c-af0c-4a10-b38f-0e5abae901b9" />
+      <img alt="김지우" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/d3e90cee-caaf-4884-97f6-39cfbf1f7730" />
+
       </a>
     </td>
     <td align="center">
@@ -34,7 +35,6 @@
     <td align="center">
       <a href="https://github.com/yoonseo1605">
         <img alt="박윤서" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/3fbfc2e7-a85a-417b-b544-bb3b1eed3ebf" />
-
       </a>
     </td>
   </tr>
