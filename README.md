@@ -74,26 +74,56 @@
   <tr>
     <td valign="top">
       <ul>
-        <b>[ 맡은 페이지 ]</b>
-        <li>맡은 기능1</li>
-        <li>맡은 기능2</li>
+        <b>[ Users ]</b>
+        <li>회원가입</li>
+        <li>로그인</li>
+        <li>페르소나 자동 로그인</li>
+        <li>사업자 등록 번호 상태 조회 API</li>
+        <li>프로필 편집</li>
+        <li>구매자/판매자 홈화면</li>
+        <li>구매자/판매자 권한 분리</li>
       </ul>
       <ul>
-        <b>[ 맡은 페이지 ]</b>
-        <li>맡은 기능1</li>
-        <li>맡은 기능2</li>
+        <b>[ Stores ]</b>
+        <li>카카오 지도 API</li>
+        <li>지도 - 가게 정보 모달</li>
+        <li>판매자 가게 등록/수정</li>
+        <li>구매자 - 가게 제보 기능</li>
+        <li>가게/판매 품목 검색 기능</li>
+        <li>판매자 가게 품목 개별 수정</li>
+        <li>구글 STT/Gemini 음성 인식 기능</li>       
+      </ul>
+      <ul>
+        <b>[ items ]</b>
+        <li>구매자 판매 품목 관리</li>
       </ul>
     </td>
     <td valign="top">
       <ul>
-        <b>[ 맡은 페이지 ]</b>
-        <li>맡은 기능1</li>
-        <li>맡은 기능2</li>
+        <b>[ users ]</b>
+        <li>구매자/판매자 홈화면</li>
       </ul>
       <ul>
-        <b>[ 맡은 페이지 ]</b>
-        <li>맡은 기능1</li>
-        <li>맡은 기능2</li>
+        <b>[ shopping ]</b>
+        <li>AI 기반 재료 추천(Gemini)</li>
+        <li>상품명 기반 가게 검색</li>
+      </ul>
+      <ul>
+        <b>[ reservations ]</b>
+        <li>상품 예약 기능</li>
+        <li>예약 목록 및 상태 관리</li>
+      </ul>
+      <ul>
+        <b>[ reviews ]</b>
+        <li>픽업 완료된 예약 건에 대해 리뷰 작성 및 관리</li>
+      </ul>
+      <ul>
+        <b>[ rewards ]</b>
+        <li>구매자의 리워드 상태 구현</li>
+      </ul>
+      <ul>
+        <b>[ 배포 ]</b>
+        <li>서비스 배포</li>
       </ul>
     </td>
     <td valign="top">
