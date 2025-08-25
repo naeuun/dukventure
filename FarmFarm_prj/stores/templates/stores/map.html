@@ -104,29 +104,29 @@ document.addEventListener('DOMContentLoaded', function() {
             reportItemListEl.appendChild(imgCard);
 
             // 품목 + 키워드
-            if((report.items && report.items.length>0) || (report.keywords && report.keywords.length>0)){
-                report.items?.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'report-item-card';
-                    card.innerHTML = `
-                    <div>
-                    <strong>품목:</strong> ${item.name}
-                    </div>
-                    <div>
-                    <strong>설명:</strong> ${item.description||''}
-                    </div>
-                    ${report.keywords && report.keywords.length>0 ? `<div><strong>키워드:</strong> ${report.keywords.join(', ')}</div>` : ''}
+            if ((report.items && report.items.length > 0) || (report.keywords && report.keywords.length > 0)) {
+    const card = document.createElement('div');
+    card.className = 'report-item-card';
 
-                    `;
-                    reportItemListEl.appendChild(card);
-                });
-                
-            } else {
-                const card = document.createElement('div');
-                card.className = 'report-item-card';
-                card.innerHTML = '<div>등록된 품목이 없습니다.</div>';
-                reportItemListEl.appendChild(card);
-            }
+    // 품목 이름을 콤마로 연결
+    const itemNames = report.items?.map(item => item.name).join(', ') || '';
+    const itemDescriptions = report.items?.map(item => item.description || '').filter(desc => desc).join(', ') || '';
+
+    card.innerHTML = `
+        ${itemNames ? `<div><strong>품목:</strong> ${itemNames}</div>` : ''}
+        ${itemDescriptions ? `<div><strong>설명:</strong> ${itemDescriptions}</div>` : ''}
+        ${report.keywords && report.keywords.length > 0 
+            ? `<div><strong>키워드:</strong> ${report.keywords.join(', ')}</div>` 
+            : ''}
+    `;
+    reportItemListEl.appendChild(card);
+} else {
+    const card = document.createElement('div');
+    card.className = 'report-item-card';
+    card.innerHTML = '<div>등록된 품목이 없습니다.</div>';
+    reportItemListEl.appendChild(card);
+}
+
 
             openReportModal();
         });
