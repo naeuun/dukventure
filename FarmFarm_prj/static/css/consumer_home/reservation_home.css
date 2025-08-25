@@ -115,8 +115,9 @@ body {
 }
 
 .card__image img {
-  width: 326.049px;
-  height: auto;
+  height:100%;
+  width:100%;
+  object-fit: cover;
 }
 
 /* 중앙 텍스트(토마토/달걀) */
