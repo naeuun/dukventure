@@ -453,7 +453,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="level-box">
                         <p class="nickname" id="buyer-home-nic">
                             {{ request.user.username }}
+                            {% if request.user.username != "김현지" %}
                             <img id="editProfileBtn" src="{% static 'img/edit.png' %}" alt="수정" style="cursor: pointer" />
+                            {% endif %}
                         </p>
                         <p class="level">
                             LV. <span id="character-level-text">-</span>
