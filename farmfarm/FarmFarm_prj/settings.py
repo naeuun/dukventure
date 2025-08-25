@@ -19,15 +19,8 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 BUYER_PASSWORD = os.getenv('BUYER_PASSWORD')
 SELLER_PASSWORD = os.getenv('SELLER_PASSWORD')
 
-# =================================================
-# 추가: django-environ으로 .env 읽기
-#env = environ.Env()
-#environ.Env.read_env()  # 프로젝트 루트의 .env 읽기
-
 # Google STT 환경 변수
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -65,7 +58,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-#    "frontend.apps.FrontendConfig", # 프론트엔드에서 추가한 부분
     'stores',
     'items',
     'users',
