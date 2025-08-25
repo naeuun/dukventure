@@ -11,12 +11,12 @@
 
 <table>
   <tr>
-    <td align="center">
+    <td align="center"width="150px">
       <a href="https://github.com/naeuun">
         <img alt="김나은" width="150px" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
       </a>
     </td>
-    <td align="center">
+    <td align="center"width="150px">
       <a href="https://github.com/zyecastle">
         <img alt="조예성" width="150px" alt="image" src="https://github.com/user-attachments/assets/fc06c948-61b0-4344-904f-e18e35092f5f" />
       </a>
