@@ -24,7 +24,6 @@
     <td align="center">
       <a href="https://github.com/kimjiwoo1223">
       <img alt="김지우" width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/d3e90cee-caaf-4884-97f6-39cfbf1f7730" />
-
       </a>
     </td>
     <td align="center">
