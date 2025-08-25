@@ -13,27 +13,27 @@
   <tr>
     <td align="center">
       <a href="https://github.com/naeuun">
-        <img alt="김나은" width="480px" height="480" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
+        <img alt="김나은" width="180px" alt="image" src="https://github.com/user-attachments/assets/43731894-75e2-4716-93c3-4f3361d5b1d6" />
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/zyecastle">
-        <img alt="조예성" width="480px" height="480" alt="image" src="https://github.com/user-attachments/assets/fc06c948-61b0-4344-904f-e18e35092f5f" />
+        <img alt="조예성" width="180px" alt="image" src="https://github.com/user-attachments/assets/fc06c948-61b0-4344-904f-e18e35092f5f" />
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/kimjiwoo1223">
-      <img alt="김지우" width="480px" height="480" alt="image" src="https://github.com/user-attachments/assets/d3e90cee-caaf-4884-97f6-39cfbf1f7730" />
+      <img alt="김지우" width="180px" alt="image" src="https://github.com/user-attachments/assets/d3e90cee-caaf-4884-97f6-39cfbf1f7730" />
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/gjdbsdk">
-        <img alt="허윤아" width="480px" height="480" alt="image" src="https://github.com/user-attachments/assets/a464187d-7646-4cc7-9deb-f61df54a42d9" />
+        <img alt="허윤아" width="180px"alt="image" src="https://github.com/user-attachments/assets/a464187d-7646-4cc7-9deb-f61df54a42d9" />
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/yoonseo1605">
-        <img alt="박윤서" width="480px" height="480" alt="image" src="https://github.com/user-attachments/assets/3fbfc2e7-a85a-417b-b544-bb3b1eed3ebf" />
+        <img alt="박윤서" width="180px" alt="image" src="https://github.com/user-attachments/assets/3fbfc2e7-a85a-417b-b544-bb3b1eed3ebf" />
       </a>
     </td>
   </tr>
