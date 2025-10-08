@@ -203,9 +203,3 @@
 </table>
 
 <br />
-
-## 🍀 Feature
-
-<br />
-
-## 🍀 Preview
